@@ -4539,6 +4539,125 @@
           }
         }
       }
+    },
+    "dashboard.stats.rawStorageTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Raw Storage Monitor (Karpathy LLM Wiki)"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "原始数据存储监控 (基于卡帕西)"
+          }
+        }
+      }
+    },
+    "dashboard.stats.rawTotalPages": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Raw Source Pages"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "原始来源文件数"
+          }
+        }
+      }
+    },
+    "dashboard.stats.rawTotalSize": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Raw Storage Size"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "原始存储占用"
+          }
+        }
+      }
+    },
+    "dashboard.stats.viewRawPages": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "View Raw Pages List"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "查看原始文件列表"
+          }
+        }
+      }
+    },
+    "dashboard.stats.rawPageDetailTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Raw Page Details"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "原始页面详情"
+          }
+        }
+      }
+    },
+    "dashboard.stats.rawPageCountFormat": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Words: %1$d | Size: %2$@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "字数: %1$d 字 | 大小: %2$@"
+          }
+        }
+      }
+    },
+    "dashboard.stats.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comparison Metrics Grid"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "对比指标网格"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

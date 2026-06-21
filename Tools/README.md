@@ -1,83 +1,104 @@
 # ZhiYu 开发者工具箱 (Developer Tools)
 
-本目录包含用于 ZhiYu 开发、测试与质量保障的辅助脚本与工具。
+本目录包含用于 ZhiYu 开发、测试、质量保障以及持续集成的辅助脚本与工具。为了维护项目的长期健康，所有脚本均已按功能职责完成分类归档。
 
 ## 目录结构
 
 ```
 Tools/
-├── Gatekeeper/     # 编译门禁脚本（project.yml preBuildScripts 引用）
-├── CI/             # CI 流水线脚本（.github/workflows 引用）
-├── Lint/           # 代码质量检查（手动执行）
-├── Mock/           # Mock 服务器 + 端到端测试
-├── Plugins/        # 插件 SDK、示例源文件、测试工具
-├── Utils/          # 通用辅助脚本
+├── Gatekeeper/     # 编译门禁与静态合规守卫（Xcode Build Phases 引用）
+│   ├── Architecture/  # 系统架构纯净度与依赖守卫
+│   ├── Compliance/    # 编码规范、本地化、魔鬼数字及 HIG 守卫
+│   ├── Release/       # App Store 提审与隐私漏洞守卫
+│   └── Sanity/        # 工程结构卫生与代码健康扫描
+├── CI/             # CI 流水线相关脚本（GitHub Actions & Woodpecker 引用）
+│   ├── Build/         # 编译环境与跨平台构建脚本
+│   ├── Test/          # 跑测执行、覆盖率及不稳定测试过滤
+│   ├── Analyze/       # 静态分析、SPM 依赖安全及 SBOM 归档
+│   ├── Perf/          # 性能比对与性能基线更新
+│   └── Notify/        # 飞书等即时通讯工具告警通知
+├── Mock/           # 插件市场 Mock 服务器与端到端测试
+├── Plugins/        # 插件 SDK 示例与测试工具
+├── Utils/          # 快照录制等通用辅助工具
 └── README.md
 ```
 
-- **新增脚本**：按用途放入对应子目录。
-- **文档同步**：新增或移动脚本后，必须同步更新本 `README.md`。
+- **新增脚本**：必须按上述职责放入对应子目录，严禁在 `CI/` 或 `Gatekeeper/` 根下堆积。
+- **文档同步**：新增、移动或删除脚本后，必须同步更新本 `README.md`。
 
 ---
 
-## Gatekeeper — 编译门禁
+## Gatekeeper — 本地编译门禁
 
-需在 Xcode Build Phases 中以 `python3 Tools/Gatekeeper/<script>.py` 形式引用。
+在 Xcode Build Phases 中通过 `python3 Tools/Gatekeeper/<Category>/<script>.py` 调用。
 
-| 脚本 | 功能 |
+### Architecture (架构守卫)
+| 脚本 | 功能说明 |
 |------|------|
-| `check_domain_purity.py` | 领域层纯净度检查 |
-| `check_localization.py` | 硬编码中文 + 违规 tr() 调用拦截 |
-| `check_storage_constants.py` | 数据库物理表名/字段名硬编码拦截 |
-| `check_magic_numbers_v2.py` | 魔鬼数字扫描（颜色/尺寸/数值） |
-| `check_hardcoded_secrets.py` | 硬编码密钥/Token/IP 扫描 |
-| `check_hig_compliance.py` | HIG 视觉与无障碍规范（字号下限、空 hint、动画触发器、系统硬编码颜色）校验 |
-| `check_appstore_readiness.py` | App Store 提审就绪度（Info.plist、ATS 豁免、版本号格式、fatalError、隐私清单）校验 |
+| `check_architecture_dependency.py` | 严格审计 L0-L3 跨层依赖，禁止反向依赖 |
+| `check_domain_purity.py` | 验证领域层 (Domain) 平台无关性，严禁导入 UIKit/AppKit |
+| `check_test_di_setup.py` | 检查单元测试 DI 容器（ServiceContainer）的双注册合法性 |
+| `check_layer_markers.sh` | 检查 Swift 文件头部是否标注合法架构层级标记（如 `[L1]`） |
+
+### Compliance (规范守卫)
+| 脚本 | 功能说明 |
+|------|------|
+| `check_localization.py` | 拦截硬编码中文及直接调用 `.tr()` 行为，强制类型安全本地化 |
+| `check_storage_constants.py` | 拦截数据库物理表名和物理字段的硬编码 SQL 插值 |
+| `check_magic_numbers.py` | 自动扫描代码中的魔鬼数字（颜色、尺寸及硬编码常数） |
+| `check_hig_compliance.py` | 校验 Apple HIG 无障碍规范（字号限制、hint 等） |
+
+### Release (安全与发布就绪)
+| 脚本 | 功能说明 |
+|------|------|
+| `check_appstore_readiness.py` | 校验提审就绪度（Info.plist 字段、 fatalError 拦截等） |
+| `check_hardcoded_secrets.py` | 阻断硬编码密钥、私钥、Token、敏感 IP 或测试域名提审 |
+
+### Sanity (工程健康)
+| 脚本 | 功能说明 |
+|------|------|
+| `check_root_hygiene.py` | 拦截临时文件及根目录非标结构，维护工作区整洁 |
+| `check_layout.py` | 检测冲突约束、负 Spacing 及跨平台布局不兼容项 |
+| `check_docs_and_configs.py` | 校验工程文档完整性与规范一致性 |
+| `check_scripts_quality.py` | 检测 Shell 及 Python 脚本编码规范与可执行状态 |
+| `check_swift_quality.py` | 扫描 Swift 强类型、隐式隐患等代码质量缺陷 |
+| `check_unsafe_string_index.py` | 扫描 Swift 源码中不安全的 String.Index 偏移调用 |
 
 ---
 
-## Mock — 模拟服务器与测试
+## CI — 持续集成与跑测
 
-### 启动插件市场 Mock 服务器
+### Build (编译构建)
+- `prepare_build_environment.sh`：拉取构建依赖与 SPM 缓存。
+- `build_platform.sh`：独立构建指定平台的 target 和 scheme。
+- `build_multi_platform.sh`：本地一键构建 iOS/macOS/watchOS 多平台并收集编译错误。
 
-```bash
-python3 Tools/Mock/MockServer/server.py
-```
+### Test (自动化测试)
+- `run_unit_tests.sh`：执行单元测试，自动过滤标记有 `@flaky` 的不稳定用例。
+- `run_ui_tests.sh`：执行 UI 自动化测试，跳过不稳定用例。
+- `run_tests_and_coverage.sh`：汇总跑测并触发生命周期门禁。
+- `check_coverage.py`：解析 `.xcresult` 报文，强制执行核心 Domain 覆盖率门禁。
+- `ci-test-progress.sh`：解析 xcodebuild 管道输出，实时格式化当前跑测进度。
 
-默认监听 `http://localhost:8080`。
+### Analyze (静态分析)
+- `run_static_analysis.sh`：并发执行架构、规范、卫生等 12 项检查。
+- `audit_spm_dependencies.py`：审计 Swift Package Manager 依赖库版本安全。
+- `verify_spm_integrity.sh`：基于哈希校验 SPM 依赖链完整性。
+- `generate_sbom.py` / `merge_sbom.py`：解析依赖树并生成与 Syft 合并的标准 SBOM。
+- `verify_commit_signature.sh`：校验最近提交的 GPG 签名。
+- `verify_reproducible_build.sh`：确定性编译输出校验。
 
-### 运行 E2E 测试
+### Perf (性能基准)
+- `check_perf_regression.py`：将本次测试执行的时间、CPU 等指标同基线进行比对。
+- `update_perf_baseline.sh`：在性能主动优化后，更新本地性能参考基线。
 
-```bash
-python3 Tools/Mock/test_plugin_e2e.py
-```
-
-### 运行综合测试套件
-
-```bash
-./Tools/Plugins/test_plugin_and_model_features.sh
-```
-
----
-
-## Utils — 辅助脚本
-
-### 快照录制
-
-```bash
-./Tools/Utils/update_snapshots.sh
-```
-
-### CI 测试进度
-
-```bash
-./Tools/CI/ci-test-progress.sh
-```
+### Notify (告警通知)
+- `notify_feishu.sh`：向飞书群机器人推送流水线通关/阻断卡片。
 
 ---
 
 ## 注意事项
 
-- **Python 环境**：使用系统 `python3`（macOS 自带或 Homebrew 安装）。
-- **权限**：`.sh` 脚本首次使用前需 `chmod +x`。
-- **覆盖率工具**：`check_coverage.py` 依赖 Xcode `xccov` 组件。
+- **Python 环境**：运行环境为 `./env/venv/bin/python3`。
+- **可执行权限**：所有的 `.sh` 脚本和部分 python 文件需要具备可执行权限（`chmod +x`）。
+- **门禁熔断**：任何 Gatekeeper 门禁脚本或 CI 分析脚本在校验失败时，均应以退出状态码 `1` 阻断后续流程。

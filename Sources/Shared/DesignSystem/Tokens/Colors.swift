@@ -273,6 +273,10 @@ public struct ColorTheme: Sendable {
     public var gray: Color { Color(light: Color(hex: "8E8E93"), dark: Color(hex: "8E8E93")) }
     /// 测试/多用例特定颜色（青色）
     public var cyan: Color { Color.cyan }
+    /// 比对/特定标识（青色/蓝绿色）
+    public var teal: Color { Color(light: Color(hex: "30B0C7"), dark: Color(hex: "40C8E0")) }
+    /// 词条/高亮（黄色）
+    public var yellow: Color { Color(light: Color(hex: "FFCC00"), dark: Color(hex: "FFD60A")) }
 }
 
 #if canImport(UIKit)

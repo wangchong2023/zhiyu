@@ -174,7 +174,6 @@ final class ZhiYuUITests: KnowledgeBaseUITests {
     }
 
     // 链接跳转测试：列表文档 -> 查找双向链接 [[WikiPage]] 标记 -> 模拟点击跳转关联页
-    // @flaky: 初始种子文档可能不包含双向链接导致的偶发性失败
     func testPageLinkNavigation() throws {
         ensureAppIsLoggedInAndInVault()
 
@@ -187,42 +186,33 @@ final class ZhiYuUITests: KnowledgeBaseUITests {
         }
         XCTAssertTrue(knowledgeTab.exists, "知识库 Tab 按钮应该存在")
         knowledgeTab.tap()
+        try? Thread.sleep(forTimeInterval: 0.5)
 
         let listPredicate = NSPredicate(format: "label CONTAINS '所有' OR label CONTAINS '页面' OR label CONTAINS 'Pages'")
-        var pageListRow = app.buttons.matching(listPredicate).element(boundBy: 0)
+        let pageListRow = app.descendants(matching: .any).matching(listPredicate).element(boundBy: 0)
+        XCTAssertTrue(pageListRow.waitForExistence(timeout: 10), "知识库主页‘所有页面’入口应当在 10 秒内加载并可见")
+        pageListRow.tap()
+        try? Thread.sleep(forTimeInterval: 0.8)
 
-        if !pageListRow.waitForExistence(timeout: 5) {
-            pageListRow = app.cells.matching(listPredicate).element(boundBy: 0)
-        }
-        if !pageListRow.exists {
-            pageListRow = app.cells.containing(listPredicate).element(boundBy: 0)
-        }
-        if !pageListRow.exists {
-            pageListRow = app.buttons.containing(listPredicate).element(boundBy: 0)
-        }
+        // 关键点：使用必然含有双向链接的预置种子页面 "个人知识图谱指南" 进行精确定位
+        let targetPredicate = NSPredicate(format: "label CONTAINS '个人知识图谱指南' OR label CONTAINS 'Personal Knowledge Graph Guide'")
+        let targetElement = app.descendants(matching: .any).matching(targetPredicate).element(boundBy: 0)
 
-        if pageListRow.exists {
-            pageListRow.tap()
-        }
+        XCTAssertTrue(targetElement.waitForExistence(timeout: 20), "未能在列表中找到预置的个人知识图谱指南文档")
+        targetElement.tap()
+        try? Thread.sleep(forTimeInterval: 0.8)
 
-        let firstPage = app.buttons.matching(identifier: "PageRow_Item").element(boundBy: 0)
-        let firstPageExists = firstPage.waitForExistence(timeout: 20)
-        guard firstPageExists else {
-            XCTFail("知识库列表首个文档项在 20 秒内未加载完成，请检查冷启动数据种子化时序")
-            return
-        }
-        firstPage.tap()
-
-        let linkPredicate = NSPredicate(format: "label CONTAINS '[[ '")
+        let linkPredicate = NSPredicate(format: "label CONTAINS '[[ ' OR label CONTAINS '[['")
         var pageLink = app.staticTexts.matching(linkPredicate).element(boundBy: 0)
         if !pageLink.exists {
             pageLink = app.staticTexts.containing(linkPredicate).element(boundBy: 0)
         }
-        if pageLink.exists {
-            pageLink.tap()
-        }
+        
+        // 关键点：强断言渲染判定，存在后再执行点击
+        XCTAssertTrue(pageLink.waitForExistence(timeout: 8), "详情页未能成功渲染 Wiki 双向链接")
+        pageLink.tap()
 
-        XCTAssertTrue(app.navigationBars.element.waitForExistence(timeout: 3))
+        XCTAssertTrue(app.navigationBars.element.waitForExistence(timeout: 5), "点击 Wiki 双链后应发生导航跳转")
     }
 
     // 闭环测试：退出至工作台 -> 多笔记本金库切换 -> 校验播种数据幂等填充

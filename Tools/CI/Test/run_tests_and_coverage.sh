@@ -18,14 +18,14 @@ echo "$TEST_COUNT" > build/.test_count
 
 # 2. 执行单元测试 (CI 模式下执行)
 echo "===> Run Unit Tests"
-bash Tools/CI/run_unit_tests.sh --ci
+bash Tools/CI/Test/run_unit_tests.sh --ci
 
 # 3. 代码覆盖率门禁熔断校验
 echo "===> Code Coverage Check"
-python3 Tools/CI/check_coverage.py
+python3 Tools/CI/Test/check_coverage.py
 
 # 4. 性能回归阻断校验
 echo "===> Performance Regression Check"
-python3 Tools/CI/check_perf_regression.py
+python3 Tools/CI/Perf/check_perf_regression.py
 
 echo "✅ 跑测、覆盖率门禁及性能回归校验全部通过！"

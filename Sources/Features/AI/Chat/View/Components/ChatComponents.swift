@@ -228,7 +228,8 @@ struct ChatBubbleView: View {
             // Expanded references grouped by page type
             if referencesExpanded {
                 let grouped = Dictionary(grouping: message.relatedPageIDs.compactMap { id in pages.first { $0.id == id } }) { $0.pageType }
-                ForEach(PageType.allCases.filter { grouped[$0] != nil }, id: \.self) { type in
+                // 遍历用户可见的页面类型，过滤掉内部 raw 类型
+                ForEach(PageType.allVisibleCases.filter { grouped[$0] != nil }, id: \.self) { type in
                     if let pagesOfType = grouped[type], !pagesOfType.isEmpty {
                         VStack(alignment: .leading, spacing: DesignSystem.tiny) {
                             // Type header

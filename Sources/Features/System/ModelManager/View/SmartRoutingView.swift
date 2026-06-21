@@ -21,18 +21,14 @@ public struct SmartRoutingView: View {
     public init() {}
 
     public var body: some View {
-        ZStack {
-            themeManager.pageBackground()
-                .ignoresSafeArea()
-
-            ScrollView {
-                VStack(spacing: DesignSystem.large) {
-                    modelStrategySection
-                    taskRoutingSection
-                    runtimeStatusSection
-                }
-                .padding(DesignSystem.medium)
+        // 直接返回 ScrollView，利用父容器统一渲染的渐变背景，避免多层 ignoresSafeArea 劫持手势
+        ScrollView {
+            VStack(spacing: DesignSystem.large) {
+                modelStrategySection
+                taskRoutingSection
+                runtimeStatusSection
             }
+            .padding(DesignSystem.medium)
         }
     }
 
@@ -182,7 +178,12 @@ public struct SmartRoutingView: View {
 
 #if DEBUG
 #Preview {
-    SmartRoutingView()
-        .environmentObject(ThemeManager.shared)
+    ZStack {
+        // 在预览模式下在最外层包裹背景，确保预览效果与真机运行时一致
+        ThemeManager.shared.pageBackground()
+            .ignoresSafeArea()
+        SmartRoutingView()
+    }
+    .environmentObject(ThemeManager.shared)
 }
 #endif

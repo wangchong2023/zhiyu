@@ -272,6 +272,8 @@ class XCStringsAuditor:
         # 3. 特定逻辑键匹配
         if re.match(r'^llm\.(prompt\.(?!workshop\b|reset\b|expert\b)[a-zA-Z]+|ingest\.json)', key):
             return True
+        if key in ("vault.defaultName.en", "vault.researchName.en", "vault.defaultName.zh", "vault.researchName.zh"):
+            return True
             
         return False
 

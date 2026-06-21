@@ -212,7 +212,8 @@ struct IngestView: View {
                         Text(L10n.Creation.pageType).font(.caption.weight(.medium)).foregroundStyle(.appSecondary)
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack(spacing: DesignSystem.small) {
-                                ForEach(PageType.allCases, id: \.self) { type in
+                                // 遍历用户可见页面类型，屏蔽 raw 选项
+                                ForEach(PageType.allVisibleCases, id: \.self) { type in
                                     Button(action: { HapticFeedback.shared.trigger(.selection); withAnimation(.spring(response: 0.3)) { coordinator.newType = type } }) {
                                         HStack(spacing: DesignSystem.tightPadding) { Image(systemName: type.icon); Text(type.displayName) }
                                         .font(.subheadline.weight(coordinator.newType == type ? .bold : .medium)).padding(.horizontal, DesignSystem.medium).padding(.vertical, DesignSystem.small)

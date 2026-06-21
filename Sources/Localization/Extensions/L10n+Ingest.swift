@@ -77,6 +77,8 @@ extension L10n {
         public static var ocrScan: String { Ingest.tr("ingest.ocrScan") }
         public static var clipboardImport: String { Ingest.tr("ingest.clipboardImport") }
         public static var voiceNote: String { Ingest.tr("ingest.voiceNote") }
+        public static var audioSubtitle: String { Ingest.tr("ingest.audioSubtitle") }
+        public static var resultTitle: String { Ingest.tr("ingest.resultTitle") }
         public static var importRecords: String { Ingest.tr("ingest.importRecords") }
         public static var viewRawText: String { Ingest.tr("ingest.viewRawText") }
         public static var openLink: String { Ingest.tr("ingest.openLink") }
@@ -161,8 +163,9 @@ extension L10n {
         }
 
         public typealias ocr = OCR
-        public enum OCR {
+        public struct OCR {
             public static var title: String { Ingest.tr("ocr.title") }
+            public static var previewTitle: String { Ingest.tr("ocr.previewTitle") }
             public static var pageType: String { Ingest.tr("ocr.pageType") }
             public static var saveToKnowledge: String { Ingest.tr("ocr.saveToKnowledge") }
             public static var processing: String { Ingest.tr("ocr.processing") }
@@ -188,6 +191,7 @@ extension L10n {
 
         public typealias pdf = PDF
         public enum PDF {
+            public static var sourceURL: String { Ingest.tr("pdf.sourceURL") }
             public static var notSupported: String { Ingest.tr("pdf.notSupported") }
             public static var notSupportedDesc: String { Ingest.tr("pdf.notSupportedDesc") }
             public static var pageSeparator: String { Ingest.tr("pdf.pageSeparator") }

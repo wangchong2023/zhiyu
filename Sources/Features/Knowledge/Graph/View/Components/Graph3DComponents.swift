@@ -450,7 +450,8 @@ struct Graph3DControlsOverlay: View {
                                     .buttonStyle(.plain)
                                     .foregroundStyle(filterType == nil ? Color.appAccent : .appText)
                                     
-                                    ForEach(PageType.allCases) { type in
+                                    // 遍历用户可见页面类型，屏蔽 raw 选项
+                                    ForEach(PageType.allVisibleCases) { type in
                                         Button(action: { filterType = type; showFilterPopup = false }) {
                                             HStack {
                                                 Image(systemName: type.icon)

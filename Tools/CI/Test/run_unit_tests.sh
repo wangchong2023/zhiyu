@@ -10,50 +10,13 @@
 
 set -euo pipefail
 
+# 引入持续集成公共基础底座
+source "$(dirname "$0")/../common.sh"
+
 # ── 1. 常量与环境配置 ──────────────────────────────────────────
-PROJECT="ZhiYu.xcodeproj"
-SCHEME="ZhiYu"
-DERIVED_DATA_PATH="build/DerivedData-ios"
-SPM_CACHE_DIR="${HOME}/.cache/zhiyu-spm"
+DERIVED_DATA_PATH="${BUILD_DIR}/DerivedData-ios"
 
-# 动态查找可用模拟器：优先 iPhone 17 Pro，回退到任意可用 iPhone 模拟器
-# 确保在 GitHub Actions macos-15 runner 上也能找到有效目标
-find_simulator() {
-    # 优先精确匹配 iPhone 17 Pro
-    local sim
-    sim=$(xcrun simctl list devices available -j 2>/dev/null \
-        | python3 -c "
-import json, sys
-data = json.load(sys.stdin)
-for runtime, devices in data.get('devices', {}).items():
-    for d in devices:
-        if 'iPhone 17 Pro' in d.get('name','') and d.get('isAvailable', False):
-            print(d['name']); exit()
-" 2>/dev/null)
-    if [ -n "${sim}" ]; then
-        echo "${sim}"
-        return
-    fi
-    # 回退：查找任意可用的最新 iPhone 模拟器
-    sim=$(xcrun simctl list devices available -j 2>/dev/null \
-        | python3 -c "
-import json, sys
-data = json.load(sys.stdin)
-candidates = []
-for runtime, devices in data.get('devices', {}).items():
-    if 'iOS' not in runtime and 'iPhone' not in runtime:
-        continue
-    for d in devices:
-        name = d.get('name', '')
-        if 'iPhone' in name and d.get('isAvailable', False):
-            candidates.append((runtime, name))
-candidates.sort(reverse=True)
-if candidates:
-    print(candidates[0][1])
-" 2>/dev/null)
-    echo "${sim:-iPhone 16}"
-}
-
+# 获取动态寻找出的最新可用模拟器
 SIM_NAME=$(find_simulator)
 DESTINATION="platform=iOS Simulator,name=${SIM_NAME}"
 echo "📱 使用模拟器: ${SIM_NAME}"
@@ -67,7 +30,7 @@ while IFS= read -r skip_arg; do
         FLAKY_ARGS+=("$skip_arg")
         HAS_FLAKY=true
     fi
-done < <(bash Tools/CI/collect_flaky_tests.sh)
+done < <(bash Tools/CI/Test/collect_flaky_tests.sh)
 
 # ── 3. 模式解析 ──────────────────────────────────────────────
 CI_MODE="false"
@@ -113,13 +76,13 @@ if [ "${CI_MODE}" = "true" ]; then
     # CI 模式下，使用管道流进行进度统计并用 xcbeautify 生成 JUnit 报告
     set -o pipefail
     xcodebuild "${XCODEBUILD_ARGS[@]}" 2>&1 \
-        | tee build/test_raw.log \
-        | Tools/CI/ci-test-progress.sh \
-        | xcbeautify --report junit --report-path build/test_report.junit
+        | tee "${BUILD_DIR}/test_raw.log" \
+        | Tools/CI/Test/ci-test-progress.sh \
+        | xcbeautify --report junit --report-path "${BUILD_DIR}/test_report.junit"
     TEST_EXIT_CODE=${PIPESTATUS[0]}
 else
     # 本地模式直接在前台输出，方便查看详细堆栈
-    xcodebuild "${XCODEBUILD_ARGS[@]}" 2>&1 | tee build/test_raw.log
+    xcodebuild "${XCODEBUILD_ARGS[@]}" 2>&1 | tee "${BUILD_DIR}/test_raw.log"
     TEST_EXIT_CODE=${PIPESTATUS[0]}
 fi
 set -e
@@ -129,23 +92,6 @@ if [ ${TEST_EXIT_CODE} -eq 0 ]; then
     echo "✓ 所有单元测试通过！"
     exit 0
 else
-    echo ""
-    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-    echo "❌ 单元测试执行失败 (错误码: ${TEST_EXIT_CODE})"
-    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-    echo "  编译错误:"
-    grep -E "^.*:[0-9]+:[0-9]+: error:" build/test_raw.log | sort -t: -k1,1 -k2,2n -u || echo "  (none)"
-    echo ""
-    echo "  致命错误:"
-    grep -i "fatal error" build/test_raw.log || echo "  (none)"
-    echo ""
-    echo "  失败测试:"
-    grep -E "Test case.*failed|Test Suite.*failed" build/test_raw.log | tail -20 || echo "  (none)"
-    echo ""
-    echo "  日志尾部:"
-    tail -15 build/test_raw.log
-    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-    echo "  完整日志: build/test_raw.log"
-    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    summarize_xcodebuild_errors "${BUILD_DIR}/test_raw.log" "单元测试" "${TEST_EXIT_CODE}"
     exit ${TEST_EXIT_CODE}
 fi

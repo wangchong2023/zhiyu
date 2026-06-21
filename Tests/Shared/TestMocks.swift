@@ -388,6 +388,13 @@ extension XCTestCase {
         
         // 注册 RAG 编排器，供 UI 测试运行时解析，防止 DI Fatal Error (@DIP)
         ServiceContainer.shared.register(RAGOrchestrator(), for: RAGOrchestrator.self)
+        
+        // 注册 ModelDownloadCapabilities 和 RemoteConfigCapabilities 契约，支持 GlobalModelManager 的测试运行，消除依赖缺失导致的 @Inject 崩溃
+        let fakeDownload = FakeModelDownloadManager()
+        ServiceContainer.shared.register(fakeDownload as any ModelDownloadCapabilities, for: (any ModelDownloadCapabilities).self)
+        
+        let mockRemoteConfig = MockRemoteConfigService()
+        ServiceContainer.shared.register(mockRemoteConfig as any RemoteConfigCapabilities, for: (any RemoteConfigCapabilities).self)
     }
 }
 
@@ -454,4 +461,40 @@ public final class TestMockURLProtocol: URLProtocol, @unchecked Sendable {
     
     /// 停止加载请求
     public override func stopLoading() {}
+}
+
+// MARK: - Mock 大模型下载与配置服务 (HIG Compliance & Inject Safeness)
+
+/// 模拟大模型下载服务实现类
+final class FakeModelDownloadManager: ModelDownloadCapabilities, @unchecked Sendable {
+    var lastModelId: String?
+    var lastRemoteURL: URL?
+    
+    func startDownload(modelId: String, remoteURL: URL) async throws {
+        lastModelId = modelId
+        lastRemoteURL = remoteURL
+    }
+    
+    func pauseDownload(modelId: String) async throws {}
+    func resumeDownload(modelId: String) async throws {}
+    func cancelDownload(modelId: String) async throws {}
+    
+    func observeDownloadState(for modelId: String) async -> AsyncStream<DownloadState> {
+        return AsyncStream { continuation in
+            continuation.finish()
+        }
+    }
+}
+
+/// 模拟云端配置与 Manifest 服务实现类
+final class MockRemoteConfigService: RemoteConfigCapabilities, @unchecked Sendable {
+    var mockManifests: [LLMManifest] = []
+    
+    func fetchLLMManifests() async throws -> [LLMManifest] {
+        return mockManifests
+    }
+    
+    func fetchAgentSkills() async throws -> [AgentSkill] {
+        return []
+    }
 }

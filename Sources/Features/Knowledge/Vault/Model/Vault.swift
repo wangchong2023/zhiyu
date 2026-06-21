@@ -30,6 +30,35 @@ public struct Vault: Identifiable, Codable, Hashable, VaultProtocol {
     public var icon: String?
     public var description: String?
     
+    /// 笔记本对应的英文/安全目录名称
+    public var englishName: String {
+        let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        // 1. 内置演示笔记本映射，保证路径稳定性
+        if trimmedName == L10n.Vault.defaultNameZh || trimmedName == L10n.Vault.defaultNameEn || trimmedName == L10n.Vault.defaultName {
+            return "Personal_KM"
+        }
+        if trimmedName == L10n.Vault.researchNameZh || trimmedName == L10n.Vault.researchNameEn || trimmedName == L10n.Vault.researchName {
+            return "Project_Research"
+        }
+        
+        // 2. 自定义笔记本拼音转译与字符清洗
+        let latin = trimmedName.applyingTransform(.toLatin, reverse: false)
+        let strip = latin?.applyingTransform(.stripDiacritics, reverse: false) ?? trimmedName
+        
+        // 将所有非安全字符（非字母、非数字、非下划线）替换为下划线，支持多空格/连接符归并
+        let spaced = strip.replacingOccurrences(of: "\\s+|-", with: "_", options: .regularExpression)
+        let pattern = "[^a-zA-Z0-9_]"
+        if let regex = try? NSRegularExpression(pattern: pattern, options: []) {
+            let range = NSRange(location: 0, length: spaced.utf16.count)
+            let cleaned = regex.stringByReplacingMatches(in: spaced, options: [], range: range, withTemplate: "")
+            let cleanResult = cleaned.replacingOccurrences(of: "_+", with: "_", options: .regularExpression)
+            let trimmedResult = cleanResult.trimmingCharacters(in: CharacterSet(charactersIn: "_"))
+            return trimmedResult.isEmpty ? "Vault_\(id.uuidString.prefix(8))" : trimmedResult
+        }
+        return "Vault_\(id.uuidString.prefix(8))"
+    }
+    
     public init(
         id: UUID = UUID(),
         name: String,

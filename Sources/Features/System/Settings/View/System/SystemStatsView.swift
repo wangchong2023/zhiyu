@@ -322,7 +322,7 @@ struct SystemStatsView: View {
                                     .foregroundStyle(.appSecondary)
                             }
                         }
-                        .appListRowStyle(showDivider: index < coordinator.vaultStorageItems.count - 1)
+                    .appListRowStyle(showDivider: index < coordinator.vaultStorageItems.count - 1)
                     }
                 }
             }

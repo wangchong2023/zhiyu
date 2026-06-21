@@ -38,6 +38,8 @@ extension L10n {
         public static var table: String { Localized.tr("editor.table", table: t) }
         public static var selectedText: String { Localized.tr("editor.selectedText", table: t) }
         public static var placeholder: String { Localized.tr("editor.placeholder", table: t) }
+        public static var toc: String { Localized.tr("editor.toc", table: t) }
+        public static var outline: String { Localized.tr("editor.outline", table: t) }
 
         public struct iconPicker {
             public static var reset: String { Localized.tr("editor.iconPicker.reset", table: t) }

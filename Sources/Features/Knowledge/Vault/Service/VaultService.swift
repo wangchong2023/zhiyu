@@ -196,8 +196,9 @@ public final class VaultService: VaultServiceProtocol {
     private func autoRestoreActiveVault() {
         if let idString = UserDefaults.standard.string(forKey: AppConstants.Keys.Storage.vaultsSelectedID),
            let id = UUID(uuidString: idString),
-           vaults.contains(where: { $0.id == id }) {
+           let vault = vaults.first(where: { $0.id == id }) {
             self.selectedVaultID = id
+            UserDefaults.standard.set(vault.englishName, forKey: "vaultSelectedEnglishName")
             Task {
                 // 🛡️ 防御性检查：规避单测非 DB 环境下因依赖未注册导致的致命错误
                 guard let databaseSwitcher = databaseSwitcher else {
@@ -232,6 +233,7 @@ public final class VaultService: VaultServiceProtocol {
     public func selectVaultAndWait(_ vault: Vault) async throws {
         self.selectedVaultID = vault.id
         UserDefaults.standard.set(vault.id.uuidString, forKey: AppConstants.Keys.Storage.vaultsSelectedID)
+        UserDefaults.standard.set(vault.englishName, forKey: "vaultSelectedEnglishName")
         
         // 🛡️ 防御性检查：规避单测非 DB 环境下因依赖未注册导致的致命错误
         guard let vaultRepository = vaultRepository,
@@ -385,6 +387,7 @@ public final class VaultService: VaultServiceProtocol {
     public func selectVault(_ vault: Vault) {
         self.selectedVaultID = vault.id
         UserDefaults.standard.set(vault.id.uuidString, forKey: AppConstants.Keys.Storage.vaultsSelectedID)
+        UserDefaults.standard.set(vault.englishName, forKey: "vaultSelectedEnglishName")
         // 同步写入 global_settings 表（供 Widget Extension 读取活跃 vault）
         Task {
             guard let vaultRepository = vaultRepository else { return }
@@ -423,6 +426,7 @@ public final class VaultService: VaultServiceProtocol {
         
         self.selectedVaultID = nil
         UserDefaults.standard.removeObject(forKey: AppConstants.Keys.Storage.vaultsSelectedID)
+        UserDefaults.standard.removeObject(forKey: "vaultSelectedEnglishName")
         // 物理释放专属连接以闭合通道锁
         databaseSwitcher?.releaseDatabaseConnection()
     }
@@ -501,6 +505,7 @@ public final class VaultService: VaultServiceProtocol {
         if selectedVaultID == id {
             selectedVaultID = nil
             UserDefaults.standard.removeObject(forKey: AppConstants.Keys.Storage.vaultsSelectedID)
+            UserDefaults.standard.removeObject(forKey: "vaultSelectedEnglishName")
             databaseSwitcher?.releaseDatabaseConnection()
         }
         

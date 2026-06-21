@@ -27,8 +27,23 @@ struct PageDetailContentSection: View {
             } else if page.content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                 emptyStateView
             } else {
-                MarkdownRendererView(content: page.content, isPrivate: page.isPrivate, onLinkTap: onLinkTap)
-                    .padding(.vertical)
+                switch page.pageType {
+                case .concept:
+                    ConceptDetailBodyView(page: page, onLinkTap: onLinkTap)
+                        .padding(.vertical)
+                case .entity:
+                    EntityDetailBodyView(page: page, onLinkTap: onLinkTap)
+                        .padding(.vertical)
+                case .source:
+                    SourceDetailBodyView(page: page, onLinkTap: onLinkTap)
+                        .padding(.vertical)
+                case .comparison:
+                    ComparisonDetailBodyView(page: page, onLinkTap: onLinkTap)
+                        .padding(.vertical)
+                case .raw:
+                    MarkdownRendererView(content: page.content, isPrivate: page.isPrivate, onLinkTap: onLinkTap)
+                        .padding(.vertical)
+                }
             }
         }
     }

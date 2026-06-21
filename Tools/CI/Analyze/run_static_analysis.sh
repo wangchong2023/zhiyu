@@ -53,23 +53,23 @@ run_parallel_task() {
 }
 
 # 并发执行所有的独立检查
-run_parallel_task "Architecture Dependency" "arch_dependency" "python3 Tools/Gatekeeper/check_architecture_dependency.py" & pid1=$!
-run_parallel_task "Domain Purity" "domain_purity" "python3 Tools/Gatekeeper/check_domain_purity.py" & pid2=$!
-run_parallel_task "DI Test Setup" "di_test_setup" "python3 Tools/Gatekeeper/check_test_di_setup.py" & pid3=$!
-run_parallel_task "Root Hygiene" "root_hygiene" "python3 Tools/Gatekeeper/check_root_hygiene.py" & pid4=$!
-run_parallel_task "Magic Numbers & Strings" "magic_numbers" "python3 Tools/Gatekeeper/check_magic_numbers_v2.py" & pid5=$!
-run_parallel_task "Layer Markers" "layer_markers" "bash Tools/Lint/lint_layer_markers.sh" & pid6=$!
-run_parallel_task "Unsafe String.Index Scan" "unsafe_string_index" "python3 Tools/Lint/scan_unsafe_string_index.py" & pid7=$!
-run_parallel_task "Docs & Config Integrity" "docs_and_configs" "python3 Tools/Gatekeeper/check_docs_and_configs.py" & pid8=$!
-run_parallel_task "SPM Integrity" "spm_integrity" "bash Tools/CI/verify_spm_integrity.sh" & pid9=$!
-run_parallel_task "Tools Quality Gatekeeper" "tools_quality" "$PYTHON3 Tools/Gatekeeper/check_scripts_quality.py" & pid10=$!
-run_parallel_task "Swift Quality Guard" "swift_quality" "$PYTHON3 Tools/Gatekeeper/check_swift_quality.py" & pid11=$!
+run_parallel_task "Architecture Dependency" "arch_dependency" "python3 Tools/Gatekeeper/Architecture/check_architecture_dependency.py" & pid1=$!
+run_parallel_task "Domain Purity" "domain_purity" "python3 Tools/Gatekeeper/Architecture/check_domain_purity.py" & pid2=$!
+run_parallel_task "DI Test Setup" "di_test_setup" "python3 Tools/Gatekeeper/Architecture/check_test_di_setup.py" & pid3=$!
+run_parallel_task "Root Hygiene" "root_hygiene" "python3 Tools/Gatekeeper/Sanity/check_root_hygiene.py" & pid4=$!
+run_parallel_task "Magic Numbers & Strings" "magic_numbers" "python3 Tools/Gatekeeper/Compliance/check_magic_numbers.py" & pid5=$!
+run_parallel_task "Layer Markers" "layer_markers" "bash Tools/Gatekeeper/Architecture/check_layer_markers.sh" & pid6=$!
+run_parallel_task "Unsafe String.Index Scan" "unsafe_string_index" "python3 Tools/Gatekeeper/Sanity/check_unsafe_string_index.py" & pid7=$!
+run_parallel_task "Docs & Config Integrity" "docs_and_configs" "python3 Tools/Gatekeeper/Sanity/check_docs_and_configs.py" & pid8=$!
+run_parallel_task "SPM Integrity" "spm_integrity" "bash Tools/CI/Analyze/verify_spm_integrity.sh" & pid9=$!
+run_parallel_task "Tools Quality Gatekeeper" "tools_quality" "$PYTHON3 Tools/Gatekeeper/Sanity/check_scripts_quality.py" & pid10=$!
+run_parallel_task "Swift Quality Guard" "swift_quality" "$PYTHON3 Tools/Gatekeeper/Sanity/check_swift_quality.py" & pid11=$!
 
 # SBOM 串行链路整体放入后台
 (
-    python3 Tools/CI/generate_sbom.py && \
-    (syft . -o cyclonedx-json=build/syft.cdx.json 2>/dev/null || echo "Syft skipped") && \
-    python3 Tools/CI/merge_sbom.py
+    python3 Tools/CI/Analyze/generate_sbom.py && \
+    (syft . --exclude "./build" --exclude "./env" -o cyclonedx-json=build/syft.cdx.json 2>/dev/null || echo "Syft skipped") && \
+    python3 Tools/CI/Analyze/merge_sbom.py
 ) > "$LOG_DIR/sbom_generation.log" 2>&1
 status_sbom=$?
 if [ $status_sbom -ne 0 ]; then

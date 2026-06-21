@@ -73,6 +73,12 @@ struct DeveloperSettingsView: View {
                 } label: {
                     Label(L10n.Common.Perf.title, systemImage: "chart.bar.xaxis")
                 }
+
+                NavigationLink {
+                    RawStorageListView()
+                } label: {
+                    Label(L10n.Dashboard.stats.viewRawPages, systemImage: "doc.plaintext")
+                }
             } header: {
                 Text(L10n.Dashboard.stats.evaluation)
             }

@@ -159,6 +159,7 @@ extension L10n {
         public static var cleanedSuffix: String { Localized.tr("dashboard.stats.cleanedSuffix", table: t) }
 
         public struct stats {
+            public static var title: String { Localized.tr("dashboard.stats.title", table: t) }
             public static var audioFormat: String { Localized.tr("dashboard.stats.audioFormat", table: t) }
             public static var imageFormat: String { Localized.tr("dashboard.stats.imageFormat", table: t) }
             public static var documentFormat: String { Localized.tr("dashboard.stats.documentFormat", table: t) }
@@ -297,6 +298,28 @@ extension L10n {
             public static var activeVaultStatus: String { Localized.tr("dashboard.stats.activeVaultStatus", table: t) }
             /// 未激活笔记本的状态文本
             public static var inactiveVaultStatus: String { Localized.tr("dashboard.stats.inactiveVaultStatus", table: t) }
+            
+            /// 原始数据存储监控标题
+            public static var rawStorageTitle: String { Localized.tr("dashboard.stats.rawStorageTitle", table: t) }
+            
+            /// 原始来源文件总数标签
+            public static var rawTotalPages: String { Localized.tr("dashboard.stats.rawTotalPages", table: t) }
+            
+            /// 原始文件存储大小标签
+            public static var rawTotalSize: String { Localized.tr("dashboard.stats.rawTotalSize", table: t) }
+            
+            /// 原始文件列表查看入口标签
+            public static var viewRawPages: String { Localized.tr("dashboard.stats.viewRawPages", table: t) }
+            
+            /// 原始页面详情标题
+            public static var rawPageDetailTitle: String { Localized.tr("dashboard.stats.rawPageDetailTitle", table: t) }
+            
+            /// 原始页面元数据大小和字数的格式化文案
+            /// - Parameters:
+            ///   - count: 字符字数
+            ///   - size: 友好格式化的文件大小
+            /// - Returns: 格式化后的本地化文案
+            public static func rawPageCountFormat(_ count: Int, _ size: String) -> String { Dashboard.trf("dashboard.stats.rawPageCountFormat", count, size) }
 
             public struct short {
                 public static var entity: String { Dashboard.tr("stats.short.entity") }

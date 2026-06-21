@@ -11,7 +11,7 @@
 import json, os, sys
 from datetime import datetime, timezone
 
-PROJECT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+PROJECT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 
 def find_resolved():
     paths = [

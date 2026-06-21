@@ -323,7 +323,8 @@ struct KnowledgeDashboardView: View {
             }
             
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: DesignSystem.Grid.standardSpacing) {
-                ForEach(PageType.allCases, id: \.self) { type in
+                // 遍历用户可见页面类型，屏蔽 raw 选项的统计
+                ForEach(PageType.allVisibleCases, id: \.self) { type in
                     let count = store.pages.filter { $0.pageType == type }.count
                     if count > 0 {
                         Button(action: {

@@ -7,11 +7,14 @@
 # ==============================================================================
 set -euo pipefail
 
-PROJECT="ZhiYu.xcodeproj"
-SCHEME="ZhiYu"
-DEST="platform=iOS Simulator,name=iPhone 17 Pro"
-DERIVED="build/DerivedData"
-LOG_FILE="build/ui_test_output.log"
+# 引入持续集成公共基础底座
+source "$(dirname "$0")/../common.sh"
+
+# 获取动态寻找出的最新可用模拟器
+SIM_NAME=$(find_simulator)
+DEST="platform=iOS Simulator,name=${SIM_NAME}"
+DERIVED="${BUILD_DIR}/DerivedData"
+LOG_FILE="${BUILD_DIR}/ui_test_output.log"
 
 # ── 从 @flaky 注释自动收集不稳定测试 ─────────────────────────────
 echo "🔍 收集 @flaky 标记的不稳定测试..."
@@ -22,7 +25,7 @@ while IFS= read -r skip_arg; do
         FLAKY_ARGS+=("$skip_arg")
         HAS_FLAKY=true
     fi
-done < <(bash Tools/CI/collect_flaky_tests.sh)
+done < <(bash Tools/CI/Test/collect_flaky_tests.sh)
 
 # ── 构造 xcodebuild 参数 ──────────────────────────────────
 XCODEBUILD_ARGS=(
@@ -53,20 +56,6 @@ UI_EXIT=${PIPESTATUS[0]}
 set -e
 
 if [ ${UI_EXIT} -ne 0 ]; then
-  echo ""
-  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-  echo "❌ UI 测试失败 (exit=${UI_EXIT})"
-  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-  echo "  失败测试:"
-  grep -E "failed" "$LOG_FILE" | grep -i "test" | tail -20 || echo "  (none)"
-  echo ""
-  echo "  编译/运行时错误:"
-  grep -E "error:|fatal error" "$LOG_FILE" | grep -v "check_hardcoded" | tail -20 || echo "  (none)"
-  echo ""
-  echo "  日志尾部:"
-  tail -15 "$LOG_FILE"
-  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-  echo "  完整日志: ${LOG_FILE}"
-  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  summarize_xcodebuild_errors "$LOG_FILE" "UI 自动化测试" "${UI_EXIT}"
   exit ${UI_EXIT}
 fi

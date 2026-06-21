@@ -34,6 +34,14 @@ final class SystemStatsCoordinator {
     var latencyCount: Int = 0
     var storageCategories: [StorageCategory] = []
     var totalPages: Int = 0
+    /// 原始文件（.raw）的存储情况
+    var rawStorageStats: RawStats?
+    
+    /// 原始文件统计结构
+    struct RawStats: Sendable {
+        var count: Int
+        var size: Int64
+    }
     var isLoading = true
     var isCleaning = false
     var cleanedCount: Int?
@@ -69,6 +77,7 @@ final class SystemStatsCoordinator {
         await fetchMonthlyStats()
         await fetchStorageStats()
         await fetchVaultStorageSizes()
+        await fetchRawPageStats()
         self.totalPages = (try? await knowledgeRepo.count()) ?? 0
 
         let endTime = Date()
@@ -82,6 +91,19 @@ final class SystemStatsCoordinator {
             module: "Dashboard"
         )
         self.isLoading = false
+    }
+
+    /// 从知识库仓库中提取所有 .raw (原始) 页面的存储统计数据（字数与字节大小）
+    /// 并将其保存到 rawStorageStats 结构中，用于开发调试查看基于卡帕西 Wiki 的原始数据存储。
+    private func fetchRawPageStats() async {
+        guard let allPages = try? await knowledgeRepo.fetchAll() else { return }
+        // 过滤出所有原始未解析类型的页面
+        let rawPages = allPages.filter { $0.pageType == .raw }
+        
+        // 计算其总内容字节大小 (基于 UTF8 字节统计)
+        let totalSize = rawPages.reduce(Int64(0)) { $0 + Int64($1.content.utf8.count) }
+        
+        self.rawStorageStats = RawStats(count: rawPages.count, size: totalSize)
     }
 
     private func fetchAIDailyStats() async {

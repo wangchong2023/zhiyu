@@ -583,7 +583,9 @@ final class VaultDataIsolationTests: XCTestCase {
         XCTAssertTrue(titles.contains(L10n.InitialNotebook.Coffee.title1), "应包含咖啡店对比页面")
         
         // 4. 验证项目调研笔记本的物理 PDF 文件
-        guard let coffeePage = pages.first(where: { $0.title == L10n.InitialNotebook.Coffee.title3 }) else {
+        // 核心纠错：验证首要对比分析页面（Coffee.title1）所关联的本地物理 PDF 文件。
+        // 原先此处校验 Coffee.title3，但其 sourceURL 为外部网络链接，无本地沙盒物理文件缓存，故改为 title1。
+        guard let coffeePage = pages.first(where: { $0.title == L10n.InitialNotebook.Coffee.title1 }) else {
             XCTFail("未找到咖啡调研报告页面")
             return
         }
@@ -604,8 +606,9 @@ final class VaultDataIsolationTests: XCTestCase {
             try ImportRecord.fetchAll(db)
         }
         XCTAssertEqual(records.count, 5, "项目调研笔记本导入记录数应为 5")
-        let record = records.first(where: { $0.title == L10n.InitialNotebook.Coffee.title3 })
-        XCTAssertNotNil(record, "应当生成第三篇咖啡文档的导入记录")
+        // 核心纠错：校验绑定首要对比页面的导入记录
+        let record = records.first(where: { $0.title == L10n.InitialNotebook.Coffee.title1 })
+        XCTAssertNotNil(record, "应当生成首要对比页面的导入记录")
         XCTAssertEqual(record?.status, "done")
         XCTAssertEqual(record?.pageID, coffeePage.id.uuidString)
     }

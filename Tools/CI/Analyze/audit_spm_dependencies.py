@@ -24,7 +24,7 @@ from typing import Dict, List, Tuple
 # 1. 配置区域：已知漏洞库规则 (Vulnerability Database Rules)
 # 定义已知存在严重安全缺陷的第三方 SPM 依赖及其不安全版本范围
 # ==============================================================================
-VULNERABILITY_RULES: Dict[str, List[Tuple[str, str]]] = {
+VULNERABILITY_RULES: Dict[str, List[Tuple[str, str, str]]] = {
     # 格式: "依赖包 identity": [("漏洞比较符号", "临界版本", "漏洞描述/CVE信息")]
     "grdb.swift": [
         ("<", "6.29.0", "CVE-2025-XXXX: 在低版本中可能存在极端的多线程竞争内存崩塌以及 SQL 注入逃逸风险，要求最低安全版本为 6.29.0")
@@ -162,7 +162,7 @@ def main():
     print("🛡️  智宇 (ZhiYu) SPM 依赖安全指纹审计门禁启动中...")
     print(DIVIDER)
     
-    workspace_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    workspace_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     resolved_path = _find_resolved_path(workspace_root)
     
     if not os.path.exists(resolved_path):

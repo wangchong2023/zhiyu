@@ -53,7 +53,8 @@ struct GraphLegend: View {
                     GraphLegendRow(color: .fromModelColorName(cluster.colorName), title: cluster.name)
                 }
             } else {
-                ForEach(PageType.allCases) { type in
+                // 遍历展示用户可见页面类型的图例，屏蔽内部 raw 类型
+                ForEach(PageType.allVisibleCases) { type in
                     GraphLegendRow(color: .fromModelColorName(type.colorName), title: type.displayName)
                 }
             }

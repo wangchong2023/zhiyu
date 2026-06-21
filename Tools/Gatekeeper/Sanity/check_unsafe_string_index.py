@@ -1,9 +1,15 @@
 #!/usr/bin/env python3
-"""
-扫描 Swift 源码中不安全的 String.Index offsetBy: 调用。
-不安全的写法: .index(startIndex, offsetBy: N)  — offsetBy 无 limitedBy 保护
-安全的写法:   .index(startIndex, offsetBy: N, limitedBy: endIndex)
-"""
+# -*- coding: utf-8 -*-
+#
+#  check_unsafe_string_index.py
+#  ZhiYu
+#
+#  Created by Antigravity on 2026/06/21.
+#  Copyright © 2026 WangChong. All rights reserved.
+#
+#  系统层级：[Tools/Gatekeeper/Sanity] 卫生守卫
+#  核心职责：扫描 Swift 源码中不安全的 String.Index offsetBy: 调用，强制使用 limitedBy 保护。
+#
 import re
 import os
 import sys

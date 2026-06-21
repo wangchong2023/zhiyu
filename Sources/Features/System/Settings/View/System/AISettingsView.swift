@@ -19,22 +19,28 @@ struct AISettingsView: View {
     @Environment(\.dismiss) var dismiss
     
     @State private var selectedTab = 0
-    
+
     var body: some View {
         ZStack {
+            // 在最外层统一渲染背景，并忽略安全区，确保子视图无需重复制做
             themeManager.pageBackground()
                 .ignoresSafeArea()
             
             VStack(spacing: 0) {
+                // 使用系统 Picker(.segmented) 保证 hit testing 稳定可靠
+                // 采用类型安全的索引循环 0..<tabLabels.count，规避元组解构时的类型推断冲突
                 Picker("", selection: $selectedTab) {
-                    Text(L10n.Settings.smartRouting).tag(0)
-                    Text(L10n.Settings.llmSettings).tag(1)
-                    Text(L10n.Settings.localModelManager).tag(2)
-                    Text(L10n.Settings.promptSettings).tag(3)
+                    ForEach(0..<tabLabels.count, id: \.self) { index in
+                        Text(tabLabels[index]).tag(index)
+                    }
                 }
+                #if !os(watchOS)
                 .pickerStyle(.segmented)
-                .padding()
-                
+                #endif
+                .padding(.horizontal)
+                .padding(.vertical, Spacing.small)
+
+                // 核心状态切换区域，根据 selectedTab 动态渲染对应子模块配置视图
                 Group {
                     switch selectedTab {
                     case 0: SmartRoutingView()
@@ -57,5 +63,10 @@ struct AISettingsView: View {
                 .bold()
             }
         }
+    }
+    
+    /// 获取当前设置界面的选项卡标签文本数组
+    private var tabLabels: [String] {
+        [L10n.Settings.smartRouting, L10n.Settings.llmSettings, L10n.Settings.localModelManager, L10n.Settings.promptSettings]
     }
 }

@@ -53,35 +53,41 @@ public struct LocalModelManagerView: View {
         }
     }
 
+    // MARK: - 布局常量 (Layout Constants)
+    private struct Layout {
+        static let springResponse: Double = 0.3
+        static let springDamping: Double = 0.7
+        static let tabHorizontalPadding: CGFloat = 18
+        static let tabVerticalPadding: CGFloat = 8
+        static let selectorSpacing: CGFloat = 4
+        static let selectorBorderWidth: CGFloat = 1.0
+    }
+
     public init() {}
 
     public var body: some View {
-        ZStack {
-            themeManager.pageBackground()
-                .ignoresSafeArea()
+        // 直接返回 VStack，使用父视图统一渲染的渐变背景，规避 ignoresSafeArea 拦截点击事件的问题
+        VStack(spacing: 0) {
+            // 自定义精致胶囊型 Tab 选择器
+            tabSelector
 
-            VStack(spacing: 0) {
-                // 自定义精致胶囊型 Tab 选择器
-                tabSelector
+            // 内容区域
+            TabView(selection: $selectedTab) {
+                ModelStoreView(onGoToLab: {
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        selectedTab = .laboratory
+                    }
+                })
+                .tag(Tab.store)
 
-                // 内容区域
-                TabView(selection: $selectedTab) {
-                    ModelStoreView(onGoToLab: {
-                        withAnimation(.easeInOut(duration: 0.3)) {
-                            selectedTab = .laboratory
-                        }
-                    })
-                    .tag(Tab.store)
-
-                    ModelLabView(onGoToStore: {
-                        withAnimation(.easeInOut(duration: 0.3)) {
-                            selectedTab = .store
-                        }
-                    })
-                    .tag(Tab.laboratory)
-                }
-                .tabViewStyle(.page(indexDisplayMode: .never))
+                ModelLabView(onGoToStore: {
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        selectedTab = .store
+                    }
+                })
+                .tag(Tab.laboratory)
             }
+            .tabViewStyle(.page(indexDisplayMode: .never))
         }
     }
 
@@ -89,23 +95,23 @@ public struct LocalModelManagerView: View {
 
     /// 顶部精致胶囊型 Tab 选择器，减少主屏纵向高度占用，提升可视面积
     private var tabSelector: some View {
-        HStack(spacing: 4) {
+        HStack(spacing: Layout.selectorSpacing) {
             ForEach(Tab.allCases, id: \.self) { tab in
                 Button(action: {
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                    withAnimation(.spring(response: Layout.springResponse, dampingFraction: Layout.springDamping)) {
                         selectedTab = tab
                     }
                     HapticFeedback.shared.trigger(.selection)
                 }) {
                     Text(tab.title)
                         .font(.subheadline.weight(.medium))
-                        .padding(.horizontal, 18)
-                        .padding(.vertical, 8)
+                        .padding(.horizontal, Layout.tabHorizontalPadding)
+                        .padding(.vertical, Layout.tabVerticalPadding)
                         .background(
                             Capsule()
                                 .fill(selectedTab == tab ? Color.appAccent : Color.clear)
                         )
-                        .foregroundStyle(selectedTab == tab ? .white : .appSecondary)
+                        .foregroundStyle(selectedTab == tab ? Color.theme.white : .appSecondary)
                 }
                 .buttonStyle(.plain)
             }
@@ -114,7 +120,7 @@ public struct LocalModelManagerView: View {
         .background(Capsule().fill(Color.appCard.opacity(DesignSystem.Opacity.prominent)))
         .overlay(
             Capsule()
-                .stroke(Color.appBorder.opacity(DesignSystem.Opacity.prominent), lineWidth: 1)
+                .stroke(Color.appBorder.opacity(DesignSystem.Opacity.prominent), lineWidth: Layout.selectorBorderWidth)
         )
         .padding(.vertical, DesignSystem.medium)
         .frame(maxWidth: .infinity, alignment: .center)
@@ -126,10 +132,15 @@ public struct LocalModelManagerView: View {
 #if DEBUG
 #Preview {
     NavigationStack {
-        LocalModelManagerView()
-            .environment(AppStore())
-            .environment(Router())
-            .environmentObject(ThemeManager.shared)
+        ZStack {
+            // 在预览模式下在最外层包裹背景，确保预览效果与真机运行时一致
+            ThemeManager.shared.pageBackground()
+                .ignoresSafeArea()
+            LocalModelManagerView()
+        }
+        .environment(AppStore())
+        .environment(Router())
+        .environmentObject(ThemeManager.shared)
     }
 }
 #endif

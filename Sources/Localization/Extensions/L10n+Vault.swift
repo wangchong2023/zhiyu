@@ -26,8 +26,12 @@ extension L10n {
         public static var backToHub: String { tr("vault.backToHub") }
         /// 默认笔记本名称
         public static var defaultName: String { tr("vault.defaultName") }
+        public static var defaultNameZh: String { tr("vault.defaultName.zh") }
+        public static var defaultNameEn: String { tr("vault.defaultName.en") }
         /// 项目调研默认笔记本名称
         public static var researchName: String { tr("vault.researchName") }
+        public static var researchNameZh: String { tr("vault.researchName.zh") }
+        public static var researchNameEn: String { tr("vault.researchName.en") }
         public static var subtitle: String { Localized.tr("vault.subtitle", table: t) }
         public static var noSelection: String { tr("vault.noSelection") }
         public static var new: String { Localized.tr("vault.new", table: t) }
@@ -48,6 +52,21 @@ extension L10n {
         public static var nameLabel: String { Localized.tr("vault.nameLabel", table: t) }
         public static var pageCountSuffix: String {
             Localized.tr("vault.pageCountSuffix", table: t)
+        }
+
+        public struct raw {
+            public static var categoryDocument: String { tr("vault.raw.category.document") }
+            public static var categoryAudio: String { tr("vault.raw.category.audio") }
+            public static var categoryOcr: String { tr("vault.raw.category.ocr") }
+            public static var categoryWeb: String { tr("vault.raw.category.web") }
+            public static var categoryClipboard: String { tr("vault.raw.category.clipboard") }
+            public static var categoryManual: String { tr("vault.raw.category.manual") }
+            public static var ocrSimulated: String { tr("vault.raw.ocr.simulated") }
+        }
+
+        public struct comparison {
+            public static var recommendationDefault: String { tr("vault.comparison.recommendation.default") }
+            public static var recommendationFallback: String { tr("vault.comparison.recommendation.fallback") }
         }
 
         public struct sort {

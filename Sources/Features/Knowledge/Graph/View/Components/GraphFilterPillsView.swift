@@ -20,7 +20,8 @@ struct GraphFilterPillsView: View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: DesignSystem.small) {
                 FilterPill(title: L10n.Search.all, isSelected: filterType == nil) { filterType = nil }
-                ForEach(PageType.allCases) { type in
+                // 遍历用户可见的页面类型，过滤掉内部使用的原始数据类型
+                ForEach(PageType.allVisibleCases) { type in
                     FilterPill(title: type.displayName, icon: type.icon, color: Color.fromModelColorName(type.colorName), isSelected: filterType == type) { filterType = type }
                 }
             }

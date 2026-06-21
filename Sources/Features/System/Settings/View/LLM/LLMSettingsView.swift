@@ -30,167 +30,163 @@ struct LLMSettingsView: View {
     
     var body: some View {
         @Bindable var config = config
-        ZStack {
-            themeManager.pageBackground()
-                .ignoresSafeArea()
+        // 直接返回 Form，利用父视图统一的渐变背景，解决多层 ignoresSafeArea 导致的点击命中测试拦截问题
+        Form {
+            // Enable/Disable
+            Section {
+                Toggle(isOn: $config.isEnabled) {
+                    Label(L10n.AI.LLM.enableAssistant, systemImage: DesignSystem.Icons.sparkles)
+                        .foregroundStyle(.appText)
+                }
+                .tint(.appAccent)
+            } header: {
+                Text(L10n.AI.LLM.status)
+            }
+            .appListRowBackground()
             
-            Form {
-                // Enable/Disable
-                Section {
-                    Toggle(isOn: $config.isEnabled) {
-                        Label(L10n.AI.LLM.enableAssistant, systemImage: DesignSystem.Icons.sparkles)
+            Section {
+                VStack(alignment: .leading, spacing: DesignSystem.small) {
+                    Text(L10n.AI.OnDevice.assistMode)
+                        .font(.headline)
+                        .foregroundStyle(.appText)
+                    Text(L10n.AI.OnDevice.assistDesc)
+                        .font(.caption)
+                        .foregroundStyle(.appSecondary)
+                }
+                .padding(.vertical, DesignSystem.tiny)
+                
+                Toggle(L10n.AI.OnDevice.enableAutoScan, isOn: $config.autoScan)
+                    .tint(.appAccent)
+                
+                Toggle(L10n.AI.OnDevice.autoRefactor, isOn: $config.autoRefactor)
+                    .tint(.appAccent)
+            } header: {
+                Text(L10n.Settings.advancedMaintenance)
+            }
+            .appListRowBackground()
+            
+            Section {
+                ForEach(LLMProvider.allCases) { provider in
+                    Button(action: {
+                        let selectedProvider = provider
+                        testResult = nil
+                        config.provider = selectedProvider
+                        if !selectedProvider.defaultBaseURL.isEmpty {
+                            config.baseURL = selectedProvider.defaultBaseURL
+                        }
+                        if !selectedProvider.defaultModel.isEmpty {
+                            config.model = selectedProvider.defaultModel
+                        }
+                        withAnimation {
+                            isConfigExpanded = true
+                        }
+                    }) {
+                        HStack {
+                            Image(systemName: provider.icon)
+                                .foregroundStyle(.appAccent)
+                            Text(provider.displayName)
+                                .foregroundStyle(.appText)
+                            Spacer()
+                            if config.provider == provider {
+                                Image(systemName: DesignSystem.Icons.check)
+                                    .foregroundStyle(.appAccent)
+                            }
+                        }
+                    }
+                }
+            } header: {
+                Text(L10n.AI.LLM.Provider.title)
+            }
+            .appListRowBackground()
+            
+            Section {
+                #if !os(watchOS)
+                DisclosureGroup(isExpanded: $isConfigExpanded) {
+                    configurationContent
+                } label: {
+                    Label(L10n.AI.LLM.configuration, systemImage: "slider.horizontal.3")
+                        .foregroundStyle(.appText)
+                }
+                #else
+                configurationContent
+                #endif
+            }
+            .appListRowBackground()
+            
+            // Test Connection
+            Section {
+                Button(action: testConnection) {
+                    HStack {
+                        if testing {
+                            ProgressView()
+                                .tint(.appAccent)
+                        } else {
+                            Image(systemName: DesignSystem.Icons.bolt)
+                                .foregroundStyle(.appAccent)
+                        }
+                        Text(testing ? L10n.AI.LLM.testing : L10n.AI.LLM.testConnection)
                             .foregroundStyle(.appText)
                     }
-                    .tint(.appAccent)
-                } header: {
-                    Text(L10n.AI.LLM.status)
                 }
-                .appListRowBackground()
+                .disabled(testing || config.apiKey.isEmpty || config.baseURL.isEmpty)
+                .opacity(config.apiKey.isEmpty || config.baseURL.isEmpty ? 0.6 : 1.0)
                 
-                Section {
+                if let result = testResult {
                     VStack(alignment: .leading, spacing: DesignSystem.small) {
-                        Text(L10n.AI.OnDevice.assistMode)
-                            .font(.headline)
-                            .foregroundStyle(.appText)
-                        Text(L10n.AI.OnDevice.assistDesc)
-                            .font(.caption)
-                            .foregroundStyle(.appSecondary)
+                        switch result {
+                        case .success(let latency, _, _):
+                          HStack {
+                              Image(systemName: DesignSystem.Icons.checkCircle)
+                                  .foregroundStyle(.green)
+                              Text(L10n.AI.OnDevice.connected)
+                                  .font(.subheadline.bold())
+                                  .foregroundStyle(.green)
+                              Spacer()
+                              Text(L10n.AI.LLM.latency("\(latency) \(L10n.Dashboard.unitMs)"))
+                                  .font(.caption.monospaced())
+                                  .foregroundStyle(.appSecondary)
+                          }
+                        case .failure(let code, let message, let latency, _):
+                          HStack(alignment: .top) {
+                              Image(systemName: DesignSystem.Icons.errorCircle)
+                                  .foregroundStyle(.red)
+                              VStack(alignment: .leading, spacing: DesignSystem.tiny) {
+                                  Text(L10n.AI.OnDevice.errorFormat("\(code)"))
+                                      .font(.subheadline.bold())
+                                  Text(message)
+                                      .font(.caption)
+                                      .foregroundStyle(.appSecondary)
+                              }
+                              Spacer()
+                              if let latency = latency {
+                                  Text(L10n.AI.LLM.latency("\(latency) \(L10n.Dashboard.unitMs)"))
+                                      .font(.caption.monospaced())
+                                      .foregroundStyle(.appSecondary)
+                              }
+                          }
+                        }
                     }
                     .padding(.vertical, DesignSystem.tiny)
-                    
-                    Toggle(L10n.AI.OnDevice.enableAutoScan, isOn: $config.autoScan)
-                        .tint(.appAccent)
-                    
-                    Toggle(L10n.AI.OnDevice.autoRefactor, isOn: $config.autoRefactor)
-                        .tint(.appAccent)
-                } header: {
-                    Text(L10n.Settings.advancedMaintenance)
                 }
-                .appListRowBackground()
-                
-                Section {
-                    ForEach(LLMProvider.allCases) { provider in
-                        Button(action: {
-                            let selectedProvider = provider
-                            testResult = nil
-                            config.provider = selectedProvider
-                            if !selectedProvider.defaultBaseURL.isEmpty {
-                                config.baseURL = selectedProvider.defaultBaseURL
-                            }
-                            if !selectedProvider.defaultModel.isEmpty {
-                                config.model = selectedProvider.defaultModel
-                            }
-                            withAnimation {
-                                isConfigExpanded = true
-                            }
-                        }) {
-                            HStack {
-                                Image(systemName: provider.icon)
-                                    .foregroundStyle(.appAccent)
-                                Text(provider.displayName)
-                                    .foregroundStyle(.appText)
-                                Spacer()
-                                if config.provider == provider {
-                                    Image(systemName: DesignSystem.Icons.check)
-                                        .foregroundStyle(.appAccent)
-                                }
-                            }
-                        }
-                    }
-                } header: {
-                    Text(L10n.AI.LLM.Provider.title)
+            } header: {
+                Text(L10n.AI.LLM.validation)
+            } footer: {
+                VStack(alignment: .leading, spacing: DesignSystem.tightPadding) {
+                    InfoRow(icon: "lock.shield", text: L10n.AI.LLM.info.localKey)
+                    InfoRow(icon: "doc.text", text: L10n.AI.LLM.info.contextSent)
+                    InfoRow(icon: "network", text: L10n.AI.LLM.info.openAICompatible)
+                    InfoRow(icon: "arrow.down.doc", text: L10n.AI.LLM.info.smartIngest)
                 }
-                .appListRowBackground()
-                
-                Section {
-                    #if !os(watchOS)
-                    DisclosureGroup(isExpanded: $isConfigExpanded) {
-                        configurationContent
-                    } label: {
-                        Label(L10n.AI.LLM.configuration, systemImage: "slider.horizontal.3")
-                            .foregroundStyle(.appText)
-                    }
-                    #else
-                    configurationContent
-                    #endif
-                }
-                .appListRowBackground()
-                
-                // Test Connection
-                Section {
-                    Button(action: testConnection) {
-                        HStack {
-                            if testing {
-                                ProgressView()
-                                    .tint(.appAccent)
-                            } else {
-                                Image(systemName: DesignSystem.Icons.bolt)
-                                    .foregroundStyle(.appAccent)
-                            }
-                            Text(testing ? L10n.AI.LLM.testing : L10n.AI.LLM.testConnection)
-                                .foregroundStyle(.appText)
-                        }
-                    }
-                    .disabled(testing || config.apiKey.isEmpty || config.baseURL.isEmpty)
-                    .opacity(config.apiKey.isEmpty || config.baseURL.isEmpty ? 0.6 : 1.0)
-                    
-                    if let result = testResult {
-                        VStack(alignment: .leading, spacing: DesignSystem.small) {
-                            switch result {
-                            case .success(let latency, _, _):
-                                HStack {
-                                    Image(systemName: DesignSystem.Icons.checkCircle)
-                                        .foregroundStyle(.green)
-                                    Text(L10n.AI.OnDevice.connected)
-                                        .font(.subheadline.bold())
-                                        .foregroundStyle(.green)
-                                    Spacer()
-                                    Text(L10n.AI.LLM.latency("\(latency) \(L10n.Dashboard.unitMs)"))
-                                        .font(.caption.monospaced())
-                                        .foregroundStyle(.appSecondary)
-                                }
-                            case .failure(let code, let message, let latency, _):
-                                HStack(alignment: .top) {
-                                    Image(systemName: DesignSystem.Icons.errorCircle)
-                                        .foregroundStyle(.red)
-                                    VStack(alignment: .leading, spacing: DesignSystem.tiny) {
-                                        Text(L10n.AI.OnDevice.errorFormat("\(code)"))
-                                            .font(.subheadline.bold())
-                                        Text(message)
-                                            .font(.caption)
-                                            .foregroundStyle(.appSecondary)
-                                    }
-                                    Spacer()
-                                    if let latency = latency {
-                                        Text(L10n.AI.LLM.latency("\(latency) \(L10n.Dashboard.unitMs)"))
-                                            .font(.caption.monospaced())
-                                            .foregroundStyle(.appSecondary)
-                                    }
-                                }
-                            }
-                        }
-                        .padding(.vertical, DesignSystem.tiny)
-                    }
-                } header: {
-                    Text(L10n.AI.LLM.validation)
-                } footer: {
-                    VStack(alignment: .leading, spacing: DesignSystem.tightPadding) {
-                        InfoRow(icon: "lock.shield", text: L10n.AI.LLM.info.localKey)
-                        InfoRow(icon: "doc.text", text: L10n.AI.LLM.info.contextSent)
-                        InfoRow(icon: "network", text: L10n.AI.LLM.info.openAICompatible)
-                        InfoRow(icon: "arrow.down.doc", text: L10n.AI.LLM.info.smartIngest)
-                    }
+                .padding(.top, DesignSystem.small)
+                Text(L10n.AI.LLM.infoString)
                     .padding(.top, DesignSystem.small)
-                    Text(L10n.AI.LLM.infoString)
-                        .padding(.top, DesignSystem.small)
-                }
-                .appListRowBackground()
             }
-            #if !os(watchOS)
-            .listStyle(.insetGrouped)
-            #endif
-            .scrollContentBackground(.hidden)
+            .appListRowBackground()
         }
+        #if !os(watchOS)
+        .listStyle(.insetGrouped)
+        #endif
+        .scrollContentBackground(.hidden)
     }
     
     /// 配置内容视图（API Key / Base URL / Model 输入）

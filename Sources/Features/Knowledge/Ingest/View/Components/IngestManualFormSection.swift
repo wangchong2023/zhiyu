@@ -226,7 +226,8 @@ struct IngestManualFormSection: View {
 
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: DesignSystem.small) {
-                    ForEach(PageType.allCases) { type in
+                    // 遍历用户可见页面类型，屏蔽 raw 选项
+                    ForEach(PageType.allVisibleCases) { type in
                         Button(action: { newType = type }) {
                             AppIconChip(
                                 icon: type.icon,

@@ -20,6 +20,11 @@ public enum PageType: String, Codable, CaseIterable, Identifiable, Sendable {
     
     public var id: String { rawValue }
     
+    /// 用户可见的页面类型列表（不含内部用的 raw 类型）
+    public static var allVisibleCases: [PageType] {
+        return [.entity, .concept, .source, .comparison]
+    }
+    
     public var displayName: String {
         switch self {
         case .entity: return L10n.CoreModels.type.entity

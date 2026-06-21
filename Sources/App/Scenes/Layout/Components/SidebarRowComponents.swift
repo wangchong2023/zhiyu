@@ -154,7 +154,8 @@ struct UniverseSection: View {
                 .contentShape(Rectangle())
             }
             
-            ForEach(PageType.allCases) { type in
+            // 遍历用户可见页面类型，过滤掉内部使用的 raw 类型
+            ForEach(PageType.allVisibleCases) { type in
                 let count = store.pages.filter { $0.pageType == type }.count
                 if count > 0 {
                     SidebarRowWrapper(value: SidebarSelection.filteredIndex(type)) {

@@ -532,35 +532,3 @@ final class ModelStoreConfigTests: XCTestCase {
         }
     }
 }
-
-final class FakeModelDownloadManager: ModelDownloadCapabilities, @unchecked Sendable {
-    var lastModelId: String?
-    var lastRemoteURL: URL?
-    
-    func startDownload(modelId: String, remoteURL: URL) async throws {
-        lastModelId = modelId
-        lastRemoteURL = remoteURL
-    }
-    
-    func pauseDownload(modelId: String) async throws {}
-    func resumeDownload(modelId: String) async throws {}
-    func cancelDownload(modelId: String) async throws {}
-    
-    func observeDownloadState(for modelId: String) async -> AsyncStream<DownloadState> {
-        return AsyncStream { continuation in
-            continuation.finish()
-        }
-    }
-}
-
-final class MockRemoteConfigService: RemoteConfigCapabilities, @unchecked Sendable {
-    var mockManifests: [LLMManifest] = []
-    
-    func fetchLLMManifests() async throws -> [LLMManifest] {
-        return mockManifests
-    }
-    
-    func fetchAgentSkills() async throws -> [AgentSkill] {
-        return []
-    }
-}

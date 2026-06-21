@@ -29,6 +29,8 @@ final class FeedbackRepositoryTests: XCTestCase {
                 t.column(FeedbackEntry.CodingKeys.category.name, .text).notNull()
                 t.column(FeedbackEntry.CodingKeys.rating.name, .integer).notNull()
                 t.column(FeedbackEntry.CodingKeys.content.name, .text).notNull()
+                // 核心纠错：加入 status 反馈状态列，对齐 v13_feedback_status 生产迁移。
+                t.column(FeedbackEntry.CodingKeys.status.name, .text).notNull().defaults(to: FeedbackStatus.pending.rawValue)
                 t.column(FeedbackEntry.CodingKeys.appVersion.name, .text)
                 t.column(FeedbackEntry.CodingKeys.osVersion.name, .text)
                 t.column(FeedbackEntry.CodingKeys.deviceModel.name, .text)
@@ -106,8 +108,9 @@ final class FeedbackRepositoryTests: XCTestCase {
     }
 
     func testCodingKeysCount() {
-        let keys: [FeedbackEntry.CodingKeys] = [.id, .title, .category, .rating, .content, .appVersion, .osVersion, .deviceModel, .createdAt]
-        XCTAssertEqual(keys.count, 9)
+        // 核心纠错：验证 CodingKeys 数目为 10（添加了 status 字段）。
+        let keys: [FeedbackEntry.CodingKeys] = [.id, .title, .category, .rating, .content, .status, .appVersion, .osVersion, .deviceModel, .createdAt]
+        XCTAssertEqual(keys.count, 10)
     }
 
     // MARK: - 提交 + 历史列表

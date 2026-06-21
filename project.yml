@@ -65,34 +65,34 @@ targets:
       - script: "export PATH=\"$PATH:/opt/homebrew/bin:/usr/local/bin\"\nif which swiftlint >/dev/null; then swiftlint lint --strict; else echo 'warning: SwiftLint not installed. Please download from https://github.com/realm/SwiftLint'; fi"
         name: "[Gatekeeper] SwiftLint Quality Audit"
         basedOnDependencyAnalysis: false
-      - script: "python3 Tools/Gatekeeper/check_domain_purity.py"
+      - script: "python3 Tools/Gatekeeper/Architecture/check_domain_purity.py"
         name: "[Gatekeeper] Domain Purity Check"
         basedOnDependencyAnalysis: false
-      - script: "python3 Tools/Gatekeeper/check_localization.py"
+      - script: "python3 Tools/Gatekeeper/Compliance/check_localization.py"
         name: "[Gatekeeper] L10n Leak & Hardcode Audit"
         basedOnDependencyAnalysis: false
-      - script: "python3 Tools/Gatekeeper/check_storage_constants.py"
+      - script: "python3 Tools/Gatekeeper/Compliance/check_storage_constants.py"
         name: "[Gatekeeper] Storage Constants Audit"
         basedOnDependencyAnalysis: false
-      - script: "python3 Tools/Gatekeeper/check_magic_numbers_v2.py"
+      - script: "python3 Tools/Gatekeeper/Compliance/check_magic_numbers.py"
         name: "[Gatekeeper] Magic Number Audit"
         basedOnDependencyAnalysis: false
-      - script: "python3 Tools/Gatekeeper/check_hardcoded_secrets.py"
+      - script: "python3 Tools/Gatekeeper/Release/check_hardcoded_secrets.py"
         name: "[Gatekeeper] Hardcoded Secrets Audit"
         basedOnDependencyAnalysis: false
-      - script: "python3 Tools/Gatekeeper/check_hig_compliance.py"
+      - script: "python3 Tools/Gatekeeper/Compliance/check_hig_compliance.py"
         name: "[Gatekeeper] HIG Compliance Check"
         basedOnDependencyAnalysis: false
-      - script: "python3 Tools/Gatekeeper/check_appstore_readiness.py"
+      - script: "python3 Tools/Gatekeeper/Release/check_appstore_readiness.py"
         name: "[Gatekeeper] App Store Readiness Check"
         basedOnDependencyAnalysis: false
-      - script: "python3 Tools/Gatekeeper/check_architecture_dependency.py"
+      - script: "python3 Tools/Gatekeeper/Architecture/check_architecture_dependency.py"
         name: "[Gatekeeper] Architecture Dependency Check"
         basedOnDependencyAnalysis: false
-      - script: "python3 Tools/Gatekeeper/check_scripts_quality.py"
+      - script: "python3 Tools/Gatekeeper/Sanity/check_scripts_quality.py"
         name: "[Gatekeeper] Tools Scripts Quality Audit"
         basedOnDependencyAnalysis: false
-      - script: "python3 Tools/Gatekeeper/check_layout.py"
+      - script: "python3 Tools/Gatekeeper/Sanity/check_layout.py"
         name: "[Gatekeeper] Cross-Platform Layout Audit"
         basedOnDependencyAnalysis: false
     dependencies:

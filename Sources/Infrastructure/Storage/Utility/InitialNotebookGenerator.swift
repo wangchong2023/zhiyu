@@ -80,15 +80,18 @@ struct InitialNotebookGenerator {
     /// - Returns: 生成的页面数量
     static func generate(in store: any AnyPageStore) async throws -> Int {
         Logger.shared.info("InitialNotebook_Starting")
-        let folder = await resolveImportsFolder()
+        let fileFolder = await resolveImportsFolder(for: .file)
+        let ocrFolder = await resolveImportsFolder(for: .ocr)
+        let voiceFolder = await resolveImportsFolder(for: .voice)
+        
         // 动态根据当前本地化语言，决定去 Bundle 寻找的物理文件名（中文版使用中文物理文件名，英文版使用英文物理文件名）
-        let methodologyURL = resolveFileURL(bundleName: L10n.InitialNotebook.FileNames.methodology, localName: L10n.InitialNotebook.FileNames.methodology, in: folder,
+        let methodologyURL = resolveFileURL(bundleName: L10n.InitialNotebook.FileNames.methodology, localName: L10n.InitialNotebook.FileNames.methodology, in: fileFolder,
             fallback: L10n.InitialNotebook.Fallback.methodology)
-        let workflowURL = resolveFileURL(bundleName: L10n.InitialNotebook.FileNames.workflow, localName: L10n.InitialNotebook.FileNames.workflow, in: folder,
+        let workflowURL = resolveFileURL(bundleName: L10n.InitialNotebook.FileNames.workflow, localName: L10n.InitialNotebook.FileNames.workflow, in: fileFolder,
             fallback: L10n.InitialNotebook.Fallback.workflow)
-        let ocrFolderURL = resolveFileURL(bundleName: "ocr_folder_scan.png", localName: L10n.InitialNotebook.FileNames.ocrFolderScan, in: folder,
+        let ocrFolderURL = resolveFileURL(bundleName: "ocr_folder_scan.png", localName: L10n.InitialNotebook.FileNames.ocrFolderScan, in: ocrFolder,
             fallback: "")
-        let voiceForgetURL = resolveFileURL(bundleName: "voice_note_forgetting_curve.mp3", localName: L10n.InitialNotebook.FileNames.voiceNoteForget, in: folder,
+        let voiceForgetURL = resolveFileURL(bundleName: "voice_note_forgetting_curve.mp3", localName: L10n.InitialNotebook.FileNames.voiceNoteForget, in: voiceFolder,
             fallback: "")
         
         let seeds = buildPKMPageSeeds(
@@ -109,15 +112,18 @@ struct InitialNotebookGenerator {
     /// - Returns: 生成的页面数量
     static func generateResearchNotebook(in store: any AnyPageStore) async throws -> Int {
         Logger.shared.info("ResearchInitialNotebook_Starting")
-        let folder = await resolveImportsFolder()
+        let fileFolder = await resolveImportsFolder(for: .file)
+        let ocrFolder = await resolveImportsFolder(for: .ocr)
+        let voiceFolder = await resolveImportsFolder(for: .voice)
+        
         // 动态根据当前本地化语言，决定去 Bundle 寻找的物理文件名（中文版使用中文物理文件名，英文版使用英文物理文件名）
-        let luckinURL = resolveFileURL(bundleName: L10n.InitialNotebook.FileNames.luckin, localName: L10n.InitialNotebook.FileNames.luckin, in: folder,
+        let luckinURL = resolveFileURL(bundleName: L10n.InitialNotebook.FileNames.luckin, localName: L10n.InitialNotebook.FileNames.luckin, in: fileFolder,
             fallback: L10n.InitialNotebook.Fallback.luckin)
-        let surveyURL = resolveFileURL(bundleName: L10n.InitialNotebook.FileNames.survey, localName: L10n.InitialNotebook.FileNames.survey, in: folder,
+        let surveyURL = resolveFileURL(bundleName: L10n.InitialNotebook.FileNames.survey, localName: L10n.InitialNotebook.FileNames.survey, in: fileFolder,
             fallback: L10n.InitialNotebook.Fallback.survey)
-        let ocrStoreURL = resolveFileURL(bundleName: "ocr_store_manual.png", localName: L10n.InitialNotebook.FileNames.ocrStoreManual, in: folder,
+        let ocrStoreURL = resolveFileURL(bundleName: "ocr_store_manual.png", localName: L10n.InitialNotebook.FileNames.ocrStoreManual, in: ocrFolder,
             fallback: "")
-        let voiceProcureURL = resolveFileURL(bundleName: "voice_note_procurement.mp3", localName: L10n.InitialNotebook.FileNames.voiceNoteProcure, in: folder,
+        let voiceProcureURL = resolveFileURL(bundleName: "voice_note_procurement.mp3", localName: L10n.InitialNotebook.FileNames.voiceNoteProcure, in: voiceFolder,
             fallback: "")
         
         let seeds = buildResearchPageSeeds(
@@ -189,13 +195,34 @@ struct InitialNotebookGenerator {
 
     // MARK: - 私有辅助方法：文件路径解析
 
-    /// 解析当前金库沙盒目录下的 Imports 文件夹路径
+    private static func getCategoryDirName(for category: ImportCategory) -> String {
+        switch category {
+        case .file: return "document"
+        case .voice: return "audio"
+        case .ocr: return "ocr"
+        case .link: return "web"
+        case .clipboard: return "clipboard"
+        case .manual: return "manual"
+        }
+    }
+
+    /// 解析当前金库沙盒目录下的 raw/{笔记本英文名}/{Category} 文件夹路径
     /// 必须在 MainActor 上执行，以安全访问 DatabaseManager
-    private static func resolveImportsFolder() async -> URL? {
+    private static func resolveImportsFolder(for category: ImportCategory) async -> URL? {
         await MainActor.run {
             if let dbURL = DatabaseManager.shared.dbURL {
-                let folder = dbURL.deletingLastPathComponent().appendingPathComponent("Imports")
-                try? FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+                let fm = FileManager.default
+                let categoryDirName = getCategoryDirName(for: category)
+                
+                // 从 UserDefaults 读取当前活跃笔记本英文名，作为 raw 隔离目录结构一部分
+                let englishName = UserDefaults.standard.string(forKey: "vaultSelectedEnglishName") ?? "fallback"
+                
+                let folder = dbURL.deletingLastPathComponent()
+                    .appendingPathComponent("raw")
+                    .appendingPathComponent(englishName)
+                    .appendingPathComponent(categoryDirName)
+                
+                try? fm.createDirectory(at: folder, withIntermediateDirectories: true)
                 return folder
             }
             return nil

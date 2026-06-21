@@ -74,7 +74,8 @@ struct PDFIngestSheet: View {
                 .foregroundStyle(.appText)
             
             Picker(L10n.Ingest.PDF.pageType, selection: $targetType) {
-                ForEach(PageType.allCases, id: \.self) { type in
+                // 遍历用户可见页面类型，屏蔽 raw 选项
+                ForEach(PageType.allVisibleCases, id: \.self) { type in
                     Text(type.displayName).tag(type)
                 }
             }

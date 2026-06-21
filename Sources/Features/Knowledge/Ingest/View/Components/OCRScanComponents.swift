@@ -206,7 +206,8 @@ struct OCRSaveForm: View {
                 .accessibilityIdentifier("ocr-page-title")
 
             Picker(L10n.Ingest.OCR.pageType, selection: $targetType) {
-                ForEach(PageType.allCases, id: \.self) { type in
+                // 遍历用户可见页面类型，屏蔽 raw 选项
+                ForEach(PageType.allVisibleCases, id: \.self) { type in
                     Label(type.displayName, systemImage: type.icon).tag(type)
                 }
             }

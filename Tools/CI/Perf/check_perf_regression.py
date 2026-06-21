@@ -15,7 +15,7 @@ import json
 import subprocess
 
 # 项目根路径与各项路径常量定义
-PROJECT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+PROJECT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 BASELINE_DIR = os.path.join(PROJECT_DIR, "build", ".perf_baselines")
 XCRESULT_DIR = os.path.join(PROJECT_DIR, "build", "DerivedData-ios", "Logs", "Test")
 TEMP_JSON = os.path.join(PROJECT_DIR, "build", "xcresult_check_raw.json")

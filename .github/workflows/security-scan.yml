@@ -43,17 +43,17 @@ jobs:
       - name: Scan for Hardcoded Secrets
         run: |
           echo "🔍 扫描硬编码密钥/Token/IP..."
-          python3 Tools/Gatekeeper/check_hardcoded_secrets.py
+          python3 Tools/Gatekeeper/Release/check_hardcoded_secrets.py
 
       - name: Check Localization Compliance
         run: |
           echo "🔍 扫描硬编码中文和违规 tr() 调用..."
-          python3 Tools/Gatekeeper/check_localization.py
+          python3 Tools/Gatekeeper/Compliance/check_localization.py
 
       - name: Audit SPM Dependencies
         run: |
           echo "🔍 审计 SPM 依赖安全版本..."
-          python3 Tools/CI/audit_spm_dependencies.py
+          python3 Tools/CI/Analyze/audit_spm_dependencies.py
 
       - name: Verify iOS Build
         run: |
@@ -105,7 +105,7 @@ jobs:
       - name: Verify Reproducible Build
         run: |
           echo "🔨 验证确定性构建 (Reproducible Build)..."
-          bash Tools/CI/verify_reproducible_build.sh
+          bash Tools/CI/Analyze/verify_reproducible_build.sh
 
       - name: Security Audit Complete
         run: |

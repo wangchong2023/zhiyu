@@ -11,13 +11,49 @@
 import Foundation
 
 final class FileImportFileStore: ImportFileStore, Sendable {
-    private let recordsDir: URL
 
     init() {
+        // 无需预先创建 recordsDir，全部采用动态延迟计算
+    }
+
+    private func getCategoryDirName(for category: ImportCategory) -> String {
+        switch category {
+        case .file: return "document"
+        case .voice: return "audio"
+        case .ocr: return "ocr"
+        case .link: return "web"
+        case .clipboard: return "clipboard"
+        case .manual: return "manual"
+        }
+    }
+
+    private func getRecordsDir(for category: ImportCategory) -> URL {
         let fm = FileManager.default
-        let docDir = fm.urls(for: .documentDirectory, in: .userDomainMask).first ?? fm.temporaryDirectory
-        self.recordsDir = docDir.appendingPathComponent("import_records", isDirectory: true)
-        try? fm.createDirectory(at: recordsDir, withIntermediateDirectories: true)
+        let categoryDirName = getCategoryDirName(for: category)
+        
+        let appSupport = fm.urls(for: .applicationSupportDirectory, in: .userDomainMask).first ?? fm.temporaryDirectory
+        
+        if let vaultIDString = UserDefaults.standard.string(forKey: AppConstants.Keys.Storage.vaultsSelectedID),
+           let englishName = UserDefaults.standard.string(forKey: "vaultSelectedEnglishName"),
+           !vaultIDString.isEmpty, !englishName.isEmpty {
+            
+            // 物理落盘到 Vaults/{Vault_UUID}/raw/{笔记本英文名}/{Category}/
+            let vaultsDir = appSupport
+                .appendingPathComponent(AppConstants.Storage.vaultsDirectoryName)
+                .appendingPathComponent(vaultIDString)
+                .appendingPathComponent("raw")
+                .appendingPathComponent(englishName)
+                .appendingPathComponent(categoryDirName)
+            
+            try? fm.createDirectory(at: vaultsDir, withIntermediateDirectories: true)
+            return vaultsDir
+        } else {
+            // fallback 兜底路径: Documents/import_records/
+            let docDir = fm.urls(for: .documentDirectory, in: .userDomainMask).first ?? fm.temporaryDirectory
+            let fallbackDir = docDir.appendingPathComponent("import_records", isDirectory: true)
+            try? fm.createDirectory(at: fallbackDir, withIntermediateDirectories: true)
+            return fallbackDir
+        }
     }
 
     func saveContent(_ content: String, category: ImportCategory, ext: String = "md") -> String? {
@@ -30,6 +66,7 @@ final class FileImportFileStore: ImportFileStore, Sendable {
         formatter.dateFormat = "yyyyMMdd_HHmmss"
         let ts = formatter.string(from: Date())
         let fileName = "\(category.rawValue)_\(ts).\(ext)"
+        let recordsDir = getRecordsDir(for: category)
         let fileURL = recordsDir.appendingPathComponent(fileName)
         do {
             try data.write(to: fileURL, options: .atomic)
@@ -65,6 +102,7 @@ final class FileImportFileStore: ImportFileStore, Sendable {
         
         // 构造带时间戳的新物理文件名以防重名冲突
         let newFileName = "\(nameWithoutExt)_\(ts).\(ext)"
+        let recordsDir = getRecordsDir(for: category)
         let destinationURL = recordsDir.appendingPathComponent(newFileName)
         
         do {

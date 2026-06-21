@@ -57,7 +57,8 @@ struct SaveVoiceNoteSheet: View {
                 .foregroundStyle(.appSecondary)
             
             Picker("", selection: $selectedType) {
-                ForEach(PageType.allCases) { type in
+                // 遍历用户可见的页面类型，过滤掉内部 raw 类型
+                ForEach(PageType.allVisibleCases) { type in
                     Label(type.displayName, systemImage: type.icon).tag(type)
                 }
             }

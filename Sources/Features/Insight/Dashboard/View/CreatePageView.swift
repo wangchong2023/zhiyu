@@ -58,7 +58,8 @@ struct CreatePageView: View {
 
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: DesignSystem.small) {
-                    ForEach(PageType.allCases) { pageType in
+                    // 遍历用户可见的页面类型，过滤掉内部 raw 类型
+                    ForEach(PageType.allVisibleCases) { pageType in
                         Button(action: { type = pageType }) {
                             HStack(spacing: DesignSystem.tightPadding) {
                                 Image(systemName: pageType.icon).font(.caption)

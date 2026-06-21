@@ -176,7 +176,7 @@ final class PluginMarketService: ObservableObject {
     /// 构建要尝试请求的插件市场 URL 地址列表（支持按首选语言加载）
     /// - Returns: 包含高优先级多语言包及通用兜底包的 URL 数组。
     private func buildPluginURLs() -> [URL] {
-        let preferredLanguage = Locale.preferredLanguages.first ?? "en"
+        let preferredLanguage = Localized.currentLanguage
         var urls: [URL] = []
         
         // 优先将对应语言的本地化 community-plugins_zh-Hans.json 加入抓取队列中以优先尝试
@@ -433,7 +433,7 @@ final class PluginMarketService: ObservableObject {
     public func readmeCandidateURLs(
         forID pluginID: String,
         downloadURLString: String,
-        preferredLanguages: [String] = Locale.preferredLanguages
+        preferredLanguages: [String] = [Localized.currentLanguage]
     ) -> [URL] {
         guard let downloadURL = URL(string: downloadURLString) else { return [] }
         let base = downloadURL.deletingLastPathComponent()

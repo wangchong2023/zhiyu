@@ -101,6 +101,7 @@ RECORD_SNAPSHOTS=1 xcodebuild test \
   -scheme ZhiYu \
   -destination "platform=iOS Simulator,id=${UDID}" \
   -only-testing:ZhiYuTests/ComponentSnapshots \
+  -test-env RECORD_SNAPSHOTS=1 \
   CODE_SIGNING_ALLOWED=NO \
   CODE_SIGNING_REQUIRED=NO \
   | tee "${LOG_FILE}"

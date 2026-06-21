@@ -50,31 +50,31 @@ jobs:
         run: xcodegen generate
 
       - name: Audit SPM Dependencies
-        run: python3 Tools/CI/audit_spm_dependencies.py
+        run: python3 Tools/CI/Analyze/audit_spm_dependencies.py
 
       - name: Run SwiftLint Strict Analysis
         run: swiftlint lint --strict --reporter github-actions-logging
 
       - name: Scan for Hardcoded Secrets
-        run: python3 Tools/Gatekeeper/check_hardcoded_secrets.py
+        run: python3 Tools/Gatekeeper/Release/check_hardcoded_secrets.py
 
       - name: Check Localization Compliance
-        run: python3 Tools/Gatekeeper/check_localization.py
+        run: python3 Tools/Gatekeeper/Compliance/check_localization.py
 
       - name: Check Architecture Dependencies (L0-L3)
-        run: python3 Tools/Gatekeeper/check_architecture_dependency.py
+        run: python3 Tools/Gatekeeper/Architecture/check_architecture_dependency.py
 
       - name: Check Domain Purity
-        run: python3 Tools/Gatekeeper/check_domain_purity.py
+        run: python3 Tools/Gatekeeper/Architecture/check_domain_purity.py
 
       - name: Audit Magic Numbers & Strings
-        run: python3 Tools/Gatekeeper/check_magic_numbers_v2.py
+        run: python3 Tools/Gatekeeper/Compliance/check_magic_numbers.py
 
       - name: Check Root Hygiene (Temp Files + Structure)
-        run: python3 Tools/Gatekeeper/check_root_hygiene.py
+        run: python3 Tools/Gatekeeper/Sanity/check_root_hygiene.py
 
       - name: Check Test DI Setup
-        run: python3 Tools/Gatekeeper/check_test_di_setup.py
+        run: python3 Tools/Gatekeeper/Architecture/check_test_di_setup.py
 
       - name: Verify Commit Signature
         run: |
@@ -86,14 +86,14 @@ jobs:
         continue-on-error: true
 
       - name: Verify SPM Integrity
-        run: bash Tools/CI/verify_spm_integrity.sh
+        run: bash Tools/CI/Analyze/verify_spm_integrity.sh
 
       - name: Generate SBOM
         run: |
-          python3 Tools/CI/generate_sbom.py
+          python3 Tools/CI/Analyze/generate_sbom.py
           brew install syft 2>/dev/null || true
           syft . -o cyclonedx-json=build/syft.cdx.json 2>/dev/null || echo "Syft unavailable"
-          python3 Tools/CI/merge_sbom.py
+          python3 Tools/CI/Analyze/merge_sbom.py
 
       - name: Upload SBOM Artifact
         uses: actions/upload-artifact@v4
@@ -141,11 +141,11 @@ jobs:
 
       - name: Run Unit Tests with Coverage
         run: |
-          chmod +x Tools/CI/run_unit_tests.sh
-          ./Tools/CI/run_unit_tests.sh
+          chmod +x Tools/CI/Test/run_unit_tests.sh
+          ./Tools/CI/Test/run_unit_tests.sh
 
       - name: Enforce Code Coverage Threshold
-        run: python3 Tools/CI/check_coverage.py
+        run: python3 Tools/CI/Test/check_coverage.py
 
       - name: Upload Test Results (on failure)
         if: failure()
@@ -187,8 +187,8 @@ jobs:
 
       - name: Run UI Tests (Parallel)
         run: |
-          chmod +x Tools/CI/run_ui_tests.sh
-          ./Tools/CI/run_ui_tests.sh
+          chmod +x Tools/CI/Test/run_ui_tests.sh
+          ./Tools/CI/Test/run_ui_tests.sh
 
       - name: Upload UI Test Results (on failure)
         if: failure()

@@ -22,6 +22,8 @@ extension L10n {
         /// - Parameter args: args
         /// - Returns: 返回值
         public static var subtitle: String { tr("welcome.subtitle") }
+        public static var featureList: String { tr("onboarding.featureList") }
+        public static var featureTitle: String { tr("onboarding.featureTitle") }
 
         public static var pathTitle: String { tr("onboarding.path.title") }
 
