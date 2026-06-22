@@ -1,0 +1,66 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+# ==============================================================================
+# 脚本名称: commit-msg
+# 核心职责: 强制约束 Conventional Commits 格式且要求描述（subject）必须为中文。
+# ==============================================================================
+
+import sys
+import re
+
+def main():
+    # Git 传入的第一个参数是包含 commit 信息的临时文件路径
+    commit_msg_file = sys.argv[1]
+    
+    try:
+        with open(commit_msg_file, 'r', encoding='utf-8') as f:
+            commit_msg = f.read().strip().split("\n")[0].strip()
+    except Exception as e:
+        print(f"❌ [Git Hook] 无法读取 commit 信息文件: {e}")
+        sys.exit(1)
+
+    # 忽略自动生成的合并和回滚提交信息
+    if commit_msg.startswith("Merge branch") or commit_msg.startswith("Revert "):
+        sys.exit(0)
+
+    # 验证 Conventional Commits 基础格式（支持中英文冒号，后接空格）
+    pattern = r"^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\(.+\))?[:：]\s+(.+)$"
+    match = re.match(pattern, commit_msg)
+    
+    if not match:
+        print("========================================================================")
+        print("❌ [Git Hook] Commit 提交注释格式不符合规范！")
+        print("========================================================================")
+        print("标准格式: <type>(<scope>): <subject>")
+        print("         <空行>")
+        print("         <body>")
+        print("示例：")
+        print("  feat(graph): 新增知识图谱聚合分析功能")
+        print("")
+        print("  增加相关视图渲染层逻辑：")
+        print("  - 优化文本高亮性能")
+        print("  - 修复多语言加载问题")
+        print("------------------------------------------------------------------------")
+        print("允许的分类 (type) 包含: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert")
+        print("========================================================================")
+        sys.exit(1)
+
+    # 提取出的描述内容
+    subject = match.group(3)
+
+    # 强制校验：描述（subject）必须包含中文汉字
+    if not re.search(r"[\u4e00-\u9fa5]", subject):
+        print("========================================================================")
+        print("❌ [Git Hook] 提交规范错误：提交描述 (subject) 必须包含中文汉字！")
+        print("========================================================================")
+        print(f"检测到的描述为: \"{subject}\"")
+        print("为了保持项目提交记录对齐，请使用中文来描述您的改动，例如:")
+        print("  feat: 优化编辑器文本高亮渲染")
+        print("  fix: 解决多语言加载失败的空指针异常")
+        print("========================================================================")
+        sys.exit(1)
+
+    sys.exit(0)
+
+if __name__ == '__main__':
+    main()

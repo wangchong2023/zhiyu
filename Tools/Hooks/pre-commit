@@ -1,0 +1,22 @@
+#!/bin/bash
+#
+#  pre-commit
+#  ZhiYu
+#
+#  核心职责：提交前强制静态扫描。
+#  注：编译门禁（Gatekeeper 脚本）已集成在 Xcode Build Phases 中，
+#  此处仅执行轻量级文件级检查。
+#
+
+echo "🔒 [Git Hook] 启动 Git Pre-commit 静态扫描..."
+
+# 硬编码密钥扫描（阻断 API Key / Token / 密码泄露）
+# 保留在 pre-commit 作为安全红线——比 build phase 更早拦截
+python3 Tools/Gatekeeper/Release/check_hardcoded_secrets.py
+if [ $? -ne 0 ]; then
+    echo "❌ [Git Hook] 硬编码密钥扫描失败！请移除代码中的密钥/Token。"
+    exit 1
+fi
+
+echo "✅ [Git Hook] 静态校验全部通过，准予提交！"
+exit 0
