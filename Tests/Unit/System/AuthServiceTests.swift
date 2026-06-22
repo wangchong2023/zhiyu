@@ -20,6 +20,9 @@ final class AuthServiceTests: XCTestCase {
         try await super.setUp()
         setupFullMockEnvironment()
 
+        // 注入 Mock Keychain，绕过模拟器 errSecMissingEntitlement -34018 限制
+        KeychainService.testOverride = MockKeychainService()
+
         // 注入 TestMockURLProtocol 的测试 URLSession
         let config = URLSessionConfiguration.ephemeral
         config.protocolClasses = [TestMockURLProtocol.self]
@@ -37,6 +40,7 @@ final class AuthServiceTests: XCTestCase {
         await NetworkClient.shared.awaitRefreshTask()
         await NetworkClient.shared.setTestSession(nil)
         TestMockURLProtocol.requestHandler = nil
+        KeychainService.testOverride = nil
         try await super.tearDown()
     }
 
@@ -174,12 +178,8 @@ final class AuthServiceTests: XCTestCase {
         AuthService.forceMockBackend = false
         #endif
 
-        // 1. 注入 Token（受限模拟器环境下 Keychain 不可用则跳过此用例）
-        do {
-            try KeychainService.shared.store(key: AppConstants.Network.jwtTokenKey, value: "valid_jwt_token")
-        } catch KeychainError.storeFailed(let status) where status == -34018 {
-            throw XCTSkip("Keychain access denied (errSecMissingEntitlement -34018). Skipping test in restricted simulator environment.")
-        }
+        // 1. 注入 Token（Mock Keychain 已由 setUp 注入，模拟器环境安全）
+        try KeychainService.shared.store(key: AppConstants.Network.jwtTokenKey, value: "valid_jwt_token")
 
         // 2. 模拟拉取 Profile 返回成功
         let profileResponse = UserProfileResponse(
@@ -227,12 +227,8 @@ final class AuthServiceTests: XCTestCase {
         AuthService.forceMockBackend = false
         #endif
 
-        // 1. 注入 Token（受限模拟器环境下 Keychain 不可用则跳过此用例）
-        do {
-            try KeychainService.shared.store(key: AppConstants.Network.jwtTokenKey, value: "expired_jwt_token")
-        } catch KeychainError.storeFailed(let status) where status == -34018 {
-            throw XCTSkip("Keychain access denied (errSecMissingEntitlement -34018). Skipping test in restricted simulator environment.")
-        }
+        // 1. 注入 Token（Mock Keychain 已由 setUp 注入，模拟器环境安全）
+        try KeychainService.shared.store(key: AppConstants.Network.jwtTokenKey, value: "expired_jwt_token")
 
         // 2. 模拟拉取 Profile 接口返回 40101 错误或 401 HTTP 状态
         let apiResponse: ApiResponse<UserProfileResponse> = ApiResponse(code: 40101, message: "Token expired", data: nil, requestId: "test_req_id", timestamp: 123456789)
@@ -266,13 +262,18 @@ final class AuthServiceTests: XCTestCase {
         // 2. 模拟 ContentView 注册的通知监听响应
         let expectation = XCTestExpectation(description: "监听到 userAuthExpired 通知并执行注销")
 
+        // queue: nil 意味着回调在通知发送线程执行；.userAuthExpired 可能从后台队列发出，
+        // 而 AuthService.shared.logout() 标记了 @MainActor，Swift 6 严格并发下从非主线程
+        // 直接调用会触发运行时 SIGABRT（_swift_task_dealloc_specific）。
         let observer = NotificationCenter.default.addObserver(
             forName: .userAuthExpired,
             object: nil,
             queue: nil
         ) { _ in
-            AuthService.shared.logout()
-            expectation.fulfill()
+            DispatchQueue.main.async {
+                AuthService.shared.logout()
+                expectation.fulfill()
+            }
         }
 
         // 3. 发送广播
@@ -290,13 +291,10 @@ final class AuthServiceTests: XCTestCase {
 
     /// 测试：当登出请求返回 401 且触发刷新失败导致的递归调用时，Keychain 是否依然能被清理
     func testLogoutClearsKeychainEvenIfBackendFailsWith401() async throws {
-        // 1. 模拟写入凭证 (受限模拟器环境下 Keychain 不可用则跳过此用例)
-        do {
-            try KeychainService.shared.store(key: AppConstants.Network.jwtTokenKey, value: "expired_token")
-            try KeychainService.shared.store(key: "refresh_token", value: "expired_refresh_token")
-        } catch KeychainError.storeFailed(let status) where status == -34018 {
-            throw XCTSkip("Keychain access denied (errSecMissingEntitlement -34018). Skipping test in restricted simulator environment.")
-        }
+        // 1. 模拟写入凭证（Mock Keychain 已由 setUp 注入，模拟器环境安全）
+        try KeychainService.shared.store(key: AppConstants.Network.jwtTokenKey, value: "expired_token")
+        try KeychainService.shared.store(key: "refresh_token", value: "expired_refresh_token")
+
         AuthSession.shared.update(user: User(id: UUID(), name: "Test User", email: "test@example.com"))
 
         // 2. 模拟注销接口返回 401
@@ -351,13 +349,9 @@ final class AuthServiceTests: XCTestCase {
 
     /// 测试：登录成功后，执行 logout() 能否物理擦除 Keychain 中的 Token，防止残留劫持
     func testLogoutClearsKeychainTokens() async throws {
-        // 1. 模拟登录写入 Token 到安全区（受限模拟器环境下 Keychain 不可用则跳过此用例）
-        do {
-            try KeychainService.shared.store(key: AppConstants.Network.jwtTokenKey, value: "login_jwt_token")
-            try KeychainService.shared.store(key: "refresh_token", value: "login_refresh_token")
-        } catch KeychainError.storeFailed(let status) where status == -34018 {
-            throw XCTSkip("Keychain access denied (errSecMissingEntitlement -34018). Skipping test in restricted simulator environment.")
-        }
+        // 1. 模拟登录写入 Token（Mock Keychain 已由 setUp 注入，模拟器环境安全）
+        try KeychainService.shared.store(key: AppConstants.Network.jwtTokenKey, value: "login_jwt_token")
+        try KeychainService.shared.store(key: "refresh_token", value: "login_refresh_token")
 
         AuthSession.shared.update(user: User(id: UUID(), name: "Login User", email: "test@example.com"))
         XCTAssertTrue(AuthService.shared.isAuthenticated)
@@ -394,13 +388,10 @@ final class AuthServiceTests: XCTestCase {
 
     /// 测试：退出登录时，客户端是否会向后端发送携带对应 refresh_token 的 POST 注销请求，使服务端吊销 Token
     func testLogoutTriggersBackendRevokeRequest() async throws {
-        // 1. 模拟写入凭证（受限模拟器环境下 Keychain 不可用则跳过此用例）
-        do {
-            try KeychainService.shared.store(key: AppConstants.Network.jwtTokenKey, value: "jwt_token")
-            try KeychainService.shared.store(key: "refresh_token", value: "refresh_token_to_revoke")
-        } catch KeychainError.storeFailed(let status) where status == -34018 {
-            throw XCTSkip("Keychain access denied (errSecMissingEntitlement -34018). Skipping test in restricted simulator environment.")
-        }
+        // 1. 模拟写入凭证（Mock Keychain 已由 setUp 注入，模拟器环境安全）
+        try KeychainService.shared.store(key: AppConstants.Network.jwtTokenKey, value: "jwt_token")
+        try KeychainService.shared.store(key: "refresh_token", value: "refresh_token_to_revoke")
+
         AuthSession.shared.update(user: User(id: UUID(), name: "Login User", email: "test@example.com"))
 
         // 2. 拦截并校验登出请求
