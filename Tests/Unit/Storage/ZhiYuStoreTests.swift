@@ -94,17 +94,30 @@ final class LLMConfigStoreTests: XCTestCase {
     override func setUp() async throws {
         try await super.setUp()
         setupFullMockEnvironment()
+        // 注入 Mock Security 服务（必须在 LLMConfigStore() 构造前），绕过模拟器限制
+        KeychainService.testOverride = MockKeychainService()
+        SecureEnclaveCryptoService.testOverride = MockSecureEnclaveCryptoService()
+        // 清理 UserDefaults 及 Keychain 中所有 LLM 配置持久化数据，确保测试隔离
+        // saveAPIKey 有三层存储：Keychain → 旧版 Keychain → UserDefaults fallback，需全部清理
         UserDefaults.standard.removeObject(forKey: "zhiyu_llm_config")
-        try? KeychainService.shared.delete(key: "llm_api_key")
-        try? KeychainService.shared.delete(key: "llm_api_key_deepseek")
+        for provider in LLMProvider.allCases {
+            UserDefaults.standard.removeObject(forKey: "zhiyu_llm_api_key_fallback_\(provider.rawValue)")
+            try? KeychainService.shared.delete(key: "llm_api_key_\(provider.rawValue)")
+        }
+        try? KeychainService.shared.delete(key: "llm_api_key")  // 旧版全局 Key
         configStore = LLMConfigStore()
     }
-    
+
     override func tearDown() async throws {
         UserDefaults.standard.removeObject(forKey: "zhiyu_llm_config")
-        try? KeychainService.shared.delete(key: "llm_api_key")
-        try? KeychainService.shared.delete(key: "llm_api_key_deepseek")
+        for provider in LLMProvider.allCases {
+            UserDefaults.standard.removeObject(forKey: "zhiyu_llm_api_key_fallback_\(provider.rawValue)")
+            try? KeychainService.shared.delete(key: "llm_api_key_\(provider.rawValue)")
+        }
+        try? KeychainService.shared.delete(key: "llm_api_key")  // 旧版全局 Key
         configStore = nil
+        KeychainService.testOverride = nil
+        SecureEnclaveCryptoService.testOverride = nil
         ServiceContainer.shared.reset()
         try await super.tearDown()
     }
@@ -122,10 +135,7 @@ final class LLMConfigStoreTests: XCTestCase {
     /// 注意：API Key 的持久化依赖 SecureEnclaveCryptoService 进行硬件级加密，
     ///       Secure Enclave 在 iOS 模拟器上不可用，此测试仅在真机上验证。
     func testSaveAndRestoreConfig() throws {
-        // Secure Enclave 在模拟器上不可用（无 T1/T2/Secure Enclave 芯片），跳过此测试
-        #if targetEnvironment(simulator)
-        throw XCTSkip("SecureEnclaveCryptoService 在 iOS 模拟器上不可用，跳过 API Key 持久化测试（需在真机上运行）。")
-        #else
+        // Mock SecureEnclaveCryptoService + MockKeychainService 已由 setUp 注入，模拟器环境安全
         configStore.apiKey = "test-key-12345"
         configStore.provider = .deepSeek
         configStore.model = "deepseek-chat"
@@ -137,7 +147,6 @@ final class LLMConfigStoreTests: XCTestCase {
         XCTAssertEqual(restored.provider, .deepSeek)
         XCTAssertEqual(restored.model, "deepseek-chat")
         XCTAssertTrue(restored.isEnabled)
-        #endif
     }
 
     /// 验证所有 AI 服务提供商的模型图标与文案配置无误

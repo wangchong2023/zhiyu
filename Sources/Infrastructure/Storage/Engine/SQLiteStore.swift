@@ -23,13 +23,14 @@ public actor SQLiteStore: AnyPageStoreCapabilities {
     private var dbWriter: any DatabaseWriter {
         get async {
             // 等待 notebook 切换完成（selectVault 异步 Task 可能尚未完成）
+            // 使用直接 await 避免 MainActor.run 在 XCTest 并行 worker 中死锁
             for _ in 0..<20 {
-                if let writer = await MainActor.run(body: { DatabaseManager.shared.dbWriter }) {
+                if let writer = await DatabaseManager.shared.dbWriter {
                     return writer
                 }
                 try? await Task.sleep(nanoseconds: 50_000_000) // 50ms × 20 = 1s
             }
-            // 极端降级
+            // 极端降级：DatabaseQueue() 创建在调用方 actor 上执行
             do { return try DatabaseQueue() } catch { fatalError("无法创建内存数据库(SQLiteStore): \(error)") }
         }
     }
@@ -181,9 +182,9 @@ public actor SQLiteStore: AnyPageStoreCapabilities {
     /// 获取存储资源统计信息，级联累加多笔记本分库及全局配置库大小
     /// - Returns: 数据库总大小、日志总大小、导出文件总大小 (字节)
     public func getStorageStats() async -> StorageStats {
-        let (dbPath, globalDBPath) = await MainActor.run {
-            (DatabaseManager.shared.dbURL?.path ?? "", DatabaseManager.shared.globalDBURL?.path ?? "")
-        }
+        // 直接 await @MainActor 属性，避免 MainActor.run 死锁
+        let dbPath = await DatabaseManager.shared.dbURL?.path ?? ""
+        let globalDBPath = await DatabaseManager.shared.globalDBURL?.path ?? ""
         
         var totalDbSize: Int64 = 0
         
