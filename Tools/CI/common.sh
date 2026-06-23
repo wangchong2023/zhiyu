@@ -22,8 +22,21 @@ export PROJECT="ZhiYu.xcodeproj"
 # 默认构建 Scheme
 export SCHEME="ZhiYu"
 
-# SPM 依赖库共享缓存目录（固定路径，确保 CI worker 与宿主机共享）
-export SPM_CACHE_DIR="${SPM_CACHE_DIR:-/tmp/zhiyu-spm-cache}"
+# SPM 依赖库共享缓存目录
+# 策略：优先 /tmp（CI 与宿主机共享），其次 ~/.cache（持久化），自动互为备份
+PERSISTENT_CACHE="${HOME}/.cache/zhiyu-spm"
+SHARED_CACHE="/tmp/zhiyu-spm-cache"
+
+if [ -d "$SHARED_CACHE/checkouts" ]; then
+    export SPM_CACHE_DIR="$SHARED_CACHE"
+elif [ -d "$PERSISTENT_CACHE/checkouts" ]; then
+    echo "📦 /tmp 缓存不存在，从 ~/.cache 恢复..."
+    cp -a "$PERSISTENT_CACHE" "$SHARED_CACHE"
+    export SPM_CACHE_DIR="$SHARED_CACHE"
+else
+    export SPM_CACHE_DIR="$SHARED_CACHE"
+    echo "⚠️  SPM 缓存为空，将从 GitHub 下载依赖（需代理）"
+fi
 
 # 集中化构建输出根目录
 export BUILD_DIR="build"
