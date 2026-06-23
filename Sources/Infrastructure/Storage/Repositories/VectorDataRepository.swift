@@ -15,12 +15,12 @@ import Foundation
 final class VectorDataRepository: VectorRepository, @unchecked Sendable {
     private var dbWriter: any DatabaseWriter {
         get async {
-            await MainActor.run {
-                if let writer = DatabaseManager.shared.dbWriter {
-                    return writer
-                }
-                do { return try DatabaseQueue() } catch { fatalError("无法创建内存数据库(VectorDataRepo): \(error)") }
+            // 直接 await @MainActor 属性，避免 MainActor.run 在 XCTest 并行 worker 中死锁
+            if let writer = await DatabaseManager.shared.dbWriter {
+                return writer
             }
+            // DatabaseQueue() 创建在调用方 actor 上执行，不阻塞主线程
+            do { return try DatabaseQueue() } catch { fatalError("无法创建内存数据库(VectorDataRepo): \(error)") }
         }
     }
 

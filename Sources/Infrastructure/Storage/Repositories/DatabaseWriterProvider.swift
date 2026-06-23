@@ -23,13 +23,15 @@ protocol DatabaseWriterProvider: AnyObject {
 extension DatabaseWriterProvider {
     var dbWriter: any DatabaseWriter {
         get async {
-            await MainActor.run {
-                if let writer = DatabaseManager.shared.dbWriter {
-                    return writer
-                }
-                do { return try DatabaseQueue() } catch {
-                    fatalError("无法创建内存数据库(DatabaseWriterProvider): \(error)")
-                }
+            // 直接 await @MainActor 属性，避免 MainActor.run 在 XCTest 并行 worker 中死锁。
+            // MainActor.run 通过 withCheckedContinuation 显式调度任务，与 XCTest 自定义 run loop
+            // 冲突；而直接 await 使用 Swift 结构化并发的 actor hop，与 XCTest 协作更好。
+            if let writer = await DatabaseManager.shared.dbWriter {
+                return writer
+            }
+            // DatabaseQueue() 创建在调用方 actor 上执行，不阻塞主线程
+            do { return try DatabaseQueue() } catch {
+                fatalError("无法创建内存数据库(DatabaseWriterProvider): \(error)")
             }
         }
     }
