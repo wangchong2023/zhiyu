@@ -3,6 +3,8 @@ labels:
 
 skip_clone: true
 
+pipeline_timeout: 30
+
 steps:
   clone-repo:
     image: bash
