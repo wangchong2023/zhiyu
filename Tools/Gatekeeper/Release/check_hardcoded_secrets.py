@@ -43,6 +43,12 @@ SAFE_URL_PATTERNS = [
     r'www\.w3\.org/XML',
     r'www\.w3\.org/1999',
     r'www\.w3\.org/2000',
+    # 公开第三方服务 API（头像生成、网页存档）
+    r'api\.multiavatar\.com',
+    r'web\.archive\.org',
+    # 示例/参考链接
+    r'github\.com/karpathy',
+    r'finance\.sina\.com\.cn/coffee-industry',
     # 占位符/示例 URL
     r'example\.com',
     r'placeholder',
