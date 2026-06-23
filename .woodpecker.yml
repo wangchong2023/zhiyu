@@ -57,19 +57,19 @@ steps:
       - bash Tools/CI/Build/build_platform.sh ZhiYu 'generic/platform=iOS Simulator' ios
 
   build-macos:
-    depends_on: [prepare]
+    depends_on: [build-ios]
     image: bash
     commands:
       - bash Tools/CI/Build/build_platform.sh ZhiYuMac 'platform=macOS' macos
 
   build-watchos:
-    depends_on: [prepare]
+    depends_on: [build-macos]
     image: bash
     commands:
       - bash Tools/CI/Build/build_platform.sh ZhiYuWatch 'generic/platform=watchOS Simulator' watchos
 
   test:
-    depends_on: [build-ios, build-macos, build-watchos]
+    depends_on: [build-watchos]
     image: bash
     commands:
       - bash Tools/CI/Test/run_tests_and_coverage.sh
