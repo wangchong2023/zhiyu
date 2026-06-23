@@ -13,9 +13,13 @@ import CryptoKit
 @preconcurrency import GRDB
 
 /// 安全管理器：负责数据签名、加密与完整性校验。
-final class SecurityManager: @unchecked Sendable {
-    /// 全局单例
-    static let shared = SecurityManager()
+class SecurityManager: @unchecked Sendable {
+    /// 真实单例（内部持有）
+    private static let _shared = SecurityManager()
+    /// 测试覆盖：设置非 nil 值后 shared 返回 Mock 实例；在 tearDown 中置 nil 恢复
+    nonisolated(unsafe) static var testOverride: SecurityManager?
+    /// 全局单例入口：测试模式下可被替换
+    static var shared: SecurityManager { testOverride ?? _shared }
 
     // MARK: - 依赖注入
     
@@ -31,7 +35,7 @@ final class SecurityManager: @unchecked Sendable {
     private let signatureKeyPrefix = AppConstants.Keys.Storage.signaturePrefix
 
     // MARK: - 初始化
-    private init() {}
+    init() {}
 
     // MARK: - 缓存
     // 使用 nonisolated(unsafe) 配合 actor 同步访问或确保单线程访问

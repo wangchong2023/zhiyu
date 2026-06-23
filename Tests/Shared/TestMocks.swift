@@ -498,3 +498,44 @@ final class MockRemoteConfigService: RemoteConfigCapabilities, @unchecked Sendab
         return []
     }
 }
+
+// MARK: - Mock Security Services (P1: 单例 TestOverride 模式)
+
+/// 内存字典实现的 Keychain Mock，绕过 errSecMissingEntitlement -34018 限制
+final class MockKeychainService: KeychainService, @unchecked Sendable {
+    private var store: [String: String] = [:]
+
+    override func store(key: String, value: String) throws {
+        store[key] = value
+    }
+
+    override func retrieve(key: String) throws -> String? {
+        store[key]
+    }
+
+    override func delete(key: String) throws {
+        store[key] = nil
+    }
+}
+
+/// No-op 加密的 SecureEnclave Mock，plaintext 直通，供测试中 API Key 持久化验证
+final class MockSecureEnclaveCryptoService: SecureEnclaveCryptoService, @unchecked Sendable {
+    override func encrypt(_ plainText: String) throws -> String {
+        plainText
+    }
+
+    override func decrypt(_ cipherText: String) throws -> String {
+        cipherText
+    }
+}
+
+/// No-op 加密的 SecurityManager Mock，plaintext 直通，供测试环境替代真实 AES-GCM 加解密
+final class MockSecurityManager: SecurityManager, @unchecked Sendable {
+    override func encrypt(_ text: String) throws -> String {
+        text
+    }
+
+    override func decrypt(_ base64Combined: String) throws -> String {
+        base64Combined
+    }
+}

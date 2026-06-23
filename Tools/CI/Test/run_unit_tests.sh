@@ -19,7 +19,14 @@ DERIVED_DATA_PATH="${BUILD_DIR}/DerivedData-ios"
 # 获取动态寻找出的最新可用模拟器
 SIM_NAME=$(find_simulator)
 DESTINATION="platform=iOS Simulator,name=${SIM_NAME}"
-echo "📱 使用模拟器: ${SIM_NAME}"
+# 进程级并行：使用 2 个模拟器实例，xcodebuild 自动克隆并 round-robin 分配测试
+# 区别于线程级并行 (-parallel-testing-enabled)，每个模拟器是独立 OS 进程，
+# 拥有独立的 MainActor 和 Swift Concurrency 运行时，完全避免 actor 冲突
+PARALLEL_DESTINATIONS=(
+    "-destination" "${DESTINATION}"
+    "-destination" "${DESTINATION}"
+)
+echo "📱 使用模拟器: ${SIM_NAME}（进程级并行 ×2）"
 
 # ── 2. 从 @flaky 注释自动收集不稳定测试 ─────────────────────────────
 echo "🔍 收集 @flaky 标记的不稳定测试..."
@@ -43,11 +50,13 @@ XCODEBUILD_ARGS=(
     test
     -project "${PROJECT}"
     -scheme "${SCHEME}"
-    -destination "${DESTINATION}"
+    "${PARALLEL_DESTINATIONS[@]}"
     -derivedDataPath "${DERIVED_DATA_PATH}"
     -enableCodeCoverage YES
-    -parallel-testing-enabled YES
-    -parallel-testing-worker-count 2
+    # 不启用线程级并行（-parallel-testing-enabled NO 为默认值），
+    # 改用进程级并行：多 -destination 标志让 xcodebuild 将测试分布到多个模拟器实例。
+    # 每个模拟器是独立 OS 进程，拥有独立的 MainActor，完全避免
+    # _swift_task_dealloc_specific 等 actor 隔离冲突。
     CODE_SIGNING_ALLOWED=NO
     CODE_SIGNING_REQUIRED=NO
 )

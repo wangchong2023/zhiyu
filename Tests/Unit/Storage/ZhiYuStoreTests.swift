@@ -97,6 +97,7 @@ final class LLMConfigStoreTests: XCTestCase {
         // 注入 Mock Security 服务（必须在 LLMConfigStore() 构造前），绕过模拟器限制
         KeychainService.testOverride = MockKeychainService()
         SecureEnclaveCryptoService.testOverride = MockSecureEnclaveCryptoService()
+        SecurityManager.testOverride = MockSecurityManager()
         // 清理 UserDefaults 及 Keychain 中所有 LLM 配置持久化数据，确保测试隔离
         // saveAPIKey 有三层存储：Keychain → 旧版 Keychain → UserDefaults fallback，需全部清理
         UserDefaults.standard.removeObject(forKey: "zhiyu_llm_config")
@@ -118,6 +119,7 @@ final class LLMConfigStoreTests: XCTestCase {
         configStore = nil
         KeychainService.testOverride = nil
         SecureEnclaveCryptoService.testOverride = nil
+        SecurityManager.testOverride = nil
         ServiceContainer.shared.reset()
         try await super.tearDown()
     }
