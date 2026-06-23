@@ -89,6 +89,8 @@ final class iCloudSyncCoordinator {
         autoSyncTimer = nil
     }
 
+    /// 执行静默自动同步：将本地页面和日志推送到云端并合并拉取远端数据。
+    /// 发生冲突时使用预设策略（merge），成功后替换本地数据。
     private func performAutoSync() async {
         guard let store else { return }
         isSyncing = true
@@ -203,7 +205,7 @@ final class iCloudSyncCoordinator {
 
     // MARK: - Data Management
 
-    /// 替换LocalData
+    /// 以拉取到的云端页面全量替换本地数据：清空 → 逐条导入 → 落盘。
     func replaceLocalData(with pages: [KnowledgePage]) {
         guard let store else { return }
         try? store.clearAllData()
@@ -215,13 +217,16 @@ final class iCloudSyncCoordinator {
 
     /// 对以 .json 结尾的非数据库偏好配置文件进行自动冲突解决。
     /// 解析两端的修改时间戳（updatedAt），自动采用 LWW (Last-Write-Wins) 进行覆盖，免去手动 Diff 的打扰。
+    /// - Parameters:
+    ///   - local: 本地配置文件 URL
+    ///   - remote: 云端冲突副本 URL
+    /// - Returns: true 表示已成功执行 LWW 冲突解决
     @discardableResult
 
-    /// 解析ConflictedMetadata
-    /// - Parameter local: local
-    /// - Parameter remote: remote
-    /// - Returns: 是否成功
+    /// 基于时间戳的 LWW（Last-Write-Wins）冲突解决策略。
+    /// 解析本地与云端 JSON 中的 updatedAt 字段，较新者覆盖较旧者。
     func resolveConflictedMetadata(local: URL, remote: URL) -> Bool {
+        // 仅处理 JSON 配置文件
         guard local.pathExtension == "json" && remote.pathExtension == "json" else {
             return false
         }
@@ -230,9 +235,8 @@ final class iCloudSyncCoordinator {
             let localData = try Data(contentsOf: local)
             let remoteData = try Data(contentsOf: remote)
             
-            // 解析 local 的 updatedAt
+            // Step 1: 配置 JSON 日期解码器，兼容 ISO8601 与多格式回退
             let decoder = JSONDecoder()
-            // 兼容 ISO8601 或自定义的日期解析
             decoder.dateDecodingStrategy = .custom { decoder in
                 let container = try decoder.singleValueContainer()
                 let dateStr = try container.decode(String.self)
@@ -264,15 +268,16 @@ final class iCloudSyncCoordinator {
             let localDate = localMeta?.updatedAt ?? (try? local.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? Date.distantPast
             let remoteDate = remoteMeta?.updatedAt ?? (try? remote.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? Date.distantPast
             
+            // Step 2: LWW 裁决 — 时间戳较新者覆盖较旧者
             if remoteDate > localDate {
-                // Remote 比较新，覆盖本地
+                // Remote 更新，云端覆盖本地
                 if FileManager.default.fileExists(atPath: local.path) {
                     try FileManager.default.removeItem(at: local)
                 }
                 try FileManager.default.copyItem(at: remote, to: local)
                 Logger.shared.info("ICloudSync_LWW_Remote")
             } else {
-                // Local 比较新，覆盖云端
+                // Local 更新，本地覆盖云端
                 if FileManager.default.fileExists(atPath: remote.path) {
                     try FileManager.default.removeItem(at: remote)
                 }

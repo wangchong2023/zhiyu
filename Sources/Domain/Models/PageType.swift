@@ -6,7 +6,7 @@
 //  Copyright © 2026 WangChong. All rights reserved.
 //
 //  系统层级：[L1.5] 领域层
-//  核心职责：核心领域模型定义（KnowledgePage、PageLink、PluginRecord 等）。
+//  核心职责：定义页面类型枚举 (PageType) 与状态枚举 (PageStatus)，约束知识页面的分类体系。
 //
 import Foundation
 

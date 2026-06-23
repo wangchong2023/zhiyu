@@ -5,7 +5,7 @@
 //  Created by Antigravity on 2026/05/30.
 //  Copyright © 2026 WangChong. All rights reserved.
 //
-//  系统层级：[L2] 业务功能层
+//  系统层级：[L3] 表现层
 //  核心职责：端侧大模型性能调优页，管理 NPU、运存、上下文等硬件运行参数。
 //
 import SwiftUI

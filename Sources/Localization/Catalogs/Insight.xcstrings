@@ -1259,6 +1259,23 @@
         }
       }
     },
+    "graph.openInNewWindow": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open in New Window"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在新窗口中打开"
+          }
+        }
+      }
+    },
     "graph.emptyDesc": {
       "extractionState": "manual",
       "localizations": {

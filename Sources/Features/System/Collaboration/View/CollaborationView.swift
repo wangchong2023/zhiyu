@@ -5,7 +5,7 @@
 //  Created by Antigravity on 2026/05/23.
 //  Copyright © 2026 WangChong. All rights reserved.
 //
-//  系统层级：[L2] 业务功能层
+//  系统层级：[L3] 表现层
 //  核心职责：构建 Collaboration 界面的 UI 视图层组件。
 //
 import SwiftUI
@@ -33,6 +33,8 @@ struct CollaborationViewContent: View {
     @State private var showHostingSheet = false
     @State private var showBrowsing = false
     @State private var showConnectionError = false
+
+    @Inject var deviceInfo: any DeviceInfoProtocol
 
     private var recentEditsSnapshot: [CollabEdit] {
         Array(collabService.recentEdits.suffix(DesignSystem.Metrics.maxCollabEditHistory)) // 10
@@ -68,9 +70,7 @@ struct CollaborationViewContent: View {
             Text(collabService.connectionError ?? "")
         }
         .onAppear {
-            #if os(iOS)
-            userName = UIDevice.current.name
-            #endif
+            userName = deviceInfo.deviceName
             collabService.setDelegate(store)
         }
         .onChange(of: collabService.connectionError) { _, newValue in

@@ -6,7 +6,7 @@
 //  Copyright © 2026 WangChong. All rights reserved.
 //
 //  系统层级：[L1.5] 领域层
-//  核心职责：核心领域模型定义（KnowledgePage、PageLink、PluginRecord 等）。
+//  核心职责：定义页面链接 (PageLink) 的领域模型，表示知识图谱中两页面间的有向关联边。
 //
 import Foundation
 

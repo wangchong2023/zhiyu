@@ -53,7 +53,7 @@ final class WatchWatchSyncService: NSObject, WatchSyncProtocol, WCSessionDelegat
         let chunks = AudioSplitter.split(data: data)
         let total = chunks.count
         
-        var pendingTransfers = UserDefaults.standard.dictionary(forKey: "watch_pending_audio_transfers") as? [String: [String: Any]] ?? [:]
+        var pendingTransfers = UserDefaults.standard.dictionary(forKey: AppConstants.Keys.Storage.watchPendingAudioTransfers) as? [String: [String: Any]] ?? [:]
         
         var chunkDicts: [[String: Any]] = []
         for (index, chunk) in chunks.enumerated() {
@@ -73,7 +73,7 @@ final class WatchWatchSyncService: NSObject, WatchSyncProtocol, WCSessionDelegat
             "total": total,
             "chunks": chunkDicts
         ]
-        UserDefaults.standard.set(pendingTransfers, forKey: "watch_pending_audio_transfers")
+        UserDefaults.standard.set(pendingTransfers, forKey: AppConstants.Keys.Storage.watchPendingAudioTransfers)
         
         triggerPendingTransfers()
     }
@@ -88,7 +88,7 @@ final class WatchWatchSyncService: NSObject, WatchSyncProtocol, WCSessionDelegat
         #endif
         guard activationState == .activated else { return }
         
-        guard var pendingTransfers = UserDefaults.standard.dictionary(forKey: "watch_pending_audio_transfers") as? [String: [String: Any]] else { return }
+        guard var pendingTransfers = UserDefaults.standard.dictionary(forKey: AppConstants.Keys.Storage.watchPendingAudioTransfers) as? [String: [String: Any]] else { return }
         
         var hasUpdates = false
         for (transferId, transferInfo) in pendingTransfers {
@@ -126,7 +126,7 @@ final class WatchWatchSyncService: NSObject, WatchSyncProtocol, WCSessionDelegat
         }
         
         if hasUpdates {
-            UserDefaults.standard.set(pendingTransfers, forKey: "watch_pending_audio_transfers")
+            UserDefaults.standard.set(pendingTransfers, forKey: AppConstants.Keys.Storage.watchPendingAudioTransfers)
         }
     }
     

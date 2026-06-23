@@ -64,7 +64,8 @@ final class WebScraperProcessor: @unchecked Sendable {
         self.chain = mock
     }
 
-    /// 抓取网页内容并转换为 Markdown
+    /// 责任链遍历入口：按 Mock → Jina → Googlebot → Archive → DumbExtractor 顺序尝试抓取。
+    /// 自动补全 https:// 前缀，标准化 URL 后交给链首节点处理。
     func fetchMarkdown(from urlString: String) async throws -> (markdown: String, title: String) {
         let startTime = Date()
         var normalizedString = urlString.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -112,7 +113,8 @@ struct MockScraperHandler: WebScraperHandler {
     }
 }
 
-/// Level 1: 请求 r.jina.ai 获取干净 Markdown
+/// Level 1: 通过 r.jina.ai 获取干净的 Markdown 内容。
+/// Jina Reader 直接返回语义化 Markdown，是首选的高质量抓取方案。
 struct JinaScraperHandler: WebScraperHandler {
     var next: WebScraperHandler?
 
@@ -151,7 +153,7 @@ struct JinaScraperHandler: WebScraperHandler {
     }
 }
 
-/// Level 2: Jina 失败时，回退至使用原生 URLSession 伪装 Googlebot 直连拉取 HTML
+/// Level 2: Jina 失败时，伪装 Googlebot 直连 HTML 并通过 DumbExtractor 转换为 Markdown。
 struct GooglebotScraperHandler: WebScraperHandler {
     var next: WebScraperHandler?
 
@@ -193,7 +195,7 @@ struct GooglebotScraperHandler: WebScraperHandler {
     }
 }
 
-/// Level 3: 遇到付费墙阻断时，访问 archive.org 获取历史网页快照
+/// Level 3: 前两级均失败时，通过 archive.org 获取历史网页快照作为兜底。
 struct ArchiveScraperHandler: WebScraperHandler {
     var next: WebScraperHandler?
 
@@ -203,7 +205,7 @@ struct ArchiveScraperHandler: WebScraperHandler {
     /// /// - Returns: 返回值
     func handle(url: URL, startTime: Date) async throws -> (markdown: String, title: String) {
         do {
-            let archiveURLString = "https://web.archive.org/web/2/\(url.absoluteString)"
+            let archiveURLString = "\(AppConstants.URLs.webArchivePrefix)\(url.absoluteString)"
             guard let archiveURL = URL(string: archiveURLString) else {
                 throw WebScraperProcessor.ScraperError.invalidURL
             }
@@ -230,7 +232,8 @@ struct ArchiveScraperHandler: WebScraperHandler {
     }
 }
 
-/// Level 4: Dumb Extractor 用于最后的 HTML 抽取阶段
+/// Level 4: 责任链末端——纯 HTML 文本提取器，直接抛出 chainExhausted。
+/// 其静态方法 extractFromHTML 负责将原始 HTML 转换为简单 Markdown（标题 + 段落）。
 struct DumbExtractorHandler: WebScraperHandler {
     var next: WebScraperHandler?
 
@@ -246,8 +249,11 @@ struct DumbExtractorHandler: WebScraperHandler {
     
     // MARK: - Dumb HTML Extractor
     
-    /// 精简 HTML 文本提取器：抽取标题 <title> 与正文段落 <p> 并转换为简易 Markdown
+    /// 精简 HTML 文本提取器：按优先级提取 <article> → <main> → 全文，抽取 <title> 与 <p> 段落并转为简易 Markdown。
+    /// - Parameter html: 原始 HTML 字符串
+    /// - Returns: (markdown文本, 标题)
     static func extractFromHTML(_ html: String) -> (markdown: String, title: String) {
+        // Step 1: 提取 <title>
         let titlePattern = "<title>(.*?)</title>"
         let titleRegex = try? NSRegularExpression(pattern: titlePattern, options: [.caseInsensitive, .dotMatchesLineSeparators])
         var title = ""
@@ -259,6 +265,7 @@ struct DumbExtractorHandler: WebScraperHandler {
             }
         }
         
+        // Step 2: 优先提取 <article>，回退到 <main>，最终使用全文
         var contentToParse = html
         let articlePattern = "(?i)<article[^>]*>(.*?)</article>"
         let mainPattern = "(?i)<main[^>]*>(.*?)</main>"
@@ -273,9 +280,11 @@ struct DumbExtractorHandler: WebScraperHandler {
             contentToParse = String(html[mainRange])
         }
         
+        // Step 3: 去除 <script> 和 <style> 标签
         contentToParse = contentToParse.replacingOccurrences(of: "(?i)<script.*?>.*?</script>", with: "", options: .regularExpression)
         contentToParse = contentToParse.replacingOccurrences(of: "(?i)<style.*?>.*?</style>", with: "", options: .regularExpression)
         
+        // Step 4: 提取所有 <p> 段落并清洗 HTML 标签
         let pPattern = "<p[^>]*>(.*?)</p>"
         let pRegex = try? NSRegularExpression(pattern: pPattern, options: [.caseInsensitive, .dotMatchesLineSeparators])
         var paragraphs: [String] = []
@@ -303,6 +312,7 @@ struct DumbExtractorHandler: WebScraperHandler {
         return (markdown, title)
     }
     
+    /// 清洗 HTML 标签与字符实体：去除所有尖括号标签，解码 &quot; / &amp; / &lt; 等 HTML 实体。
     static private func cleanHTMLTags(_ text: String) -> String {
         var clean = text.replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression)
         let entities = [

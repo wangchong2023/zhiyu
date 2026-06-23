@@ -5,7 +5,7 @@
 //  Created by Antigravity on 2026/05/23.
 //  Copyright © 2026 WangChong. All rights reserved.
 //
-//  系统层级：[L2] 业务功能层
+//  系统层级：[L3] 表现层
 //  核心职责：知识图谱：3D 可视化、社区发现、力导向布局。
 //
 import SwiftUI
@@ -75,6 +75,25 @@ struct GraphNodeView: View {
         }
     }
     
+    @ViewBuilder
+    private var nodeContextMenu: some View {
+        Button(action: { onSelect() }) {
+            Label(L10n.Graph.viewDetail, systemImage: DesignSystem.Icons.weeklyInsight)
+        }
+        Button(action: {
+            let link = "[[\(node.title)]]"
+            AppPasteboard.string = link
+        }) {
+            Label(L10n.Graph.copyPageLink, systemImage: DesignSystem.Icons.link)
+        }
+        Divider()
+        #if os(macOS)
+        Button(action: { }) {
+            Label(L10n.Graph.openInNewWindow, systemImage: DesignSystem.Icons.macwindowBadgePlus)
+        }
+        #endif
+    }
+    
     private var nodeContent: some View {
         ZStack {
             let nodeBaseColor = useClustering ? (clusters.first(where: { $0.pageIDs.contains(node.id) }).map { Color.fromModelColorName($0.colorName) } ?? Color.fromModelColorName(node.pageType.colorName)) : Color.fromModelColorName(node.pageType.colorName)
@@ -109,12 +128,9 @@ struct GraphNodeView: View {
                         endPoint: .bottomTrailing
                     )
                 )
-                #if os(iOS)
-                .matchedGeometryEffect(id: node.id, in: heroNamespace, isSource: true)
-                #endif
+                .matchedGeometryEffectIfAvailable(id: node.id, in: heroNamespace, isSource: true)
                 .frame(width: nodeSize, height: nodeSize)
-                #if !os(watchOS)
-                .onHover { hovering in
+                .onHoverIfAvailable { hovering in
                     withAnimation(.spring()) {
                         isHovered = hovering
                     }
@@ -122,31 +138,10 @@ struct GraphNodeView: View {
                         HapticFeedback.shared.trigger(.selection)
                     }
                 }
-                #endif
                 .overlay {
                     hoverTooltip
                 }
-                .contextMenu {
-                    Button(action: { onSelect() }) {
-                        Label(L10n.Graph.viewDetail, systemImage: DesignSystem.Icons.weeklyInsight)
-                    }
-                    
-                    Button(action: {
-                        AppPasteboard.string = "[[\(node.title)]]"
-                    }) {
-                        Label(L10n.Graph.copyPageLink, systemImage: DesignSystem.Icons.link)
-                    }
-                    
-                    Divider()
-                    
-                    #if os(macOS)
-                    Button(action: {
-                        // macOS 新窗口功能预留
-                    }) {
-                        Label(L10n.Common.openInNewWindow, systemImage: DesignSystem.Icons.macwindowBadgePlus)
-                    }
-                    #endif
-                }
+                .contextMenu { nodeContextMenu }
                 .overlay(
                     Circle()
                         .stroke(.appGloss.opacity(DesignSystem.glassOpacity * 2), lineWidth: DesignSystem.borderWidth)

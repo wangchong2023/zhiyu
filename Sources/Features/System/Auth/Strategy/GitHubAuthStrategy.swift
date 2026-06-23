@@ -53,7 +53,7 @@ public final class GitHubAuthStrategy: NSObject, AuthStrategy {
                 return
             }
             
-            let urlString = "https://github.com/login/oauth/authorize?client_id=\(clientId)&state=\(state)&scope=read:user,user:email"
+            let urlString = "\(AppConstants.URLs.gitHubOAuthAuthorize)?client_id=\(clientId)&state=\(state)&scope=read:user,user:email"
             guard let url = URL(string: urlString) else {
                 continuation.resume(throwing: AppError.auth(domain: "GitHubAuthStrategy", code: -1, description: "GitHub URL Error"))
                 return

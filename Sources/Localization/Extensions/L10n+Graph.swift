@@ -51,6 +51,7 @@ extension L10n {
         public static var legend: String { Localized.tr("graph.legend", table: t) }
         public static var viewDetail: String { Localized.tr("graph.viewDetail", table: t) }
         public static var copyPageLink: String { Localized.tr("graph.copyPageLink", table: t) }
+        public static var openInNewWindow: String { Localized.tr("graph.openInNewWindow", table: t) }
 
         public static var insightSurprising: String { Localized.tr("graph.insightSurprising", table: t) }
         public static var insightSurprisingDesc: String { Localized.tr("graph.insightSurprisingDesc", table: t) }

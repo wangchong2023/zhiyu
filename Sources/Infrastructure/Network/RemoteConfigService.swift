@@ -106,7 +106,7 @@ public final class RemoteConfigService: RemoteConfigCapabilities, Sendable {
                 vendor: "Google",
                 fileSizeInBytes: 1530000000, // 约 1.4 GB
                 minDeviceMemoryInGb: 6.0,    // 最低 6GB 内存，iPhone 15+ 兼容良好
-                remoteURLString: "https://cdn.zhiyu.app/models/gemma-2b-it-q4.bin",
+                remoteURLString: AppConstants.URLs.cdnModelGemma,
                 sha256Checksum: "21dbdf737aa7134914101e4a42828a2a7134aa7e42828a2a7134914101e4a428",
                 parameterCount: "2B",
                 description: "",
@@ -118,7 +118,7 @@ public final class RemoteConfigService: RemoteConfigCapabilities, Sendable {
                 vendor: "Meta",
                 fileSizeInBytes: 4610000000, // 约 4.3 GB
                 minDeviceMemoryInGb: 12.0,   // 最低需要 12GB 物理内存，仅限 iPad M系列 / Mac
-                remoteURLString: "https://cdn.zhiyu.app/models/llama-3-8b-q4.bin",
+                remoteURLString: AppConstants.URLs.cdnModelLlama,
                 sha256Checksum: "a7134aa7e42828a2a7134914101e4a42828a2a7134aa7e42828a2a7134914101e",
                 parameterCount: "8B",
                 description: "Meta ",
@@ -130,7 +130,7 @@ public final class RemoteConfigService: RemoteConfigCapabilities, Sendable {
                 vendor: "Microsoft",
                 fileSizeInBytes: 2360000000, // 约 2.2 GB
                 minDeviceMemoryInGb: 8.0,    // 最低需要 8GB 内存，适合主流 iPhone 真机
-                remoteURLString: "https://cdn.zhiyu.app/models/phi-3-mini-q4.bin",
+                remoteURLString: AppConstants.URLs.cdnModelPhi,
                 sha256Checksum: "31dbdf737aa7134914101e4a42828a2a7134aa7e42828a2a7134914101e4a428",
                 parameterCount: "3.8B",
                 description: " RAG ",

@@ -150,7 +150,7 @@ public struct ServerConfigView: View {
                 MockServerConfig(
                     id: UUID(),
                     name: L10n.ModelManager.Server.mockLocalDev,
-                    baseURL: "http://localhost:8000",
+                    baseURL: AppConstants.URLs.localhostDefault,
                     apiKey: nil,
                     isDefault: true,
                     lastTestedAt: Date(),

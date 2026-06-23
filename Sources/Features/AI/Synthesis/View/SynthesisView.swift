@@ -5,12 +5,14 @@
 //  Created by Antigravity on 2026/05/23.
 //  Copyright © 2026 WangChong. All rights reserved.
 //
-//  系统层级：[L2] 业务功能层
-//  核心职责：构建 Synthesis 界面的 UI 视图层组件。
+//  系统层级：[L3] 表现层
+//  核心职责：合成视图入口容器，管理 Tab 切换、状态、文档列表与输出导航。
 //
+
 import SwiftUI
 
 // MARK: - 合成视图入口
+
 struct SynthesisView: View {
     @Binding var selection: SidebarSelection?
     @Binding var selectedTab: AppTab
@@ -70,21 +72,7 @@ struct SynthesisView: View {
                 batchDelete: batchDelete,
                 outputSheet: outputSheet
             )
-            .onChange(of: taskCenter.tasks) { oldTasks, newTasks in
-                // 找出从 running 变为 completed 或 failed 的任务，进行 VoiceOver 主动语音公告播报
-                for newTask in newTasks {
-                    if let oldTask = oldTasks.first(where: { $0.id == newTask.id }) {
-                        switch (oldTask.status, newTask.status) {
-                        case (.running, .completed):
-                            AccessibilityService.postAnnouncement(L10n.AI.Task.Accessibility.taskFinishedAnnouncement(newTask.name))
-                        case (.running, .failed(let error)):
-                            AccessibilityService.postAnnouncement(L10n.AI.Task.Accessibility.taskFailedAnnouncement(newTask.name) + "" + error)
-                        default:
-                            break
-                        }
-                    }
-                }
-            }
+            .onTaskStatusChange(taskCenter)
         }
     }
 
@@ -109,21 +97,10 @@ struct SynthesisView: View {
     }
 
     private var runningTasksContainer: some View {
-        let tasks = taskCenter.tasks.filter { task in
-            if task.type != .synthesis { return false }
-            switch task.status {
-            case .running: return true
-            default: return false
-            }
-        }
-        return Group {
-            if !tasks.isEmpty {
-                runningTasksSection(tasks: tasks)
-                    .listRowSeparator(.hidden)
-                    .listRowInsets(EdgeInsets(top: 0, leading: DesignSystem.standardPadding, bottom: DesignSystem.loosePadding, trailing: DesignSystem.standardPadding))
-                    .listRowBackground(Color.clear)
-            }
-        }
+        SynthesisTimelineView(taskCenter: taskCenter)
+            .listRowSeparator(.hidden)
+            .listRowInsets(EdgeInsets(top: 0, leading: DesignSystem.standardPadding, bottom: DesignSystem.loosePadding, trailing: DesignSystem.standardPadding))
+            .listRowBackground(Color.clear)
     }
 
     private var entrySection: some View {
@@ -333,35 +310,19 @@ struct SynthesisView: View {
         NavigationStack {
             Group {
                 if let doc = selectedDoc {
-                    switch doc.type {
-                    case .mindmap, .infographic:
-                        VStack(spacing: DesignSystem.standardPadding) {
-                            if let title = extractTitle(from: doc.content) {
-                                Text(title)
-                                    .font(.title2.bold())
-                                    .padding(.top, DesignSystem.widePadding)
-                                    .padding(.horizontal)
-                                    .frame(maxWidth: .infinity, alignment: .center)
-                            }
-                            
-                            MermaidWebView(mermaidCode: extractMermaidCode(from: doc.content))
-                                .id(doc.id)
-                        }
-                    case .quiz:
-                        if let data = doc.content.data(using: .utf8),
-                           let quiz = try? JSONDecoder().decode(QuizModel.self, from: data) {
-                            QuizView(quiz: quiz)
-                        } else {
-                            fallbackView(doc: doc)
-                        }
-                    default:
-                        fallbackView(doc: doc)
-                    }
+                    SynthesisOutputContent(doc: doc)
                 }
             }
             .safeAreaInset(edge: .bottom) {
                 if let doc = selectedDoc, !doc.sourcePageIDs.isEmpty {
-                    sourcePagesSheet(doc: doc)
+                    SynthesisSourcePagesBar(
+                        sourcePageIDs: doc.sourcePageIDs,
+                        store: store,
+                        onNavigate: { pageID in
+                            showOutput = false
+                            router.navigateToPage(id: pageID)
+                        }
+                    )
                 }
             }
             .navigationTitle("")
@@ -386,55 +347,6 @@ struct SynthesisView: View {
         }
     }
 
-    @ViewBuilder
-    private func sourcePagesSheet(doc: SynthesisStore.SynthesisDocument) -> some View {
-        let sourcePages = store.pages.filter { doc.sourcePageIDs.contains($0.id) }
-        VStack(alignment: .leading, spacing: 0) {
-            Divider()
-            HStack {
-                Label(L10n.AI.Synthesis.sourceCount(doc.sourcePageIDs.count), systemImage: "doc.text")
-                    .font(.caption.weight(.semibold))
-                Spacer()
-            }
-            .padding(.horizontal, DesignSystem.standardPadding)
-            .padding(.vertical, DesignSystem.tightPadding)
-            .background(.ultraThinMaterial)
-
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: DesignSystem.small) {
-                    ForEach(sourcePages, id: \.id) { page in
-                        Button(action: {
-                            showOutput = false
-                            router.navigateToPage(id: page.id)
-                        }) {
-                            HStack(spacing: DesignSystem.tiny) {
-                                Image(systemName: page.displayIcon)
-                                    .font(.caption2)
-                                Text(page.title)
-                                    .font(.caption)
-                                    .lineLimit(1)
-                            }
-                            .padding(.horizontal, DesignSystem.small)
-                            .padding(.vertical, DesignSystem.tightPadding)
-                            .background(Capsule().fill(Color.appAccent.opacity(DesignSystem.Opacity.subtle)))
-                            .foregroundStyle(.appAccent)
-                        }
-                    }
-                }
-                .padding(.horizontal, DesignSystem.standardPadding)
-                .padding(.vertical, DesignSystem.tightPadding)
-            }
-        }
-    }
-
-    @ViewBuilder
-    private func fallbackView(doc: SynthesisStore.SynthesisDocument) -> some View {
-        ScrollView {
-            MarkdownRendererView(content: doc.content, isPrivate: false, onLinkTap: { _ in })
-                .padding()
-        }
-    }
-
     private func exportAction() {
         guard let doc = selectedDoc else { return }
         Task {
@@ -450,68 +362,6 @@ struct SynthesisView: View {
                     self.showExportError = true 
                 }
             }
-        }
-    }
-
-    private func runningTasksSection(tasks: [GlobalTask]) -> some View {
-        VStack(alignment: .leading, spacing: DesignSystem.medium) {
-            Text(L10n.AI.Task.running)
-                .font(.title3.bold())
-                .foregroundStyle(.appAccent)
-                .padding(.horizontal, DesignSystem.tiny)
-            
-            VStack(spacing: 0) {
-                ForEach(tasks) { task in
-                    synthesisTaskRow(task: task)
-                        .padding()
-                    if task.id != tasks.last?.id {
-                        Divider().padding(.horizontal)
-                    }
-                }
-            }
-            .appContainer(padding: false)
-        }
-    }
-
-    private func synthesisTaskRow(task: GlobalTask) -> some View {
-        HStack(spacing: DesignSystem.standardPadding) {
-            ZStack {
-                Circle().fill(Color.appAccent.opacity(DesignSystem.glassOpacity / 1.5)).frame(width: DesignSystem.Graph.selectedNodeSize, height: DesignSystem.Graph.selectedNodeSize)
-                ProgressView()
-            }
-            VStack(alignment: .leading, spacing: DesignSystem.small) {
-                Text(task.name).font(.subheadline.weight(.semibold))
-                if case .running(let progress, _) = task.status {
-                    ProgressView(value: progress).tint(.appAccent)
-                }
-            }
-        }
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(buildTaskAccessibilityLabel(task))
-    }
-
-    /// 构造任务在运行中的无障碍语音标签
-    /// - Parameter task: 异步后台任务
-    /// - Returns: 结合了进度与执行阶段描述的文本
-    private func buildTaskAccessibilityLabel(_ task: GlobalTask) -> String {
-        let base = "\(task.name)\(L10n.AI.Task.Accessibility.taskInProgress)"
-        if case .running(let progress, let stage) = task.status {
-            let percentage = Int(progress * 100)
-            let stageName = localizedStageName(stage)
-            return base + "" + L10n.AI.Task.Accessibility.progressValue(percentage, stageName)
-        }
-        return base
-    }
-
-    /// 将 RAG 执行阶段转化为强类型多语言 Status 描述文案
-    /// - Parameter stage: RAG 任务阶段
-    /// - Returns: 对应的本地化描述文案
-    private func localizedStageName(_ stage: TaskStage) -> String {
-        switch stage {
-        case .embedding: return L10n.AI.Status.extracting
-        case .retrieval: return L10n.AI.Status.scanning
-        case .synthesis: return L10n.AI.Status.synthesizing
-        default: return L10n.AI.Status.thinking
         }
     }
 
@@ -532,33 +382,10 @@ struct SynthesisView: View {
             .appContainer(padding: true)
         }
     }
-
-    private func extractTitle(from content: String) -> String? {
-        let lines = content.components(separatedBy: .newlines)
-        if let firstLine = lines.map({ $0.trimmingCharacters(in: .whitespaces) }).first(where: { !$0.isEmpty }),
-           firstLine.hasPrefix("# ") {
-            return firstLine.replacingOccurrences(of: "# ", with: "")
-        }
-        return nil
-    }
-
-    private func extractMermaidCode(from content: String) -> String {
-        if let regex = try? NSRegularExpression(pattern: "```(?:mermaid)?\\n([\\s\\S]*?)```", options: []),
-           let match = regex.firstMatch(in: content, options: [], range: NSRange(content.startIndex..., in: content)),
-           let range = Range(match.range(at: 1), in: content) {
-            return String(content[range]).trimmingCharacters(in: .whitespacesAndNewlines)
-        }
-        let lines = content.components(separatedBy: .newlines)
-        return lines.filter { line in
-            let trimmed = line.trimmingCharacters(in: .whitespaces)
-            return !trimmed.hasPrefix("#") && !trimmed.hasPrefix("```") && !trimmed.isEmpty
-        }
-        .joined(separator: "\n")
-        .trimmingCharacters(in: .whitespacesAndNewlines)
-    }
 }
 
 // MARK: - 辅助扩展：解耦 View Presentations
+
 extension View {
 
     /// synthesisViewPresentations

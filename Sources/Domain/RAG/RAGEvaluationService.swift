@@ -113,6 +113,7 @@ final class RAGEvaluationService {
 
     // MARK: - 辅助
 
+    /// 对查询文本执行 SHA-256 哈希，生成查询指纹用于关联去重。
     private static func sha256(_ text: String) -> String {
         let hash = CryptoKit.SHA256.hash(data: Data(text.utf8))
         return hash.compactMap { String(format: "%02x", $0) }.joined()
@@ -166,30 +167,34 @@ final class RAGEvaluationService {
         """
     }
 
-    /// 处理评估响应结果并将其持久化到数据库
+    /// 处理 LLM 评估 JSON 响应，解析六维评分并持久化到治理数据库。
+    /// 流程：JSON 解析 → 评分提取 → 状态判定 → 持久化评估记录 → 检索快照标注。
     /// - Parameters:
-    ///   - response: LLM 返回的响应文本
+    ///   - response: LLM 返回的 JSON 响应文本
     ///   - query: 原始查询
     ///   - answer: 生成的回答
-    ///   - sources: 检索文档源列表
-    /// - Returns: 构造好的 EvaluationReport
+    ///   - sources: 检索文档源列表（传入时触发检索质量记录）
+    /// - Returns: 构造好的 EvaluationReport，解析失败返回 nil
     private func processEvaluationResponse(
         _ response: String,
         query: String,
         answer: String,
         sources: [KnowledgeSource]?
     ) async -> EvaluationReport? {
+        // Step 1: JSON 解析 — 尝试从 LLM 响应中提取评分字段
         guard let data = response.data(using: .utf8),
               let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
             return nil
         }
 
+        // Step 2: 提取六维评分，缺失字段默认 0.0
         let faithfulnessScore = (json[EvaluationMetric.faithfulness.rawValue] as? Double) ?? 0.0
         let relevanceScore = (json[EvaluationMetric.relevance.rawValue] as? Double) ?? 0.0
         let precisionScore = (json[EvaluationMetric.precision.rawValue] as? Double) ?? 0.0
         let hallucinationRate = (json[EvaluationMetric.hallucinationRate.rawValue] as? Double) ?? 0.0
         let citationAccuracy = (json[EvaluationMetric.citationAccuracy.rawValue] as? Double) ?? 0.0
 
+        // Step 3: 基于忠实度的三级状态判定
         let status: String
         if faithfulnessScore < 0.5 {
             status = L10n.AI.Eval.Status.fail
@@ -199,7 +204,7 @@ final class RAGEvaluationService {
             status = L10n.AI.Eval.Status.pass
         }
 
-        // 持久化评估结果到数据库，然后查询回 ID
+        // Step 4: 持久化评估记录到治理数据库
         let eval = RAGEvaluation(
             query: query,
             answer: answer,
@@ -212,11 +217,11 @@ final class RAGEvaluationService {
         )
         try? await governanceStore.saveRAGEvaluation(eval)
         
-        // 查询最新评估获取自增 ID
+        // Step 5: 查询最新评估记录获取自增 ID
         let savedEvals = (try? await governanceStore.fetchRAGEvaluations(limit: 1)) ?? []
         let savedEvalID = savedEvals.first.flatMap { $0.id }
 
-        // 检索快照 + 相关性标注（仅当有 sources 且有 ID 时）
+        // Step 6: 检索快照 + 相关性标注（仅当有 sources 且有有效评估 ID 时）
         if let sources, let evalID = savedEvalID {
             await recordRetrievalQuality(
                 evalID: evalID,

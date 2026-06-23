@@ -6,7 +6,7 @@
 //  Copyright © 2026 WangChong. All rights reserved.
 //
 //  系统层级：[L1.5] 领域层
-//  核心职责：核心领域模型定义（KnowledgePage、PageLink、PluginRecord 等）。
+//  核心职责：定义 RAG 检索增强生成领域模型：页面分块 (PageChunk)、嵌入向量及混合检索召回结果。
 //
 import Foundation
 

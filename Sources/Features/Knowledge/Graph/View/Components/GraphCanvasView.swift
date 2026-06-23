@@ -5,7 +5,7 @@
 //  Created by Antigravity on 2026/05/23.
 //  Copyright © 2026 WangChong. All rights reserved.
 //
-//  系统层级：[L2] 业务功能层
+//  系统层级：[L3] 表现层
 //  核心职责：构建 GraphCanvas 界面的 UI 视图层组件。
 //
 import SwiftUI

@@ -5,7 +5,7 @@
 //  Created by Antigravity on 2026/06/21.
 //  Copyright © 2026 WangChong. All rights reserved.
 //
-//  系统层级：[L2] 业务功能层
+//  系统层级：[L3] 表现层
 //  核心职责：构建统一的 AI 大模型设置面板（AISettingsView），聚合在线模型、本地模型、智能路由和提示词设置。
 //
 

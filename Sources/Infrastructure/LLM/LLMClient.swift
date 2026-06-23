@@ -51,6 +51,7 @@ class LLMClient: LLMClientProtocol, @unchecked Sendable {
 
     // MARK: - Private Methods
 
+    /// 规范化基础 URL：去除尾部斜杠以确保路径拼接一致性。
     private var normalizedBaseURL: String {
         baseURL.hasSuffix("/") ? String(baseURL.dropLast()) : baseURL
     }
@@ -120,6 +121,9 @@ class LLMClient: LLMClientProtocol, @unchecked Sendable {
         return json
     }
 
+    /// 判断是否应重试请求。
+    /// 可重试场景：限流（429）、服务端临时错误（5xx）、网络层断连/超时。
+    /// 使用指数退避策略，最多重试 maxRetries - 1 次。
     private func shouldRetry(error: Error, attempt: Int) -> Bool {
         if attempt >= Self.maxRetries - 1 { return false }
 
@@ -225,6 +229,7 @@ final class SSEParser {
         }
     }
 
+    /// 诊断日志记录器：仅在前 15 行内记录 SSE 原始行内容供排查格式兼容问题。
     private static func logDiagnosticLine(line: String, lineCount: Int, logger: (any LoggerProtocol)?, rawLines: inout [String]) {
         guard let logger, lineCount <= 15 else { return }
         let preview = String(line.prefix(250))
@@ -234,12 +239,14 @@ final class SSEParser {
         }
     }
 
+    /// 从 SSE 行提取 "data:" 前缀后的内容字符串，兼容 "data: " 和 "data:" 两种格式。
     private static func extractDataString(from line: String) -> String? {
         let dataPrefix = "data:"
         guard line.hasPrefix(dataPrefix) else { return nil }
         return String(line.dropFirst(line.hasPrefix("data: ") ? 6 : 5))
     }
 
+    /// 将 SSE 数据行解析为 JSON 字典，非 JSON 行（如空行、注释）静默跳过。
     private static func parseJSONLine(_ dataString: String, logger: (any LoggerProtocol)?) -> [String: Any]? {
         guard let data = dataString.data(using: .utf8),
               let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
@@ -251,6 +258,8 @@ final class SSEParser {
         return json
     }
 
+    /// 从 LLM 响应 JSON 的 choices[0] 中提取 content 或 reasoning_content。
+    /// 兼容 delta（流式）和 message（非流式）两种 SSE 结构。
     private static func extractContent(from json: [String: Any]) -> String? {
         guard let choices = json["choices"] as? [[String: Any]],
               let first = choices.first else { return nil }

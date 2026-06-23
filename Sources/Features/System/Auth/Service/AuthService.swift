@@ -6,8 +6,9 @@
 //  Copyright © 2026 WangChong. All rights reserved.
 //
 //  系统层级：[L2] 业务功能层
-//  核心职责：实现 Auth 模块的核心业务逻辑服务，通过 NetworkClient 与后端真实交互。
+//  核心职责：身份认证服务协调器 — 组合 OAuth / PhoneAuth / TokenManager 三大子模块。
 //
+
 import Foundation
 import Observation
 
@@ -47,7 +48,7 @@ public final class AuthService: AuthServiceProtocol {
     public static var forceMockBackend = false
     #endif
 
-    private var isMockBackend: Bool {
+    var isMockBackend: Bool {
         #if DEBUG
         // 优先检查强制 mock 标志（供单元测试使用）
         if Self.forceMockBackend { return true }
@@ -65,145 +66,11 @@ public final class AuthService: AuthServiceProtocol {
 
     // MARK: - 核心操作
     
-    /// 自动静默登录验证，利用 Keychain 本地缓存的 token 进行登录态恢复
-    /// - Returns: 是否登录恢复成功
-    public func tryAutoLogin() async -> Bool {
-        #if DEBUG
-        if isMockBackend {
-            // Mock 模式：检测到 Mock 环境则直接构造并注入假登录用户态
-            let mockUser = User(
-                id: UUID(),
-                name: "Mock Autologin User",
-                email: "mock_autologin@example.com",
-                phone: "13800000000",
-                avatarURL: nil
-            )
-            AuthSession.shared.update(user: mockUser)
-            saveState()
-            return true
-        }
-        #endif
-        
-        // 1. 尝试从安全区 Keychain 提取现存的 Token
-        guard (try? KeychainService.shared.retrieve(key: AppConstants.Network.jwtTokenKey)) != nil else {
-            return false
-        }
-        
-        do {
-            // 2. 发起 GET 请求拉取服务器上用户的最新 Profile 资料
-            let response: UserProfileResponse = try await NetworkClient.shared.request(
-                path: AppConstants.Network.userProfilePath,
-                method: AppConstants.Network.methodGET,
-                requiresAuth: true
-            )
-            
-            // 3. 构造本地 User 模型并更新状态树
-            let user = User(
-                id: UUID(uuidString: String(response.userId)) ?? UUID(),
-                name: response.nick,
-                email: response.email ?? "",
-                phone: response.mobile,
-                avatarURL: response.avatar.flatMap { URL(string: $0) }
-            )
-            AuthSession.shared.update(user: user)
-            saveState()
-            return true
-        } catch {
-            Logger.shared.error("[AuthService] 自动静默登录拉取 Profile 失败: ", error: error)
-            return false
-        }
-    }
-    
     /// 以游客身份进入系统
     public func continueAsGuest() {
         AuthSession.shared.update(user: nil)
         AuthSession.shared.isGuest = true
         saveState()
-    }
-    
-    /// 统一密码登录操作
-    @MainActor
-
-    /// login
-    /// - Parameter identity: identity
-    /// - Parameter password: password
-    /// - Returns: 是否成功
-    public func login(identity: String, password: String) async -> Bool {
-        #if DEBUG
-        if isMockBackend {
-            let response = LoginResponse(
-                accessToken: "mock_jwt_access_token",
-                refreshToken: "mock_jwt_refresh_token",
-                expiresIn: 3600,
-                tokenType: "Bearer",
-                isNewUser: false,
-                totpRequired: false
-            )
-            return await handleSuccessfulLogin(response: response, identity: identity)
-        }
-        #endif
-        let req = LoginRequest.password(username: identity, password: password)
-        do {
-            let response: LoginResponse = try await NetworkClient.shared.request(
-                path: "/api/v1/auth/login",
-                method: "POST",
-                body: req,
-                requiresAuth: false
-            )
-            
-            return await handleSuccessfulLogin(response: response, identity: identity)
-        } catch {
-            Logger.shared.error("[AuthService] ", error: error)
-            return false
-        }
-    }
-    
-    /// 发送注册/登录验证码
-    @MainActor
-
-    /// 发送SmsCode
-    /// - Parameter phone: phone
-    /// - Parameter scene: scene
-    /// - Returns: 是否成功
-    public func sendSmsCode(phone: String, scene: String) async -> Bool {
-        let req = SendSmsRequest(phone: phone, scene: scene)
-        do {
-            let _: EmptyData = try await NetworkClient.shared.request(
-                path: "/api/v1/auth/sms/send",
-                method: "POST",
-                body: req,
-                requiresAuth: false
-            )
-            return true
-        } catch {
-            Logger.shared.error("[AuthService] ", error: error)
-            return false
-        }
-    }
-    
-    /// 手机号+验证码登录/注册操作
-    @MainActor
-
-    /// 注册
-    /// - Parameter phone: phone
-    /// - Parameter code: code
-    /// - Parameter password: password
-    /// - Returns: 是否成功
-    public func register(phone: String, code: String, password: String) async -> Bool {
-        let req = LoginRequest.sms(phone: phone, code: code)
-        do {
-            let response: LoginResponse = try await NetworkClient.shared.request(
-                path: "/api/v1/auth/login",
-                method: "POST",
-                body: req,
-                requiresAuth: false
-            )
-            
-            return await handleSuccessfulLogin(response: response, identity: phone)
-        } catch {
-            Logger.shared.error("[AuthService] ", error: error)
-            return false
-        }
     }
     
     /// 用于测试的后台注销任务追踪
@@ -214,8 +81,6 @@ public final class AuthService: AuthServiceProtocol {
     
     /// 退出登录
     @MainActor
-
-    /// logout
     public func logout() {
         Logger.shared.debug("[AuthService] logout() called")
         AuthSession.shared.logout()
@@ -255,182 +120,7 @@ public final class AuthService: AuthServiceProtocol {
         testLogoutTasks.append(task)
     }
     
-    // MARK: - 多渠道中台统一登录
-    
-    @MainActor
-
-    /// login
-    /// - Returns: 是否成功
-    public func login(using strategy: any AuthStrategy) async -> Bool {
-        do {
-            #if DEBUG
-            if isMockBackend {
-                // 在 Mock 模式下，直接构造测试凭证，跳过底层 SDK (如 FaceID) 唤起，防止 UI 测试阻塞
-                let mockCred = AuthCredential(identityType: strategy.identityType, identifier: "mock_sub_123", credential: "mock_jwt_token", extraInfo: ["nickname": "Mock User"])
-                return try await sendAuthRequestToBackend(mockCred)
-            }
-            #endif
-            
-            // 1. 驱动客户端 SDK 获取凭证
-            let credential = try await strategy.acquireCredentials()
-            
-            // 2. 发送至后端校验
-            return try await sendAuthRequestToBackend(credential)
-        } catch {
-            Logger.shared.error("[AuthService] ", error: error)
-            return false
-        }
-    }
-    
-    private func sendAuthRequestToBackend(_ cred: AuthCredential) async throws -> Bool {
-        #if DEBUG
-        if let result = await tryMockAuthRequest(cred) { return result }
-        #endif
-
-        let info = resolveAuthRequestInfo(cred)
-        let response = try await sendOAuthRequest(path: info.path, reqBody: info.body)
-        let name = cred.extraInfo?["nickname"] ?? "ZhiYu User"
-        return await handleSuccessfulLogin(response: response, identity: name)
-    }
-
-    #if DEBUG
-    private func tryMockAuthRequest(_ cred: AuthCredential) async -> Bool? {
-        guard isMockBackend else { return nil }
-        let name = cred.extraInfo?["nickname"] ?? "ZhiYu User"
-        let response = LoginResponse(
-            accessToken: "mock_jwt_access_token_\(UUID().uuidString)",
-            refreshToken: "mock_jwt_refresh_token_\(UUID().uuidString)",
-            expiresIn: 3600,
-            tokenType: "Bearer",
-            isNewUser: false,
-            totpRequired: false
-        )
-        return await handleSuccessfulLogin(response: response, identity: name)
-    }
-    #endif
-
-    private struct AuthRequestInfo {
-        let path: String
-        let body: Any
-    }
-
-    /// 根据身份凭证解析后端 API 请求路径与请求体
-    /// - Parameter cred: 客户端获取的 OAuth/一键登录身份凭证
-    /// - Returns: 包含请求路径及请求体数据的结构体
-    private func resolveAuthRequestInfo(_ cred: AuthCredential) -> AuthRequestInfo {
-        switch cred.identityType {
-        // 苹果登录：后端 API 路径为 /api/v1/auth/oauth/apple
-        case "apple": return AuthRequestInfo(path: "/api/v1/auth/oauth/apple", body: OAuthAppleRequest(code: cred.credential, state: cred.extraInfo?["state"], idToken: cred.extraInfo?["idToken"]))
-        // 微信登录：后端 API 路径为 /api/v1/auth/oauth/wechat
-        case "wechat": return AuthRequestInfo(path: "/api/v1/auth/oauth/wechat", body: OAuthWeChatRequest(code: cred.credential, state: cred.extraInfo?["state"]))
-        // 谷歌登录：后端 API 路径为 /api/v1/auth/oauth/google
-        case "google": return AuthRequestInfo(path: "/api/v1/auth/oauth/google", body: OAuthGoogleRequest(code: cred.credential, idToken: cred.extraInfo?["idToken"] ?? ""))
-        // GitHub 登录：后端 API 路径为 /api/v1/auth/oauth/github
-        case "github": return AuthRequestInfo(path: "/api/v1/auth/oauth/github", body: OAuthGitHubRequest(code: cred.credential, state: cred.extraInfo?["state"]))
-        // 运营商一键免密登录：后端 API 路径为 /api/v1/auth/carrier
-        case "carrier": return AuthRequestInfo(path: "/api/v1/auth/carrier", body: CarrierAuthRequest(carrierToken: cred.extraInfo?["carrierToken"] ?? "", appKey: cred.extraInfo?["appKey"] ?? "", privacyConsent: cred.extraInfo?["privacyConsent"] == "true"))
-        default:
-            Logger.shared.error("未支持的登录渠道类型: \(cred.identityType)")
-            return AuthRequestInfo(path: "", body: "")
-        }
-    }
-
-    private func sendOAuthRequest(path: String, reqBody: Any) async throws -> LoginResponse {
-        if let appleReq = reqBody as? OAuthAppleRequest {
-            return try await NetworkClient.shared.request(path: path, method: "POST", body: appleReq, requiresAuth: false)
-        }
-        if let wechatReq = reqBody as? OAuthWeChatRequest {
-            return try await NetworkClient.shared.request(path: path, method: "POST", body: wechatReq, requiresAuth: false)
-        }
-        if let googleReq = reqBody as? OAuthGoogleRequest {
-            return try await NetworkClient.shared.request(path: path, method: "POST", body: googleReq, requiresAuth: false)
-        }
-        if let githubReq = reqBody as? OAuthGitHubRequest {
-            return try await NetworkClient.shared.request(path: path, method: "POST", body: githubReq, requiresAuth: false)
-        }
-        if let carrierReq = reqBody as? CarrierAuthRequest {
-            return try await NetworkClient.shared.request(path: path, method: "POST", body: carrierReq, requiresAuth: false)
-        }
-        throw NetworkError.unexpected("Unsupported auth request type")
-    }
-    
-    // MARK: - 私有辅助方法
-    
-    @MainActor
-    private func handleSuccessfulLogin(response: LoginResponse, identity: String) async -> Bool {
-        do {
-            // 写入本地安全区
-            try KeychainService.shared.store(key: AppConstants.Network.jwtTokenKey, value: response.accessToken)
-            if let refresh = response.refreshToken {
-                try KeychainService.shared.store(key: "refresh_token", value: refresh)
-            }
-        } catch {
-            Logger.shared.error("[AuthService]  Token ", error: error)
-            #if DEBUG
-            if isMockBackend {
-                Logger.shared.warning("[AuthService] Mock  Keychain ")
-            } else {
-                return false
-            }
-            #else
-            return false
-            #endif
-        }
-        
-        #if DEBUG
-        if isMockBackend {
-            let mockUser = User(
-                id: UUID(),
-                name: identity,
-                email: "",
-                phone: nil,
-                avatarURL: nil
-            )
-            AuthSession.shared.update(user: mockUser)
-            saveState()
-            return true
-        }
-        #endif
-
-        do {
-            let profileResponse: UserProfileResponse = try await NetworkClient.shared.request(
-                path: AppConstants.Network.userProfilePath,
-                method: AppConstants.Network.methodGET,
-                requiresAuth: true
-            )
-            
-            let user = User(
-                id: UUID(uuidString: String(profileResponse.userId)) ?? UUID(),
-                name: profileResponse.nick,
-                email: profileResponse.email ?? "",
-                phone: profileResponse.mobile,
-                avatarURL: profileResponse.avatar.flatMap { URL(string: $0) }
-            )
-            AuthSession.shared.update(user: user)
-            saveState()
-            return true
-        } catch {
-            Logger.shared.error("[AuthService] 拉取用户配置失败: ", error: error)
-            return false
-        }
-    }
-    
-    private func getDeviceId() -> String {
-        let key = "zhiyu_device_id"
-        if let savedId = UserDefaults.standard.string(forKey: key) {
-            return savedId
-        }
-        let newId = UUID().uuidString
-        UserDefaults.standard.set(newId, forKey: key)
-        return newId
-    }
-    
-    private func saveState() {
-        UserDefaults.standard.set(isAuthenticated, forKey: AppConstants.Keys.Storage.authIsAuthenticated)
-        UserDefaults.standard.set(isGuest, forKey: AppConstants.Keys.Storage.authIsGuest)
-    }
-    
-    // MARK: - 新增的个人信息修改与支付校验方法
+    // MARK: - 个人信息修改与支付校验
     
     /// 更新个人资料
     /// - Parameters:
@@ -511,7 +201,7 @@ public final class AuthService: AuthServiceProtocol {
         #if DEBUG
         if isMockBackend {
             // Mock 模式：返回随机头像 URL
-            return "https://api.multiavatar.com/\(UUID().uuidString).png"
+            return "\(AppConstants.URLs.multiAvatarAPI)/\(UUID().uuidString).png"
         }
         #endif
         
@@ -586,96 +276,6 @@ public final class AuthService: AuthServiceProtocol {
             Logger.shared.error("[AuthService] 验证苹果支付凭证失败: ", error: error)
             return false
         }
-    }
-    
-    /// 从后端拉取最新个人资料并更新本地 User 缓存
-    /// 在登录成功或支付激活后调用，保证本地数据与后端同步
-    public func refreshUserProfile() async throws {
-        let profile: RefreshProfileResponse = try await NetworkClient.shared.request(
-            path: "/api/v1/user/profile",
-            method: "GET",
-            requiresAuth: true
-        )
-        
-        var currentPlanKey: String? = "free"
-        var parsedQuotas: RefreshPlanQuotas?
-        var parsedFeatures: [String] = []
-        
-        do {
-            let sub: RefreshSubscriptionResponse = try await NetworkClient.shared.request(
-                path: "/api/v1/subscriptions/me",
-                method: "GET",
-                requiresAuth: true
-            )
-            currentPlanKey = sub.planKey ?? "free"
-            
-            if let quotasStr = sub.quotasJson, let data = quotasStr.data(using: .utf8) {
-                parsedQuotas = try? JSONDecoder().decode(RefreshPlanQuotas.self, from: data)
-            }
-            
-            if let featuresStr = sub.featuresJson, let data = featuresStr.data(using: .utf8) {
-                if let decodedFeatures = try? JSONDecoder().decode([String].self, from: data) {
-                    parsedFeatures = decodedFeatures
-                }
-            }
-        } catch {
-            Logger.shared.warning("[AuthService] 获取当前订阅信息失败，将使用默认配置: \(error)")
-        }
-        
-        // 3. 合并更新本地 User 对象
-        if let user = AuthSession.shared.currentUser {
-            // 如果后端未返回或解析失败，默认给与 Lite (free) 的限制以策安全
-            let defaultLiteQuotas = RefreshPlanQuotas(
-                maxVaults: User.DefaultQuotas.liteMaxVaults, 
-                maxPages: User.DefaultQuotas.liteMaxPages, 
-                maxPlugins: User.DefaultQuotas.liteMaxPlugins
-            )
-            let quotasToUse = parsedQuotas ?? defaultLiteQuotas
-            
-            let updated = User(
-                id: user.id,
-                name: profile.nick,
-                email: profile.email ?? user.email,
-                avatarURL: profile.avatar.flatMap { URL(string: $0) },
-                planKey: currentPlanKey,
-                maxVaults: quotasToUse.maxVaults,
-                maxPages: quotasToUse.maxPages,
-                maxPlugins: quotasToUse.maxPlugins,
-                features: parsedFeatures
-            )
-            AuthSession.shared.update(user: updated)
-        }
-    }
-}
-
-// MARK: - 私有 DTO 结构体
-
-/// 用户基本信息响应体
-private struct RefreshProfileResponse: Codable {
-    let userId: Int64
-    let username: String
-    let nick: String
-    let avatar: String?
-    let email: String?
-}
-
-/// 用户订阅套餐信息响应体
-private struct RefreshSubscriptionResponse: Codable {
-    let planKey: String?
-    let quotasJson: String?
-    let featuresJson: String?
-}
-
-/// 用户订阅配置限额详情
-private struct RefreshPlanQuotas: Codable {
-    let maxVaults: Int
-    let maxPages: Int
-    let maxPlugins: Int
-    
-    enum CodingKeys: String, CodingKey {
-        case maxVaults = "max_vaults"
-        case maxPages = "max_pages"
-        case maxPlugins = "max_plugins"
     }
 }
 

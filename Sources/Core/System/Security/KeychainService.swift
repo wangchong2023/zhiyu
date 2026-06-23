@@ -13,13 +13,17 @@ import Security
 
 /// 钥匙串服务包装器 (@SR-03: 安全存储鉴权令牌)
 /// 提供对系统 Keychain 的轻量级访问，支持敏感数据的持久化存储与隔离。
-final class KeychainService: Sendable {
-    /// 全局单例
-    static let shared = KeychainService()
+class KeychainService: @unchecked Sendable {
+    /// 真实单例（内部持有）
+    private static let _shared = KeychainService()
+    /// 测试覆盖：设置非 nil 值后 shared 返回 Mock 实例；在 tearDown 中置 nil 恢复
+    nonisolated(unsafe) static var testOverride: KeychainService?
+    /// 全局单例入口：测试模式下可被替换
+    static var shared: KeychainService { testOverride ?? _shared }
     /// Keychain 服务标识符
     private let serviceName = "com.zhiyu.keychain"
 
-    private init() {}
+    init() {}
 
     /// 存储敏感数据
     /// - Parameters:

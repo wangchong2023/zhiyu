@@ -8,7 +8,7 @@
 //  系统层级：[Shared] 共享标准层
 //  核心职责：构建 MarkdownRenderer 界面的 UI 视图层组件。
 //
-@preconcurrency import SwiftUI
+import SwiftUI
 
 // MARK: - Markdown Renderer View
 /// Renders structured Markdown blocks using MarkdownProcessor.

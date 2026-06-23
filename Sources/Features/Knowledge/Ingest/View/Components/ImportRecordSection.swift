@@ -5,7 +5,7 @@
 //  Created by Antigravity on 2026/06/10.
 //  Copyright © 2026 WangChong. All rights reserved.
 //
-//  系统层级：[L2] 业务功能层
+//  系统层级：[L3] 表现层
 //  核心职责：导入原始内容分段 Tab + 卡片列表区域
 
 import SwiftUI
@@ -23,6 +23,8 @@ struct ImportRecordSection: View {
     var onManualEdit: ((ImportRecord) -> Void)?
 
     @Inject private var repo: any ImportRecordRepository
+    @Inject private var urlOpener: any URLOpenerProtocol
+    @Inject private var shareSheet: any ShareSheetProtocol
 
     private let tabs: [(key: String, label: String)] = {
         var items: [(String, String)] = [("all", L10n.Ingest.importAll)]
@@ -121,11 +123,9 @@ struct ImportRecordSection: View {
             showQuickLook = true
             return
         }
-        // 链接 → Safari（仅当无本地文件时）
+        // 链接 → 浏览器（仅当无本地文件时）
         if let urlStr = record.sourceURL, let url = URL(string: urlStr) {
-            #if os(iOS)
-            UIApplication.shared.open(url)
-            #endif
+            Task { await urlOpener.open(url) }
             return
         }
         // 文本 → Sheet
@@ -185,28 +185,7 @@ struct ImportRecordSection: View {
                 onOpenWith: {
                     guard let path = record.filePath else { return }
                     let fileURL = URL(fileURLWithPath: path)
-                    #if os(iOS)
-                    let controller = UIActivityViewController(activityItems: [fileURL], applicationActivities: nil)
-                    if let scene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene,
-                       let keyWindow = scene.windows.first(where: { $0.isKeyWindow }),
-                       let root = keyWindow.rootViewController {
-                        
-                        // 递归查找顶层 UIViewController
-                        var topVC = root
-                        while let presented = topVC.presentedViewController {
-                            topVC = presented
-                        }
-                        
-                        // 适配 iPad 弹窗避免崩溃
-                        if let popover = controller.popoverPresentationController {
-                            popover.sourceView = topVC.view
-                            popover.sourceRect = CGRect(x: topVC.view.bounds.midX, y: topVC.view.bounds.midY, width: 0, height: 0)
-                            popover.permittedArrowDirections = []
-                        }
-                        
-                        topVC.present(controller, animated: true)
-                    }
-                    #endif
+                    Task { await shareSheet.presentShareSheet(items: [fileURL]) }
                 },
                 onAITag: { onAITag?(record) }
             )

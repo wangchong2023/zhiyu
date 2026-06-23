@@ -111,7 +111,7 @@ final class iOSWatchSyncService: NSObject, WatchSyncProtocol, WCSessionDelegate 
     /// /// - Parameter filename: filename
     /// /// - Parameter data: data
     func handleReceivedAudioChunk(transferId: String, index: Int, total: Int, filename: String, data: Data) {
-        var assembly = UserDefaults.standard.dictionary(forKey: "ios_audio_assembly_\(transferId)") as? [String: Data] ?? [:]
+        var assembly = UserDefaults.standard.dictionary(forKey: "\(AppConstants.Keys.Storage.iOSAudioAssemblyPrefix)\(transferId)") as? [String: Data] ?? [:]
         assembly["\(index)"] = data
         
         if assembly.count == total {
@@ -126,13 +126,13 @@ final class iOSWatchSyncService: NSObject, WatchSyncProtocol, WCSessionDelegate 
             }
             let mergedData = AudioSplitter.merge(chunks: chunks)
             
-            UserDefaults.standard.removeObject(forKey: "ios_audio_assembly_\(transferId)")
+            UserDefaults.standard.removeObject(forKey: "\(AppConstants.Keys.Storage.iOSAudioAssemblyPrefix)\(transferId)")
             
             self.lastReceivedText = "audio:\(filename):\(mergedData.count)"
             NotificationCenter.default.post(name: .didReceiveWatchAudio, object: mergedData, userInfo: ["filename": filename])
             Logger.shared.info("Audio_transfer_completed_and_merged_successfully: \(filename)")
         } else {
-            UserDefaults.standard.set(assembly, forKey: "ios_audio_assembly_\(transferId)")
+            UserDefaults.standard.set(assembly, forKey: "\(AppConstants.Keys.Storage.iOSAudioAssemblyPrefix)\(transferId)")
         }
     }
     

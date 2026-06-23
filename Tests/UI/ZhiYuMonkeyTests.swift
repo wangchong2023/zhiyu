@@ -42,7 +42,7 @@ final class ZhiYuMonkeyTests: XCTestCase {
         try await super.tearDown()
     }
 
-    /// 执行 100 次原生的狂暴随机点击测试
+    // @flaky: 100 步随机点击遍历，本质不稳定且耗时不可控，CI 环境显式跳过
     func testWildMonkeyClickTraversal() throws {
         let maxIterations = 100
         print("====== [MONKEY] 开始执行 100 步狂暴随机点击遍历压力测试 ======")

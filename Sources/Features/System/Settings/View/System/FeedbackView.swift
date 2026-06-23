@@ -5,13 +5,10 @@
 //  Created by Antigravity on 2026/06/10.
 //  Copyright © 2026 WangChong. All rights reserved.
 //
-//  系统层级：[L2] 业务功能层
+//  系统层级：[L3] 表现层
 //  核心职责：用户反馈表单 + 历史记录
 
 import SwiftUI
-#if os(iOS)
-import UIKit
-#endif
 
 struct FeedbackView: View {
     @Environment(\.dismiss) private var dismiss
@@ -25,6 +22,7 @@ struct FeedbackView: View {
     @State private var history: [FeedbackEntry] = []
 
     @Inject private var repo: any FeedbackRepository
+    @Inject private var deviceInfo: any DeviceInfoProtocol
 
     private let appVersion: String = {
         Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
@@ -117,11 +115,7 @@ struct FeedbackView: View {
                 HStack {
                     Text(L10n.Settings.Feedback.osVersionLabel)
                     Spacer()
-                    #if os(iOS)
-                    Text(UIDevice.current.systemVersion).foregroundStyle(.secondary)
-                    #else
-                    Text(L10n.Settings.Feedback.osMacDefault).foregroundStyle(.secondary)
-                    #endif
+                    Text(deviceInfo.systemVersion).foregroundStyle(.secondary)
                 }
             }
             .appListRowBackground()
@@ -175,20 +169,8 @@ struct FeedbackView: View {
         let entry = FeedbackEntry(
             title: titleText, category: selectedCategory, rating: rating,
             content: contentText, appVersion: appVersion,
-            osVersion: {
-                #if os(iOS)
-                UIDevice.current.systemVersion
-                #else
-                L10n.Settings.Feedback.osMacDefault
-                #endif
-            }(),
-            deviceModel: {
-                #if os(iOS)
-                UIDevice.current.model
-                #else
-                L10n.Settings.Feedback.deviceMacDefault
-                #endif
-            }()
+            osVersion: deviceInfo.systemVersion,
+            deviceModel: deviceInfo.deviceModel
         )
         Task {
             try? await repo.save(entry)

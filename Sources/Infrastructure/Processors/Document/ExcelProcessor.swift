@@ -22,17 +22,15 @@ final class ExcelProcessor: NSObject, XMLParserDelegate {
         self.xmlData = xmlData
     }
 
-    /// 解析
-    /// - Returns: 是否成功
+    /// 启动 XML 解析：解析 XLSX 工作表 sheetN.xml，提取单元格数据。
+    /// - Returns: true 表示解析成功
     func parse() -> Bool {
         let parser = XMLParser(data: xmlData)
         parser.delegate = self
         return parser.parse()
     }
 
-    /// parser
-    /// - Parameter parser: parser
-    /// - Parameter namespaceURI: namespaceURI
+    /// XMLParserDelegate: 元素开始 — 检测单元格 <c> 和值节点 <v>，记录单元格类型 t 属性。
     func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String: String] = [:]) {
         if elementName == "c" {
             currentCellType = attributeDict["t"]
@@ -44,17 +42,14 @@ final class ExcelProcessor: NSObject, XMLParserDelegate {
         }
     }
 
-    /// parser
-    /// - Parameter parser: parser
+    /// XMLParserDelegate: 字符捕获 — 在 <v> 值节点内累积文本。
     func parser(_ parser: XMLParser, foundCharacters string: String) {
         if inValueElement {
             currentText += string
         }
     }
 
-    /// parser
-    /// - Parameter parser: parser
-    /// - Parameter namespaceURI: namespaceURI
+    /// XMLParserDelegate: 元素结束 — <v> 关闭时停止累积；<c> 关闭时将共享字符串索引 (t="s") 记录为待映射值。
     func parser(_ parser: XMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName qName: String?) {
         if elementName == "v" {
             inValueElement = false

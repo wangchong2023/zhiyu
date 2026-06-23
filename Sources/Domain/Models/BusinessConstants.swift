@@ -6,7 +6,7 @@
 //  Copyright © 2026 WangChong. All rights reserved.
 //
 //  系统层级：[L1.5] 领域层
-//  核心职责：核心领域模型定义（KnowledgePage、PageLink、PluginRecord 等）。
+//  核心职责：定义业务层常量的统一命名空间，包含 AI Token 估算、搜索权重及图谱配置参数。
 //
 import Foundation
 

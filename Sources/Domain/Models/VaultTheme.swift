@@ -6,7 +6,7 @@
 //  Copyright © 2026 WangChong. All rights reserved.
 //
 //  系统层级：[L1.5] 领域层
-//  核心职责：核心领域模型定义（KnowledgePage、PageLink、PluginRecord 等）。
+//  核心职责：定义笔记本主题 (VaultTheme) 的领域模型，包含主题配色、字体与样式配置。
 //
 import Foundation
 

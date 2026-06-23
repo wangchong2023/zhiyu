@@ -5,7 +5,7 @@
 //  Created by Antigravity on 2026/05/23.
 //  Copyright © 2026 WangChong. All rights reserved.
 //
-//  系统层级：[L2] 业务功能层
+//  系统层级：[L3] 表现层
 //  核心职责：系统设置：LLM 配置、性能监控、插件管理、iCloud、备份。
 //
 import SwiftUI
@@ -59,7 +59,7 @@ struct PluginStatsSection: View {
     }
     
     @ViewBuilder
-    private func statusIcon(for status: PluginRegistry.ResourceUsage.Status) -> some View {
+    private func statusIcon(for status: PluginRuntime.ResourceUsage.Status) -> some View {
         ZStack {
             Circle()
                 .fill(statusColor(for: status).opacity(DesignSystem.Opacity.subtle))
@@ -71,7 +71,7 @@ struct PluginStatsSection: View {
         }
     }
     
-    private func statusColor(for status: PluginRegistry.ResourceUsage.Status) -> Color {
+    private func statusColor(for status: PluginRuntime.ResourceUsage.Status) -> Color {
         switch status {
         case .active: return .green
         case .throttled: return .orange
@@ -79,7 +79,7 @@ struct PluginStatsSection: View {
         }
     }
     
-    private func statusImage(for status: PluginRegistry.ResourceUsage.Status) -> String {
+    private func statusImage(for status: PluginRuntime.ResourceUsage.Status) -> String {
         switch status {
         case .active: return "bolt.fill"
         case .throttled: return "slowmo"

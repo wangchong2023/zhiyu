@@ -19,13 +19,15 @@
 
 import XCTest
 
+@MainActor
 final class AuthUITests: XCTestCase {
 
     // MARK: - 测试基础设施
 
     var app: XCUIApplication!
 
-    override func setUpWithError() throws {
+    override func setUp() async throws {
+        try await super.setUp()
         continueAfterFailure = false
         app = XCUIApplication()
         // --reset-auth-state: 强制从登录页开始，不走自动游客路径
@@ -34,7 +36,8 @@ final class AuthUITests: XCTestCase {
         app.launch()
     }
 
-    override func tearDownWithError() throws {
+    override func tearDown() async throws {
+        try await super.tearDown()
         app = nil
     }
 
@@ -269,8 +272,8 @@ final class AuthUITests: XCTestCase {
     // MARK: - TC-AUTH-07：微信登录按钮触发（mock-backend 模式）
     //
     // 验证点：勾选协议 → 点击微信图标 → DEBUG mock 路径登录成功
+    // @flaky: WeChat 第三方按钮在 AuthView.swift 中被注释屏蔽（/* 暂时屏蔽 WeChat */），待恢复后移除此标记
     func testWeChatLoginFlow() throws {
-        try XCTSkipIf(true, "暂时屏蔽微信入口")
         XCTAssertTrue(waitForAuthView(), "启动后应在登录页")
         ensureAgreementChecked()
         scrollToThirdPartySection()
@@ -341,8 +344,8 @@ final class AuthUITests: XCTestCase {
     // MARK: - TC-AUTH-10：运营商二次入口按钮触发（mock-backend 模式）
     //
     // 验证点：勾选协议 → 点击运营商图标 → SDK 未初始化走 mock 路径 → 登录成功
+    // @flaky: 运营商二次入口按钮在 AuthView.swift 中被注释屏蔽（/* 暂时屏蔽 运营商二次入口 */），待恢复后移除此标记
     func testCarrierSecondaryButtonFlow() throws {
-        try XCTSkipIf(true, "暂时屏蔽运营商二次入口")
         XCTAssertTrue(waitForAuthView(), "启动后应在登录页")
         ensureAgreementChecked()
         scrollToThirdPartySection()

@@ -208,7 +208,10 @@ class LLMService: ObservableObject, LLMServiceProtocol, @unchecked Sendable {
         await queryReranker.generateHypotheticalDocument(query: query)
     }
 
-    /// AI 模块连通性与响应测速测试（同时验证非流式与流式信道）。
+    /// AI 模块连通性与响应测速测试 — 同时验证非流式与流式信道。
+    /// 阶段 1：非流式探活（generate "Hi" → 期望 "OK"）
+    /// 阶段 2：流式信道验证（chatStream "ping" → 读取首个非空 chunk）
+    /// 任一阶段失败均返回失败 ValidationResult 并携带错误信息。
     func validateAPIKey() async throws -> ValidationResult {
         let start = Date()
         var streamTested = false

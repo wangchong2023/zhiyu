@@ -43,6 +43,11 @@ struct WatchPlatformRegistrar: PlatformRegistrar {
         container.register(UnsupportedExportService(), for: (any ExportServiceProtocol).self)
         container.register(UnsupportedSearchIndexer(), for: (any SearchIndexerProtocol).self)
         container.register(WatchAccessibilityService(), for: (any AccessibilityServiceProtocol).self)
+
+        // 5. 设备信息 / URL 打开 / 分享面板
+        container.register(WatchDeviceInfoService(), for: (any DeviceInfoProtocol).self)
+        container.register(WatchURLOpenerService(), for: (any URLOpenerProtocol).self)
+        container.register(WatchShareSheetService(), for: (any ShareSheetProtocol).self)
     }
 }
 #endif

@@ -8,7 +8,7 @@
 //  系统层级：[L3] 应用层
 //  核心职责：构建 Navigation 界面的 UI 视图层组件。
 //
-@preconcurrency import SwiftUI
+import SwiftUI
 #if canImport(WebKit)
 import WebKit
 #endif

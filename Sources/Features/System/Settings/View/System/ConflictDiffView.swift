@@ -5,7 +5,7 @@
 //  Created by Antigravity on 2026/05/24.
 //  Copyright © 2026 WangChong. All rights reserved.
 //
-//  系统层级：[L2] 业务功能层
+//  系统层级：[L3] 表现层
 //  核心职责：提供 iCloud 多端同步版本冲突时的分栏可视化 Diff 比对与手动合并编辑界面。
 //
 

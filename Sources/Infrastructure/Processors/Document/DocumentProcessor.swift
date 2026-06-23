@@ -106,8 +106,10 @@ struct DocxProcessorProxy: DocumentProcessor {
 /// XLSX 表格格式处理器代理
 struct XlsxProcessorProxy: DocumentProcessor {
 
-    /// 提取Text
-    /// - Returns: 字符串
+    /// 提取 XLSX 中的文本内容。
+    /// 流程：解压 → 提取共享字符串池 → 遍历子工作表 → 映射共享字符串索引 → 拼接输出。
+    /// - Parameter url: XLSX 文件路径
+    /// - Returns: 提取的纯文本
     func extractText(from url: URL) async throws -> String {
         guard let archive = ZipUtility.readZipArchive(at: url) else {
             throw ProcessorError.invalidArchive
@@ -115,7 +117,7 @@ struct XlsxProcessorProxy: DocumentProcessor {
 
         var sharedStrings: [String] = []
 
-        // 提取共享字符串池 (Excel 中多单元格共享同一字符以压缩大小)
+        // Step 1: 提取共享字符串池（Excel 多单元格共享同一字符串以压缩体积）
         if let sharedStringsXML = archive["xl/sharedStrings.xml"] {
             let parser = XlsxSharedStringsParser(xmlData: sharedStringsXML)
             if parser.parse() {
@@ -125,7 +127,7 @@ struct XlsxProcessorProxy: DocumentProcessor {
 
         var allText: [String] = []
 
-        // 遍历提取每个子工作表 (Sheet) 中的文字
+        // Step 2: 遍历提取每个子工作表中的文字，映射共享字符串索引
         for (path, data) in archive {
             if path.hasPrefix("xl/worksheets/sheet") && path.hasSuffix(".xml") {
                 let parser = ExcelProcessor(xmlData: data)

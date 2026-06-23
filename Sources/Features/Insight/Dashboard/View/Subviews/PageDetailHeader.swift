@@ -5,7 +5,7 @@
 //  Created by Antigravity on 2026/05/23.
 //  Copyright © 2026 WangChong. All rights reserved.
 //
-//  系统层级：[L2] 业务功能层
+//  系统层级：[L3] 表现层
 //  核心职责：仪表盘：页面列表、知识统计、每周洞察、回链视图。
 //
 import SwiftUI
@@ -29,39 +29,7 @@ struct PageDetailHeader: View {
             tagsAndAliasesView
             
             // Metadata section with industrial-grade collapsible control
-            #if os(watchOS)
-            VStack(alignment: .leading) {
-                HStack {
-                    Label(L10n.Knowledge.Page.metaInfo, systemImage: "info.circle")
-                        .font(.caption2.bold())
-                        .foregroundStyle(.appSecondary)
-                    Spacer()
-                }
-                metaInfoView.padding(.top, DesignSystem.tiny)
-            }
-            .padding(.horizontal, DesignSystem.medium)
-            .padding(.vertical, DesignSystem.small)
-            .background(Color.appCard.opacity(DesignSystem.Opacity.disabled))
-            .clipShape(RoundedRectangle(cornerRadius: Spacing.smallRadius))
-            #else
-            DisclosureGroup(
-                isExpanded: $isMetaExpanded,
-                content: { metaInfoView.padding(.top, DesignSystem.tiny) },
-                label: {
-                    HStack {
-                        Label(L10n.Knowledge.Page.metaInfo, systemImage: DesignSystem.Icons.info)
-                            .font(.caption2.bold())
-                            .foregroundStyle(.appSecondary)
-                        Spacer()
-                    }
-                }
-            )
-            .tint(.appSecondary)
-            .padding(.horizontal, DesignSystem.medium)
-            .padding(.vertical, DesignSystem.small)
-            .background(Color.appCard.opacity(DesignSystem.Opacity.disabled))
-            .clipShape(RoundedRectangle(cornerRadius: Spacing.smallRadius))
-            #endif
+            PageDetailMetaSectionView(page: page, isExpanded: $isMetaExpanded)
         }
         .padding()
     }
@@ -167,19 +135,6 @@ struct PageDetailHeader: View {
         }
     }
     
-    // MARK: - Meta Info
-    private var metaInfoView: some View {
-        HStack(spacing: DesignSystem.standardPadding) {
-            Label(L10n.Knowledge.Page.createdAtFormat(page.createdAt.formatted(.dateTime.year().month().day().locale(Localized.currentLocale))), systemImage: DesignSystem.Icons.sortDate)
-            Label(L10n.Knowledge.Page.updatedAtFormat(page.updatedAt.formatted(.dateTime.year().month().day().locale(Localized.currentLocale))), systemImage: DesignSystem.Icons.clock)
-            Label(L10n.Knowledge.Page.wordCount(page.wordCount), systemImage: DesignSystem.Icons.wordCount)
-            Label(L10n.Knowledge.Page.outLinksCount(page.outgoingLinks.count), systemImage: DesignSystem.Icons.link)
-        }
-        .font(.caption)
-        .foregroundStyle(.appSecondary)
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel(L10n.Knowledge.Page.metaAccessibility(page.createdAt.formatted(.dateTime.year().month().day().locale(Localized.currentLocale)), page.wordCount, page.outgoingLinks.count))
-    }
 }
 
 // MARK: - Type Badge

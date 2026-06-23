@@ -54,6 +54,7 @@ final class PPTXProcessor {
         return outputURL
     }
 
+    /// 将 Markdown 文本解析为 Slide 数组：按 `## ` 分割为幻灯片，提取标题与列表项。
     private func parseMarkdown(_ markdown: String) -> [Slide] {
         var slides: [Slide] = []
         let parts = markdown.components(separatedBy: "\n## ")
@@ -69,6 +70,7 @@ final class PPTXProcessor {
         return slides
     }
 
+    /// 创建 OpenXML PPTX 所需的目录结构：_rels, ppt, ppt/slides, ppt/theme。
     private func createDirectoryStructure(at url: URL) throws {
         let dirs = ["_rels", "ppt", "ppt/_rels", "ppt/slides", "ppt/theme"]
         for dir in dirs {
@@ -76,6 +78,7 @@ final class PPTXProcessor {
         }
     }
 
+    /// 生成 [Content_Types].xml — 声明包内文件类型与 MIME 映射。
     private func generateContentTypes(at url: URL) throws {
         let xml = """
         <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -89,6 +92,7 @@ final class PPTXProcessor {
         try xml.write(to: url.appendingPathComponent("[Content_Types].xml"), atomically: true, encoding: .utf8)
     }
 
+    /// 生成 _rels/.rels — 顶级关系定义，指向主演示文稿。
     private func generateRels(at url: URL) throws {
         let xml = """
         <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -99,6 +103,7 @@ final class PPTXProcessor {
         try xml.write(to: url.appendingPathComponent("_rels/.rels"), atomically: true, encoding: .utf8)
     }
 
+    /// 生成 ppt/presentation.xml — 主演示文稿定义，包含幻灯片 ID 列表。
     private func generatePresentation(at url: URL, slideCount: Int) throws {
         var slideList = ""
         for i in 1...slideCount {
@@ -115,6 +120,7 @@ final class PPTXProcessor {
         try xml.write(to: url.appendingPathComponent("ppt/presentation.xml"), atomically: true, encoding: .utf8)
     }
 
+    /// 生成 ppt/_rels/presentation.xml.rels — 演示文稿关系文件，映射每张幻灯片与主题。
     private func generatePresentationRels(at url: URL, slideCount: Int) throws {
         var rels = ""
         for i in 1...slideCount {
@@ -131,6 +137,8 @@ final class PPTXProcessor {
         try xml.write(to: url.appendingPathComponent("ppt/_rels/presentation.xml.rels"), atomically: true, encoding: .utf8)
     }
 
+    /// 生成单张幻灯片 XML（ppt/slides/slideN.xml），包含标题栏与列表正文。
+    /// 第一张幻灯片时同步生成默认主题 theme1.xml。
     private func generateSlide(at url: URL, slide: Slide, index: Int) throws {
         var bodyText = ""
         for bullet in slide.bullets {

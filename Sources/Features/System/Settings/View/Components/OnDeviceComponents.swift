@@ -5,10 +5,10 @@
 //  Created by Antigravity on 2026/05/23.
 //  Copyright © 2026 WangChong. All rights reserved.
 //
-//  系统层级：[L2] 业务功能层
+//  系统层级：[L3] 表现层
 //  核心职责：系统设置：LLM 配置、性能监控、插件管理、iCloud、备份。
 //
-@preconcurrency import SwiftUI
+import SwiftUI
 
 // MARK: - On-Device Test View
 /// 设备端大语言模型推理测试沙盒视图
@@ -68,13 +68,7 @@ public struct OnDeviceTestView: View {
                 .foregroundStyle(.appSecondary)
                 .tracking(1)
             
-            Group {
-                #if os(watchOS)
-                TextField("", text: $prompt, axis: .vertical)
-                #else
-                TextEditor(text: $prompt)
-                #endif
-            }
+            AdaptiveTextEditor(text: $prompt)
             .font(.body)
             .frame(height: DesignSystem.Metrics.largeIconBoxSize)
             .padding(DesignSystem.atomic + DesignSystem.small) /* 10pt = 2+8 */

@@ -5,7 +5,7 @@
 //  Created by Antigravity on 2026/05/30.
 //  Copyright © 2026 WangChong. All rights reserved.
 //
-//  系统层级：[L2] 业务功能层
+//  系统层级：[L3] 表现层
 //  核心职责：为 Search 搜索功能模块提供高品质、符合现代设计美学的弹出表单 (Sheet) 视图。
 //           1. PagePreviewSheet: 用于快速预览知识卡片页面。
 //           2. SearchDiagnosticSheet: 用于深度展示混合检索及 AI 查询重写的召回诊断指标。

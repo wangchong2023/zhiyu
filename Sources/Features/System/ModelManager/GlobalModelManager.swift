@@ -70,11 +70,11 @@ public final class GlobalModelManager {
     public var activeModelId: String {
         get {
             access(keyPath: \.activeModelId)
-            return UserDefaults.standard.string(forKey: "ZhiYu.ActiveModelId") ?? "gemma-4-e2b-it"
+            return UserDefaults.standard.string(forKey: AppConstants.Keys.Storage.activeModelId) ?? "gemma-4-e2b-it"
         }
         set {
             withMutation(keyPath: \.activeModelId) {
-                UserDefaults.standard.set(newValue, forKey: "ZhiYu.ActiveModelId")
+                UserDefaults.standard.set(newValue, forKey: AppConstants.Keys.Storage.activeModelId)
             }
         }
     }
@@ -83,11 +83,11 @@ public final class GlobalModelManager {
     public var isCloudEscalationEnabled: Bool {
         get {
             access(keyPath: \.isCloudEscalationEnabled)
-            return UserDefaults.standard.bool(forKey: "ZhiYu.IsCloudEscalationEnabled")
+            return UserDefaults.standard.bool(forKey: AppConstants.Keys.Storage.isCloudEscalationEnabled)
         }
         set {
             withMutation(keyPath: \.isCloudEscalationEnabled) {
-                UserDefaults.standard.set(newValue, forKey: "ZhiYu.IsCloudEscalationEnabled")
+                UserDefaults.standard.set(newValue, forKey: AppConstants.Keys.Storage.isCloudEscalationEnabled)
             }
         }
     }
@@ -96,11 +96,11 @@ public final class GlobalModelManager {
     public var activeCloudModelId: String {
         get {
             access(keyPath: \.activeCloudModelId)
-            return UserDefaults.standard.string(forKey: "ZhiYu.ActiveCloudModelId") ?? "gpt-4o"
+            return UserDefaults.standard.string(forKey: AppConstants.Keys.Storage.activeCloudModelId) ?? "gpt-4o"
         }
         set {
             withMutation(keyPath: \.activeCloudModelId) {
-                UserDefaults.standard.set(newValue, forKey: "ZhiYu.ActiveCloudModelId")
+                UserDefaults.standard.set(newValue, forKey: AppConstants.Keys.Storage.activeCloudModelId)
             }
         }
     }

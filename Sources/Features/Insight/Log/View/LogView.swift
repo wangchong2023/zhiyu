@@ -5,7 +5,7 @@
 //  Created by Antigravity on 2026/05/23.
 //  Copyright © 2026 WangChong. All rights reserved.
 //
-//  系统层级：[L2] 业务功能层
+//  系统层级：[L3] 表现层
 //  核心职责：构建 Log 界面的 UI 视图层组件。
 //
 import SwiftUI
@@ -42,9 +42,7 @@ struct LogViewContent: View {
                     .appListRowBackground()
             }
         }
-#if os(iOS)
-                .listStyle(.insetGrouped)
-                #endif
+        .adaptiveListStyle()
         .scrollContentBackground(.hidden)
         .background(themeManager.pageBackground())
         .navigationTitle(L10n.Settings.operationLog)
@@ -73,9 +71,6 @@ struct LogViewContent: View {
         }
         .scrollContentBackground(.hidden)
         .background(PageBackgroundView(accentColor: .appAccent))
-#if os(iOS)
-        .toolbarBackground(.visible, for: .navigationBar)
-#endif
     }
 
     // MARK: - 子视图提取

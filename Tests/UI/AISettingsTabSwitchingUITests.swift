@@ -31,17 +31,16 @@ final class AISettingsTabSwitchingUITests: XCTestCase {
             guestButton.tap()
         }
 
-        Thread.sleep(forTimeInterval: 1.5)
+        try? await Task.sleep(nanoseconds: 1_500_000_000)
     }
 
-    /// 验证 AISettingsView 顶部的 4 个 tab 是否都能点击切换
-    func testAISettingsTabsAreSwitchable() throws {
+    func testAISettingsTabsAreSwitchable() async throws {
         // 1. 找到用户头像入口
         let profileButton = app.buttons["userProfileMenuButton"]
         XCTAssertTrue(profileButton.waitForExistence(timeout: 5), "用户头像入口应当存在")
         profileButton.tap()
 
-        Thread.sleep(forTimeInterval: 1.0)
+        try? await Task.sleep(nanoseconds: 1_000_000_000)
 
         // 2. 在弹出菜单中点击"AI 大模型"或"人工智能"入口
         let aiMenuPredicate = NSPredicate(format: "label CONTAINS 'AI' OR label CONTAINS '人工智能' OR label CONTAINS '大模型'")
@@ -49,7 +48,7 @@ final class AISettingsTabSwitchingUITests: XCTestCase {
         XCTAssertTrue(aiMenuButton.waitForExistence(timeout: 3), "AI 大模型菜单入口应当存在")
         aiMenuButton.tap()
 
-        Thread.sleep(forTimeInterval: 1.5)
+        try? await Task.sleep(nanoseconds: 1_500_000_000)
 
         // 3. 确认进入 AI 设置页面
         let navTitle = app.navigationBars["人工智能"]
@@ -65,7 +64,7 @@ final class AISettingsTabSwitchingUITests: XCTestCase {
         XCTAssertTrue(tab2.isHittable, "tab '在线大模型' 应当可点击")
         tab2.tap()
 
-        Thread.sleep(forTimeInterval: 1.0)
+        try? await Task.sleep(nanoseconds: 1_000_000_000)
 
         // 调试：dump 整个屏幕文本，看看点击后实际渲染的是什么
         let allStaticTexts = app.staticTexts.allElementsBoundByIndex.map { $0.label }
@@ -82,7 +81,7 @@ final class AISettingsTabSwitchingUITests: XCTestCase {
         let tab3 = segmentedControl.buttons.element(boundBy: 2)
         XCTAssertTrue(tab3.isHittable, "tab '本地大模型' 应当可点击")
         tab3.tap()
-        Thread.sleep(forTimeInterval: 1.0)
+        try? await Task.sleep(nanoseconds: 1_000_000_000)
 
         let allStaticTexts2 = app.staticTexts.allElementsBoundByIndex.map { $0.label }
         print("DEBUG after tab3 tap, static texts count: \(allStaticTexts2.count)")
@@ -98,7 +97,7 @@ final class AISettingsTabSwitchingUITests: XCTestCase {
         let tab4 = segmentedControl.buttons.element(boundBy: 3)
         XCTAssertTrue(tab4.isHittable, "tab '提示词设置' 应当可点击")
         tab4.tap()
-        Thread.sleep(forTimeInterval: 1.0)
+        try? await Task.sleep(nanoseconds: 1_000_000_000)
 
         let promptText = app.staticTexts.containing(
             NSPredicate(format: "label CONTAINS '提示' OR label CONTAINS 'Prompt'")
@@ -110,7 +109,7 @@ final class AISettingsTabSwitchingUITests: XCTestCase {
         let tab1 = segmentedControl.buttons.element(boundBy: 0)
         XCTAssertTrue(tab1.isHittable, "tab '大模型策略' 应当可点击")
         tab1.tap()
-        Thread.sleep(forTimeInterval: 1.0)
+        try? await Task.sleep(nanoseconds: 1_000_000_000)
 
         let strategyText = app.staticTexts.containing(
             NSPredicate(format: "label CONTAINS '策略' OR label CONTAINS '路由' OR label CONTAINS '本地模型'")

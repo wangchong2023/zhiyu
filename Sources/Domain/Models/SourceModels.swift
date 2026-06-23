@@ -6,7 +6,7 @@
 //  Copyright © 2026 WangChong. All rights reserved.
 //
 //  系统层级：[L1.5] 领域层
-//  核心职责：核心领域模型定义（KnowledgePage、PageLink、PluginRecord 等）。
+//  核心职责：定义知识来源 (KnowledgeSource) 的领域模型，关联原文页面 ID、标题及来源元数据。
 //
 import Foundation
 

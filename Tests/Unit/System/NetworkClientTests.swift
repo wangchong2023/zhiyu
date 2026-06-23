@@ -19,6 +19,8 @@ final class NetworkClientTests: XCTestCase {
 
     override func setUp() async throws {
         try await super.setUp()
+        // 注入 Mock Keychain，绕过模拟器 errSecMissingEntitlement -34018 限制
+        KeychainService.testOverride = MockKeychainService()
         // 注入 TestMockURLProtocol 测试 Session
         let config = URLSessionConfiguration.ephemeral
         config.protocolClasses = [TestMockURLProtocol.self]
@@ -34,6 +36,7 @@ final class NetworkClientTests: XCTestCase {
         TestMockURLProtocol.requestHandler = nil
         try? KeychainService.shared.delete(key: AppConstants.Network.jwtTokenKey)
         try? KeychainService.shared.delete(key: "refresh_token")
+        KeychainService.testOverride = nil
         try await super.tearDown()
     }
 
@@ -45,28 +48,19 @@ final class NetworkClientTests: XCTestCase {
     }
     
     func testTokenStorage() throws {
-        do {
-            try KeychainService.shared.store(key: AppConstants.Network.jwtTokenKey, value: "fake_jwt")
-            let token = try KeychainService.shared.retrieve(key: AppConstants.Network.jwtTokenKey)
-            XCTAssertEqual(token, "fake_jwt")
-        } catch KeychainError.storeFailed(let status) where status == -34018 {
-            throw XCTSkip("Keychain access denied (errSecMissingEntitlement -34018). Skipping test in restricted simulator environment.")
-        } catch {
-            throw error
-        }
+        // Mock Keychain 已由 setUp 注入，模拟器环境安全
+        try KeychainService.shared.store(key: AppConstants.Network.jwtTokenKey, value: "fake_jwt")
+        let token = try KeychainService.shared.retrieve(key: AppConstants.Network.jwtTokenKey)
+        XCTAssertEqual(token, "fake_jwt")
     }
 
     // MARK: - 无感刷新与失效退登测试
 
     /// 测试：当 Access Token 过期 (401) 时，NetworkClient 能自动通过 refresh_token 触发无感刷新，并自动携带新 Token 重试原请求
     func testTokenRefreshSuccess() async throws {
-        // 1. 初始化写入旧 token（受限模拟器环境下 Keychain 不可用则跳过此用例）
-        do {
-            try KeychainService.shared.store(key: AppConstants.Network.jwtTokenKey, value: "expired_access_token")
-            try KeychainService.shared.store(key: "refresh_token", value: "valid_refresh_token")
-        } catch KeychainError.storeFailed(let status) where status == -34018 {
-            throw XCTSkip("Keychain access denied (errSecMissingEntitlement -34018). Skipping test in restricted simulator environment.")
-        }
+        // 1. 初始化写入旧 token（Mock Keychain 已由 setUp 注入，模拟器环境安全）
+        try KeychainService.shared.store(key: AppConstants.Network.jwtTokenKey, value: "expired_access_token")
+        try KeychainService.shared.store(key: "refresh_token", value: "valid_refresh_token")
 
         // 2. 编写拦截器，处理三次网络交互：
         //   - 交互A：第一次请求主 API，携带 expired_access_token -> 返回 40101 Code
@@ -136,13 +130,9 @@ final class NetworkClientTests: XCTestCase {
 
     /// 测试：当 Access Token 过期 (401) 且 Refresh Token 也失效时，NetworkClient 能自动清空 Keychain 物理凭证，并发出全局强制退登广播
     func testTokenRefreshFailureAndLogoutBroadcast() async throws {
-        // 1. 初始化写入旧 token（受限模拟器环境下 Keychain 不可用则跳过此用例）
-        do {
-            try KeychainService.shared.store(key: AppConstants.Network.jwtTokenKey, value: "expired_access_token")
-            try KeychainService.shared.store(key: "refresh_token", value: "expired_refresh_token")
-        } catch KeychainError.storeFailed(let status) where status == -34018 {
-            throw XCTSkip("Keychain access denied (errSecMissingEntitlement -34018). Skipping test in restricted simulator environment.")
-        }
+        // 1. 初始化写入旧 token（Mock Keychain 已由 setUp 注入，模拟器环境安全）
+        try KeychainService.shared.store(key: AppConstants.Network.jwtTokenKey, value: "expired_access_token")
+        try KeychainService.shared.store(key: "refresh_token", value: "expired_refresh_token")
 
         // 2. 模拟广播拦截
         let expectation = XCTestExpectation(description: "必须向全局广播 .userAuthExpired 踢人通知")

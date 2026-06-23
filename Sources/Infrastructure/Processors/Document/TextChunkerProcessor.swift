@@ -85,6 +85,7 @@ struct TextChunkerProcessor: Sendable {
         return state.chunks
     }
 
+    /// 分块器运行时状态，维护当前分块文本、标题路径、面包屑栈等扫描上下文。
     private struct ChunkingState {
         var chunks: [Chunk] = []
         var currentChunkText = ""
@@ -95,17 +96,20 @@ struct TextChunkerProcessor: Sendable {
         var isInCodeBlock = false
     }
 
+    /// 检测并更新代码块状态：遇到 ``` 时 toggle 进出代码块标记。
+    /// - Returns: true 表示从代码块中退出，调用方应在完成当前行后重置状态。
     private func updateCodeBlockState(line: String, state: inout ChunkingState) -> Bool {
         let isCodeFlag = line.trimmingCharacters(in: .whitespaces).hasPrefix("```")
         guard isCodeFlag else { return false }
         if state.isInCodeBlock {
-            return true
+            return true // 退出代码块
         } else {
-            state.isInCodeBlock = true
+            state.isInCodeBlock = true // 进入代码块
             return false
         }
     }
 
+    /// 将当前累积的文本刷新为一个新的 Chunk 实体，重置缓冲区。
     private func flushCurrentChunk(lines: [String], state: inout ChunkingState, text: String) {
         let trimmedPrev = state.currentChunkText.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedPrev.isEmpty else { return }
@@ -114,6 +118,8 @@ struct TextChunkerProcessor: Sendable {
         state.currentChunkText = ""
     }
 
+    /// 在遇到标题时更新标题锚点与级联面包屑路径（Hierarchy RAG 核心）。
+    /// 根据标题层级修剪锚点栈，确保面包屑始终反映当前章节路径。
     private func updateHeaderTracking(line: String, state: inout ChunkingState) {
         let headerLevel = line.prefix(while: { $0 == "#" }).count
         let headerText = line.dropFirst(headerLevel).trimmingCharacters(in: .whitespaces)
@@ -122,15 +128,19 @@ struct TextChunkerProcessor: Sendable {
             state.currentAnchor = headerText
             return
         }
+        // 修剪栈至当前标题层级的上一级
         let keepCount = headerLevel - 1
         if state.anchorStack.count > keepCount {
             state.anchorStack = Array(state.anchorStack.prefix(keepCount))
         }
         state.anchorStack.append(headerText)
+        // 重建级联面包屑："H1 > H2 > H3"
         state.currentBreadcrumb = state.anchorStack.joined(separator: " > ")
         state.currentAnchor = headerText
     }
 
+    /// 当前分块溢出时触发刷新：保存当前 chunk，创建带重叠窗口的新缓冲区。
+    /// 重叠窗口保证相邻 chunk 间存在语义连续性，避免关键信息被截断。
     private func flushChunkOnOverflow(lineWithNewline: String, config: Config, state: inout ChunkingState) {
         state.chunks.append(Chunk(text: state.currentChunkText.trimmingCharacters(in: .whitespacesAndNewlines), startIndex: state.currentStartIndex, anchorPath: state.currentAnchor, breadcrumbPath: state.currentBreadcrumb, isCode: state.currentChunkText.contains("```")))
         let overlapIndex = state.currentChunkText.index(state.currentChunkText.endIndex, offsetBy: -config.chunkOverlap, default: state.currentChunkText.startIndex)

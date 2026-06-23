@@ -188,7 +188,7 @@ class KnowledgeBaseUITests: XCTestCase {
                 let submitBtn = app.buttons["notebook_submit_button"]
                 if submitBtn.exists {
                     submitBtn.tap()
-                    Thread.sleep(forTimeInterval: 1.0)
+                    _ = XCTWaiter.wait(for: [XCTestExpectation(description: "提交后等待卡片创建")], timeout: 1.0)
                     let newCard = app.buttons.matching(identifier: "NotebookCard_Item").element(boundBy: 0)
                     if newCard.waitForExistence(timeout: 3.0) {
                         newCard.tap()

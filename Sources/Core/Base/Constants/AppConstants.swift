@@ -247,6 +247,17 @@ public struct AppConstants {
             public static let watchTotalPages = "watch_totalPages"
             public static let watchTotalWords = "watch_totalWords"
             public static let watchRecentTitles = "watch_recentTitles"
+            public static let watchPendingAudioTransfers = "watch_pending_audio_transfers"
+            public static let iOSAudioAssemblyPrefix = "ios_audio_assembly_"
+            
+            // ── 模型管理 ──
+            public static let activeModelId = "ZhiYu.ActiveModelId"
+            public static let isCloudEscalationEnabled = "ZhiYu.IsCloudEscalationEnabled"
+            public static let activeCloudModelId = "ZhiYu.ActiveCloudModelId"
+            
+            // ── 笔记本选择 ──
+            public static let vaultSelectedEnglishName = "vaultSelectedEnglishName"
+            public static let seededVaultPrefix = "seeded_vault_"
             
             // ── 提示词资产 ──
             public static let promptMindmap = "prompt_mindmap"
@@ -318,6 +329,46 @@ extension AppConstants {
         public static let yearlyProductId  = "com.zhiyu.pro.yearly"
         /// 所有内购商品 ID 集合（用于批量拉取）
         public static let allProductIds: Set<String> = [monthlyProductId, yearlyProductId]
+    }
+}
+
+// MARK: - 外部服务 URL 常量
+
+extension AppConstants {
+    /// 外部服务与 API 的 URL 常量
+    public struct URLs {
+        // ── 应用官网 ──
+        public static let officialWebsite = "https://www.izhiyu.top"
+        
+        // ── 认证与 OAuth ──
+        public static let multiAvatarAPI = "https://api.multiavatar.com"
+        public static let gitHubOAuthAuthorize = "https://github.com/login/oauth/authorize"
+        
+        // ── LLM 提供商 ──
+        public static let llmProviderZhipu = "https://open.bigmodel.cn/api/paas/v4"
+        public static let llmProviderMinimax = "https://api.minimax.chat/v1"
+        public static let llmProviderQwen = "https://dashscope.aliyuncs.com/compatible-mode/v1"
+        public static let llmProviderDeepSeek = "https://api.deepseek.com/v1"
+        public static let llmProviderKimi = "https://api.moonshot.cn/v1"
+        public static let llmProviderSiliconFlow = "https://api.siliconflow.cn/v1"
+        
+        // ── 插件市场 ──
+        public static let communityPluginsJSON = "https://raw.githubusercontent.com/wangchong2023/zhiyu-releases/master/community-plugins.json"
+        
+        // ── 模型下载 CDN ──
+        public static let cdnModelGemma = "https://cdn.zhiyu.app/models/gemma-2b-it-q4.bin"
+        public static let cdnModelLlama = "https://cdn.zhiyu.app/models/llama-3-8b-q4.bin"
+        public static let cdnModelPhi = "https://cdn.zhiyu.app/models/phi-3-mini-q4.bin"
+        
+        // ── Web 存档 ──
+        public static let webArchivePrefix = "https://web.archive.org/web/2/"
+        
+        // ── 示例链接 ──
+        public static let exampleKarpathyLLM = "https://github.com/karpathy/llm.c"
+        public static let exampleCoffeeIndustry = "https://finance.sina.com.cn/coffee-industry"
+        
+        // ── 本地开发 ──
+        public static let localhostDefault = "http://localhost:8000"
     }
 }
 

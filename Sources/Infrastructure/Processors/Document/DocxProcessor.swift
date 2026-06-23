@@ -21,17 +21,15 @@ final class DocxProcessor: NSObject, XMLParserDelegate {
         self.xmlData = xmlData
     }
 
-    /// 解析
-    /// - Returns: 是否成功
+    /// 启动 XML 解析：解析 DOCX 的 word/document.xml 中 w:t 元素提取纯文本。
+    /// - Returns: true 表示解析成功
     func parse() -> Bool {
         let parser = XMLParser(data: xmlData)
         parser.delegate = self
         return parser.parse()
     }
 
-    /// parser
-    /// - Parameter parser: parser
-    /// - Parameter namespaceURI: namespaceURI
+    /// XMLParserDelegate: 元素开始 — 检测到 w:t（文本运行）时标记进入文本元素。
     func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String: String] = [:]) {
         if elementName == "w:t" {
             inTextElement = true
@@ -39,17 +37,14 @@ final class DocxProcessor: NSObject, XMLParserDelegate {
         }
     }
 
-    /// parser
-    /// - Parameter parser: parser
+    /// XMLParserDelegate: 字符捕获 — 在 w:t 内部时累积文本字符。
     func parser(_ parser: XMLParser, foundCharacters string: String) {
         if inTextElement {
             currentText += string
         }
     }
 
-    /// parser
-    /// - Parameter parser: parser
-    /// - Parameter namespaceURI: namespaceURI
+    /// XMLParserDelegate: 元素结束 — w:t 闭合时追加文本（前加空格）；w:p 闭合时插入换行符。
     func parser(_ parser: XMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName qName: String?) {
         if elementName == "w:t" {
             if !currentText.isEmpty {

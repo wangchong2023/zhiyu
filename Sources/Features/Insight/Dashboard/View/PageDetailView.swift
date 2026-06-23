@@ -5,7 +5,7 @@
 //  Created by Antigravity on 2026/05/23.
 //  Copyright © 2026 WangChong. All rights reserved.
 //
-//  系统层级：[L2] 业务功能层
+//  系统层级：[L3] 表现层
 //  核心职责：构建 PageDetail 界面的 UI 视图层组件。
 //
 
@@ -21,6 +21,9 @@ struct PageDetailView: View {
     @Environment(Router.self) var router
     @State private var recommendations: [KnowledgePage] = []
     @State private var copiedUrl: String?
+
+    @Inject var pasteboard: any PasteboardProtocol
+    @Inject var urlOpener: any URLOpenerProtocol
 
     /// 全局注入的平台设备环境，用于大屏适配判定
     private var appEnv: any AppEnvironmentProtocol {
@@ -64,57 +67,19 @@ struct PageDetailView: View {
     }
     
     private func aiMenuButton(coordinator: PageDetailCoordinator) -> some View {
-        #if os(watchOS)
-        Button(action: { coordinator.generateSummary() }) {
-            Image(systemName: DesignSystem.Icons.sparkles)
-                .foregroundStyle(.appAccent)
-        }
-        .disabled(coordinator.isEditing)
-        #else
-        Menu {
-            Button(action: { coordinator.generateSummary() }) {
-                Label(L10n.Knowledge.Page.AI.summary, systemImage: DesignSystem.Icons.aiSummary)
-            }
-            Button(action: { coordinator.extractActions() }) {
-                Label(L10n.Knowledge.Page.AI.extractActions, systemImage: DesignSystem.Icons.aiExtract)
-            }
-
-            Menu {
-                Button(action: { coordinator.performSynthesis(type: .mindmap) }) {
-                    Label(L10n.Knowledge.Page.AI.mindmap, systemImage: DesignSystem.Icons.mindmap)
-                }
-                Button(action: { coordinator.performSynthesis(type: .quiz) }) {
-                    Label(L10n.Knowledge.Page.AI.quiz, systemImage: DesignSystem.Icons.quiz)
-                }
-                Button(action: { coordinator.performSynthesis(type: .slides) }) {
-                    Label(L10n.Knowledge.Page.AI.slides, systemImage: DesignSystem.Icons.slides)
-                }
-                Button(action: { coordinator.performSynthesis(type: .report) }) {
-                    Label(L10n.Knowledge.Page.AI.report, systemImage: DesignSystem.Icons.report)
-                }
-                Button(action: { coordinator.performSynthesis(type: .infographic) }) {
-                    Label(L10n.Knowledge.Page.AI.infographic, systemImage: DesignSystem.Icons.infographic)
-                }
-            } label: {
-                Label(L10n.Knowledge.Page.AI.lab, systemImage: DesignSystem.Icons.lab)
-            }
-            
-            Divider()
-            Button(action: { coordinator.showSnapshotHistory = true }) {
-                Label(L10n.Knowledge.Page.History.title, systemImage: DesignSystem.Icons.history)
-            }
-            Button(action: { coordinator.expandContent() }) {
-                Label(L10n.Knowledge.Page.expandStub, systemImage: DesignSystem.Icons.expandStub)
-            }
-            Button(action: { coordinator.findRelatedLinks() }) {
-                Label(L10n.Knowledge.Page.findLinks, systemImage: DesignSystem.Icons.findLinks)
-            }
-        } label: {
-            Image(systemName: DesignSystem.Icons.sparkles)
-                .foregroundStyle(.appAccent)
-        }
-        .disabled(coordinator.isEditing)
-        #endif
+        PageDetailAIMenuButton(
+            isDisabled: coordinator.isEditing,
+            onGenerateSummary: { coordinator.generateSummary() },
+            onExtractActions: { coordinator.extractActions() },
+            onMindmap: { coordinator.performSynthesis(type: .mindmap) },
+            onQuiz: { coordinator.performSynthesis(type: .quiz) },
+            onSlides: { coordinator.performSynthesis(type: .slides) },
+            onReport: { coordinator.performSynthesis(type: .report) },
+            onInfographic: { coordinator.performSynthesis(type: .infographic) },
+            onShowSnapshotHistory: { coordinator.showSnapshotHistory = true },
+            onExpandContent: { coordinator.expandContent() },
+            onFindRelatedLinks: { coordinator.findRelatedLinks() }
+        )
     }
     
     private var welcomeAhaPromptCard: some View {
@@ -382,9 +347,7 @@ struct PageDetailView: View {
         Group {
             if coordinator.page.isLocalFileSource {
                 Button(action: {
-                    #if os(iOS)
-                    UIPasteboard.general.string = url
-                    #endif
+                    pasteboard.string = url
                     withAnimation(.spring()) {
                         copiedUrl = url
                     }
@@ -410,9 +373,7 @@ struct PageDetailView: View {
             } else {
                 Button(action: {
                     guard let urlObject = URL(string: url) else { return }
-                    #if os(iOS)
-                    UIApplication.shared.open(urlObject)
-                    #endif
+                    Task { await urlOpener.open(urlObject) }
                 }) {
                     HStack(spacing: DesignSystem.tiny) {
                         Image(systemName: coordinator.page.displaySourceIcon)

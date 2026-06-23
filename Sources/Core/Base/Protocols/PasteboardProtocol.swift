@@ -12,7 +12,7 @@ import Foundation
 
 /// 剪贴板服务协议
 @MainActor
-public protocol PasteboardProtocol: Sendable {
+public protocol PasteboardProtocol: AnyObject, Sendable {
     /// 获取或设置剪贴板文本
     var string: String? { get set }
 }

@@ -5,8 +5,8 @@
 //  Created by Antigravity on 2026/05/23.
 //  Copyright © 2026 WangChong. All rights reserved.
 //
-//  系统层级：[L2] 业务功能层
-//  核心职责：Model。提供智宇模块化垂直业务功能切片，包括各功能域的界面 UI 视图定义、本地私有状态交互管理。
+//  系统层级：[L1.5] 领域层
+//  核心职责：定义代码/内容质量检查 (Lint) 的问题报告领域模型，含潜在链接建议、严重级别与修正指引。
 //
 import Foundation
 

@@ -5,7 +5,7 @@
 //  Created by Antigravity on 2026/05/29.
 //  Copyright © 2026 WangChong. All rights reserved.
 //
-//  系统层级：[L2] 业务功能层 / 视图组件
+//  系统层级：[L3] 表现层 / 视图组件
 //  核心职责：构建大模型市场（ModelStoreView）的 UI 视图。支持「我的模型」与「模型市场」分段切换、物理运存护栏视觉拦截与动态下载进度交互。
 //
 

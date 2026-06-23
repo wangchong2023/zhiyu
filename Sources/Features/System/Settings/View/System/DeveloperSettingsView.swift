@@ -5,7 +5,7 @@
 //  Created by Antigravity on 2026/05/23.
 //  Copyright © 2026 WangChong. All rights reserved.
 //
-//  系统层级：[L2] 业务功能层
+//  系统层级：[L3] 表现层
 //  核心职责：构建 DeveloperSettings 界面的 UI 视图层组件。
 //
 import SwiftUI
@@ -107,9 +107,7 @@ struct DeveloperSettingsView: View {
             }
             .appListRowBackground()
         }
-            #if os(iOS)
-                .listStyle(.insetGrouped)
-                #endif
+            .adaptiveListStyle()
             .scrollContentBackground(.hidden)
             .background(PageBackgroundView(accentColor: .blue))
             .navigationTitle(L10n.Settings.Section.developer)

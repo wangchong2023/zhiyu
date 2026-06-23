@@ -13,14 +13,18 @@ import CryptoKit
 
 /// 硬件安全芯片加解密服务 (SecureEnclaveCryptoService)
 /// 专为第三方敏感令牌提供 Secure Enclave 物理层级锁死，杜绝文件级破解与异地克隆。
-final class SecureEnclaveCryptoService: Sendable {
-    /// 全局唯一的线程安全单例
-    static let shared = SecureEnclaveCryptoService()
+class SecureEnclaveCryptoService: @unchecked Sendable {
+    /// 真实单例（内部持有）
+    private static let _shared = SecureEnclaveCryptoService()
+    /// 测试覆盖：设置非 nil 值后 shared 返回 Mock 实例；在 tearDown 中置 nil 恢复
+    nonisolated(unsafe) static var testOverride: SecureEnclaveCryptoService?
+    /// 全局唯一的线程安全单例入口：测试模式下可被替换
+    static var shared: SecureEnclaveCryptoService { testOverride ?? _shared }
     
     /// 用于在 UserDefaults / Keychain 中保存硬件私钥 Token 的 Key
     private let hardwareKeyTokenPath = "com.zhiyu.secure_enclave.token"
     
-    private init() {}
+    init() {}
     
     // MARK: - 状态属性
     

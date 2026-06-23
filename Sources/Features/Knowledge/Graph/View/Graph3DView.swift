@@ -5,7 +5,7 @@
 //  Created by Antigravity on 2026/05/23.
 //  Copyright © 2026 WangChong. All rights reserved.
 //
-//  系统层级：[L2] 业务功能层
+//  系统层级：[L3] 表现层
 //  核心职责：构建 Graph3D 界面的 UI 视图层组件。
 //
 import SwiftUI
@@ -69,17 +69,10 @@ struct Graph3DView: View {
         }
         .background(PageBackgroundView(accentColor: .appAccent))
         .ignoresSafeArea(edges: isFullScreen ? .all : [])
-        #if !os(watchOS)
-        .statusBarHidden(isFullScreen)
-        .toolbar(isFullScreen ? .hidden : .visible, for: .tabBar)
-        #endif
+        .adaptiveFullScreenImmersive(isFullScreen)
         .preferredColorScheme(isFullScreen ? .dark : nil)
-        #if os(iOS)
-        .navigationBarBackButtonHidden(isFullScreen)
-        #endif
-        #if os(iOS)
-        .toolbar(isFullScreen ? .hidden : .visible, for: .navigationBar)
-        #endif
+        .hideBackButtonIfIOS(isFullScreen)
+        .hideNavigationBarIfIOS(isFullScreen)
         .onAppear { 
             // 节点数超出 2000 个时智能降级至 2D 拓扑
             if store.pages.count > 2000 {

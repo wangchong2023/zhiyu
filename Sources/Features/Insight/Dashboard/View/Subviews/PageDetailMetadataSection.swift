@@ -5,7 +5,7 @@
 //  Created by Antigravity on 2026/05/23.
 //  Copyright © 2026 WangChong. All rights reserved.
 //
-//  系统层级：[L2] 业务功能层
+//  系统层级：[L3] 表现层
 //  核心职责：仪表盘：页面列表、知识统计、每周洞察、回链视图。
 //
 import SwiftUI
@@ -17,6 +17,8 @@ struct PageDetailMetadataSection: View {
     let recommendations: [KnowledgePage]
     
     @State private var copiedUrl: String?
+    
+    @Inject var pasteboard: any PasteboardProtocol
     
     var body: some View {
         VStack(spacing: 0) {
@@ -36,9 +38,7 @@ struct PageDetailMetadataSection: View {
                         Spacer()
                         if page.isLocalFileSource {
                             Button(action: {
-                                #if os(iOS)
-                                UIPasteboard.general.string = sourceURL
-                                #endif
+                                pasteboard.string = sourceURL
                                 withAnimation(.spring()) {
                                     copiedUrl = sourceURL
                                 }

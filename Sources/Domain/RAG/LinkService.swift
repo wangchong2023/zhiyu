@@ -63,13 +63,16 @@ actor LinkService {
     }
 
     // MARK: - Search
-    /// 搜索
-    /// - Parameter query: query
-    /// - Returns: 列表
+    /// 关键词全文搜索，在页面标题、正文、标签、别名中匹配查询词。
+    /// 结果按四级相关性强制排序，短查询场景下标题完全匹配权重最高。
+    /// - Parameter query: 搜索关键词
+    /// - Parameter pages: 搜索范围（知识页面全集）
+    /// - Returns: 按相关性降序排列的匹配页面列表
     func search(query: String, in pages: [KnowledgePage]) -> [KnowledgePage] {
         guard !query.isEmpty else { return pages }
         let lowercasedQuery = query.lowercased()
 
+        // Step 1: 多字段模糊匹配过滤（标题 / 正文 / 标签 / 别名）
         let filtered = pages.filter { page in
             page.title.lowercased().contains(lowercasedQuery) ||
             page.content.lowercased().contains(lowercasedQuery) ||
@@ -77,34 +80,41 @@ actor LinkService {
             page.aliases.contains(where: { $0.lowercased().contains(lowercasedQuery) })
         }
 
-        // 强制相关性排序：精确标题 > 包含标题 > 别名 > 正文
+        // Step 2: 四级相关性强制排序：精确标题 > 前缀标题 > 包含标题 > 正文含关键词
         return filtered.sorted { p1, p2 in
             let t1 = p1.title.lowercased()
             let t2 = p2.title.lowercased()
 
-            // 1. 标题完全一致
+            // Level 1: 标题完全一致（最高优先级）
             let exact1 = (t1 == lowercasedQuery)
             let exact2 = (t2 == lowercasedQuery)
             if exact1 != exact2 { return exact1 }
 
-            // 2. 标题前缀匹配
+            // Level 2: 标题前缀匹配
             let prefix1 = t1.hasPrefix(lowercasedQuery)
             let prefix2 = t2.hasPrefix(lowercasedQuery)
             if prefix1 != prefix2 { return prefix1 }
 
-            // 3. 标题包含
+            // Level 3: 标题包含匹配
             let contains1 = t1.contains(lowercasedQuery)
             let contains2 = t2.contains(lowercasedQuery)
             if contains1 != contains2 { return contains1 }
 
-            // 如果层级相同，保持原有稳定性
+            // Level 4: 同层保持原始稳定性
             return false
         }
     }
 
-    /// 混合检索（带诊断信息版）
+    /// 混合检索（关键词 + 语义向量），使用 RRF 算法融合排序，并附带诊断信息。
+    /// 短查询（< 阈值）自动提升关键词权重以降低语义噪音。
+    /// - Parameter query: 搜索查询
+    /// - Parameter pages: 搜索范围
+    /// - Parameter embeddingProvider: 向量嵌入服务
+    /// - Returns: 包含排序结果和诊断信息的 SearchResult
     func hybridSearchWithDiagnostics(query: String, in pages: [KnowledgePage], embeddingProvider: any EmbeddingProvider) async -> SearchResult {
+        // Step 1: 关键词检索
         let keywordResults = search(query: query, in: pages)
+        // Step 2: 语义向量检索
         let semanticScored = await embeddingProvider.search(query: query, topK: 50)
         let semanticResults = filterSemanticResults(semanticScored, query: query, pages: pages)
 
@@ -112,24 +122,28 @@ actor LinkService {
         var scores: [UUID: Double] = [:]
         var diagMap: [UUID: (fts: Int, vec: Int)] = [:]
 
-        // 动态权重：对于短查询（如 "3D"），关键词匹配更可靠
+        // Step 3: 动态权重 — 短查询（如"3D"）关键词匹配更可靠
         let keywordWeight = query.count < BusinessConstants.RAG.shortQueryThreshold ? 1.5 : 1.0
         let semanticWeight = 1.0
 
+        // Step 4: RRF 分数累加 — 关键词结果
         for (index, page) in keywordResults.enumerated() {
             scores[page.id, default: 0.0] += (1.0 / Double(k + index + 1)) * keywordWeight
             diagMap[page.id] = (index + 1, -1)
         }
 
+        // Step 5: RRF 分数累加 — 语义结果
         for (index, page) in semanticResults.enumerated() {
             scores[page.id, default: 0.0] += (1.0 / Double(k + index + 1)) * semanticWeight
             let existing = diagMap[page.id] ?? (-1, -1)
             diagMap[page.id] = (existing.fts, index + 1)
         }
 
+        // Step 6: 按融合分数降序排列并去重
         let sortedIDs = scores.keys.sorted { (scores[$0] ?? 0) > (scores[$1] ?? 0) }
         let results = sortedIDs.compactMap { id in pages.first { $0.id == id } }
 
+        // Step 7: 构建诊断信息（Top-10 结果的详细排名）
         let topDiagnostics = results.prefix(10).compactMap { page -> SearchDiagnosticInfo.ResultScore? in
             guard let ranks = diagMap[page.id] else { return nil }
             return SearchDiagnosticInfo.ResultScore(
@@ -143,7 +157,7 @@ actor LinkService {
 
         let diagnosticInfo = SearchDiagnosticInfo(
             query: query,
-            rewrittenQuery: query, // 暂无重写逻辑
+            rewrittenQuery: query,
             ftsCount: keywordResults.count,
             vectorCount: semanticResults.count,
             rrfTopResults: topDiagnostics
@@ -152,7 +166,10 @@ actor LinkService {
         return SearchResult(results: results, diagnostic: diagnosticInfo)
     }
 
-    /// 按动态相似度门禁过滤语义搜索结果，短查询使用更高门槛以减少噪音
+    /// 按动态相似度门禁过滤语义搜索结果。
+    /// 短查询使用更高门槛以减少噪音，但高置信度结果（> 0.85）始终保留。
+    /// - 短查询策略：仅保留 score > 高置信阈值 或标题含查询词的候选
+    /// - 长查询策略：保留 score > 动态阈值的所有候选
     private func filterSemanticResults(
         _ scored: [(id: UUID, score: Float)],
         query: String,
@@ -175,25 +192,25 @@ actor LinkService {
             .compactMap { res in pages.first(where: { $0.id == res.id }) }
     }
 
-    /// Reciprocal Rank Fusion (RRF) 算法
-    /// 公式: score = sum(1 / (k + rank))
+    /// Reciprocal Rank Fusion (RRF) 算法 — 融合关键词与语义排序结果。
+    /// 公式: score = Σ 1 / (k + rank_i)，k 为平滑常数（默认 60）。
+    /// 同一页面出现在两路结果中时分数累加，最终按 RRF 总分降序去重。
     func rrf(keywordResults: [KnowledgePage], semanticResults: [KnowledgePage], k: Int = 60) -> [KnowledgePage] {
         var scores: [UUID: Double] = [:]
 
-        // 为关键词结果打分
+        // Step 1: 关键词结果 RRF 打分
         for (index, page) in keywordResults.enumerated() {
             scores[page.id, default: 0] += 1.0 / Double(k + index + 1)
         }
 
-        // 为语义结果打分 (累计)
+        // Step 2: 语义结果 RRF 打分（与关键词结果累加）
         for (index, page) in semanticResults.enumerated() {
             scores[page.id, default: 0] += 1.0 / Double(k + index + 1)
         }
 
-        // 合并去重并按 RRF 总分排序
+        // Step 3: 按 RRF 总分降序排列，从并集中去重映射回 KnowledgePage
         let sortedIDs = scores.keys.sorted { (scores[$0] ?? 0) > (scores[$1] ?? 0) }
 
-        // 将 ID 映射回 KnowledgePage 对象（从全集中查找以保持引用一致）
         let allCandidates = Set(keywordResults + semanticResults)
         return sortedIDs.compactMap { id in allCandidates.first { $0.id == id } }
     }

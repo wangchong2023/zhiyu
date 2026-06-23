@@ -5,10 +5,10 @@
 //  Created by Antigravity on 2026/05/23.
 //  Copyright © 2026 WangChong. All rights reserved.
 //
-//  系统层级：[L2] 业务功能层
+//  系统层级：[L3] 表现层
 //  核心职责：知识摄入：文档导入、URL 抓取、OCR 扫描、PDF 解析。
 //
-@preconcurrency import SwiftUI
+import SwiftUI
 import PhotosUI
 
 // MARK: - OCR Image Picker Area
@@ -27,31 +27,7 @@ struct OCRImagePickerArea: View {
     var body: some View {
         VStack(spacing: DesignSystem.standardPadding) { // 16
             if let image = selectedImage {
-                #if os(watchOS)
-                Text(L10n.Common.Status.simulatorNotSupported)
-                #elseif canImport(UIKit)
-                Image(uiImage: image)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(maxHeight: DesignSystem.Metrics.heroValueSize * 11.5) // 300
-                    .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
-                    .shadow(color: .primary.opacity(DesignSystem.shadowOpacity), radius: DesignSystem.small) // 0.1, 8
-                    .overlay(
-                        RoundedRectangle(cornerRadius: DesignSystem.cardRadius)
-                            .stroke(Color.appBorder, lineWidth: DesignSystem.borderWidth) // 1
-                    )
-                #else
-                Image(nsImage: image)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(maxHeight: DesignSystem.Metrics.heroValueSize * 11.5) // 300
-                    .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
-                    .shadow(color: .primary.opacity(DesignSystem.shadowOpacity), radius: DesignSystem.small) // 0.1, 8
-                    .overlay(
-                        RoundedRectangle(cornerRadius: DesignSystem.cardRadius)
-                            .stroke(Color.appBorder, lineWidth: DesignSystem.borderWidth) // 1
-                    )
-                #endif
+                OCRImageContentView(image: image)
             } else {
                 // Placeholder
                 RoundedRectangle(cornerRadius: DesignSystem.cardRadius)
@@ -138,13 +114,7 @@ struct OCRResultDisplay: View {
                 .accessibilityIdentifier("ocr-copy-text")
             }
 
-            Group {
-                #if os(watchOS)
-                TextField("", text: $recognizedText, axis: .vertical)
-                #else
-                TextEditor(text: $recognizedText)
-                #endif
-            }
+            AdaptiveTextEditor(text: $recognizedText)
                 .font(.system(.caption, design: .monospaced))
                 .foregroundStyle(.appText)
                 .frame(minHeight: DesignSystem.Metrics.heroValueSize * 4.6, maxHeight: DesignSystem.Metrics.heroValueSize * 11.5) // 120, 300
@@ -211,9 +181,7 @@ struct OCRSaveForm: View {
                     Label(type.displayName, systemImage: type.icon).tag(type)
                 }
             }
-            #if !os(watchOS)
-                .pickerStyle(.segmented)
-                #endif
+            .segmentedPickerStyleIfAvailable()
 
             // Icon picker row
             HStack {

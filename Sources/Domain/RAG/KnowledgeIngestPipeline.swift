@@ -47,6 +47,8 @@ actor KnowledgeIngestPipeline {
 
     // MARK: - Pipeline Steps
 
+    /// Step 1: 语义增强 — 由 AIContentEnricher 对表格和图片进行深度语义丰富化。
+    /// 若未配置 LLM 服务则直接返回原始内容，不走增强流程。
     private func performEnrichment(content: String, llm: (any LLMServiceProtocol)?) async throws -> String {
         guard let llm = llm else { return content }
         
@@ -55,6 +57,8 @@ actor KnowledgeIngestPipeline {
         return await enricher.enrich(content, llm: llm)
     }
 
+    /// Step 2: 并发处理 — 同时执行摘要生成、父子块切分、反向 Q&A 生成。
+    /// 使用 withTaskGroup 实现结构化并发，各父块独立并行处理。
     private func performConcurrentProcessing(content: String, pageID: UUID, llm: (any LLMServiceProtocol)?) async throws -> [PageChunk] {
         try Task.checkCancellation()
         
@@ -93,6 +97,8 @@ actor KnowledgeIngestPipeline {
         }
     }
 
+    /// 生成全局摘要块：取正文前 2000 字符发送给 LLM 生成概括性摘要。
+    /// 摘要块类型标记为 "summary"，用于后续检索时区分常规块。
     private func generateSummaryChunk(content: String, pageID: UUID, llm: any LLMServiceProtocol) async -> [PageChunk] {
         do {
             try Task.checkCancellation()
@@ -117,6 +123,7 @@ actor KnowledgeIngestPipeline {
         return []
     }
 
+    /// Step 3: 向量索引 — 将已产生的所有 PageChunk 批量送入 VectorIndexer 嵌入并持久化。
     private func performEmbedding(chunks: [PageChunk], pageID: UUID, embeddingProvider: any EmbeddingProvider) async throws {
         try Task.checkCancellation()
         await updateProgress(stage: .embedding, progress: 0.75, log: L10n.Ingest.Status.vectorizing)
@@ -129,6 +136,7 @@ actor KnowledgeIngestPipeline {
 
     // MARK: - Private Helpers
 
+    /// 更新任务中心的进度条与子日志，保持 UI 流水线进度视图实时同步。
     private func updateProgress(stage: TaskStage, progress: Double, log: String) async {
         if let task = await TaskCenter.shared.tasks.first(where: { $0.type == .ingest }) {
             await TaskCenter.shared.updateTask(task.id, status: .running(progress: progress, stage: stage))

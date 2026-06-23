@@ -6,7 +6,7 @@
 //  Copyright © 2026 WangChong. All rights reserved.
 //
 //  系统层级：[L1.5] 领域层
-//  核心职责：核心领域模型定义（KnowledgePage、PageLink、PluginRecord 等）。
+//  核心职责：定义 AI 任务进度 (AITaskMetadata/AITaskProgressState) 的领域模型，追踪异步任务生命周期。
 //
 import Foundation
 

@@ -8,7 +8,7 @@
 //  系统层级：[Shared] 共享标准层
 //  核心职责：构建 MermaidWeb 界面的 UI 视图层组件。
 //
-@preconcurrency import SwiftUI
+import SwiftUI
 #if canImport(WebKit)
 import WebKit
 #endif

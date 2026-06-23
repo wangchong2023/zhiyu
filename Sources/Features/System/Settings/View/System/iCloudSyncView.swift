@@ -5,11 +5,11 @@
 //  Created by Antigravity on 2026/05/23.
 //  Copyright © 2026 WangChong. All rights reserved.
 //
-//  系统层级：[L2] 业务功能层
+//  系统层级：[L3] 表现层
 //  核心职责：构建 iCloudSync 界面的 UI 视图层组件。
 //
 #if ICLOUD_ENABLED
-@preconcurrency import SwiftUI
+import SwiftUI
 
 // MARK: - iCloud Sync Settings View
 struct iCloudSyncView: View {
@@ -78,9 +78,7 @@ struct iCloudSyncView: View {
             }
             .appListRowBackground()
         }
-#if os(iOS)
-                .listStyle(.insetGrouped)
-                #endif
+        .adaptiveListStyle()
         .scrollContentBackground(.hidden)
         .background(PageBackgroundView(accentColor: .appAccent))
         .navigationTitle(L10n.ICloud.title)

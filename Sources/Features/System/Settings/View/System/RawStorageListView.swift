@@ -5,7 +5,7 @@
 //  Created by Antigravity on 2026/06/21.
 //  Copyright © 2026 WangChong. All rights reserved.
 //
-//  系统层级：[L2] 业务功能层
+//  系统层级：[L3] 表现层
 //  核心职责：构建 RawStorageList 界面的 UI 视图层组件，支持在开发调试中查看基于卡帕西 Wiki 方法论的原始页面存储详情。
 //
 

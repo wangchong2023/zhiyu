@@ -9,6 +9,9 @@
 //  核心职责：封装特定平台的 SwiftUI View Modifiers，解耦 Feature 层的宏依赖。
 //
 import SwiftUI
+#if canImport(UIKit)
+import UIKit
+#endif
 
 public extension View {
     
@@ -183,6 +186,104 @@ public extension View {
         self
         #else
         modifier(self)
+        #endif
+    }
+
+    // MARK: - 列表样式适配
+
+    /// 平台自适应列表样式：iOS 使用 insetGrouped，macOS 使用 inset，其他平台保持默认
+    @ViewBuilder
+    func adaptiveListStyle() -> some View {
+        #if os(iOS)
+        self.listStyle(.insetGrouped)
+        #elseif os(macOS)
+        self.listStyle(.inset)
+        #else
+        self
+        #endif
+    }
+
+    // MARK: - 键盘类型适配
+
+    /// 平台自适应数字键盘：iOS 使用 numberPad，其他平台使用默认键盘
+    @ViewBuilder
+    func adaptiveNumberPadKeyboard() -> some View {
+        #if os(iOS)
+        self.keyboardType(.numberPad)
+        #else
+        self
+        #endif
+    }
+
+    // MARK: - 全屏模式适配
+
+    /// 全屏沉浸模式：仅在非 watchOS 平台控制状态栏与 TabBar 可见性
+    @ViewBuilder
+    func adaptiveFullScreenImmersive(_ hidden: Bool) -> some View {
+        #if !os(watchOS)
+        self.statusBarHidden(hidden)
+            .toolbar(hidden ? .hidden : .visible, for: .tabBar)
+        #else
+        self
+        #endif
+    }
+
+    // MARK: - 动画适配
+
+    /// 仅在 iOS 应用 matchedGeometryEffect（macOS/watchOS 上跳过）
+    @ViewBuilder
+    func matchedGeometryEffectIfAvailable<ID: Hashable>(
+        id: ID,
+        in namespace: Namespace.ID,
+        isSource: Bool = true
+    ) -> some View {
+        #if os(iOS)
+        self.matchedGeometryEffect(id: id, in: namespace, isSource: isSource)
+        #else
+        self
+        #endif
+    }
+
+    // MARK: - macOS 专属内容
+
+    /// 仅在 macOS 渲染内容（用于 contextMenu 等 ViewBuilder 场景）
+    @ViewBuilder
+    static func macOnly<Content: View>(@ViewBuilder _ content: () -> Content) -> some View {
+        #if os(macOS)
+        content()
+        #else
+        EmptyView()
+        #endif
+    }
+
+    // MARK: - 键盘交互适配
+
+    /// iOS 键盘自动收起：仅在 iOS 添加 tap gesture 收起键盘
+    @ViewBuilder
+    func keyboardDismissOnTapIfAvailable() -> some View {
+        #if os(iOS)
+        self.onTapGesture {
+            UIApplication.shared.sendAction(
+                #selector(UIResponder.resignFirstResponder),
+                to: nil,
+                from: nil,
+                for: nil
+            )
+        }
+        #else
+        self
+        #endif
+    }
+
+    // MARK: - 悬浮交互适配
+
+    /// 仅在非 watchOS 平台应用 onHover（watchOS 无指针设备）
+    @ViewBuilder
+    func onHoverIfAvailable(perform action: @escaping (Bool) -> Void) -> some View {
+        #if !os(watchOS)
+        self.onHover(perform: action)
+        #else
+        self
         #endif
     }
 }

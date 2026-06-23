@@ -786,7 +786,6 @@ final class AccessibilityTests: ZhiYuPlatformUITests {
     }
 
     func testColorContrast() async throws {
-        throw XCTSkip("Skipping due to UI interaction flakiness and timeout during Knowledge tab navigation")
         // 验证颜色对比度（基础检查）
         await navigateToKnowledgeTab()
 

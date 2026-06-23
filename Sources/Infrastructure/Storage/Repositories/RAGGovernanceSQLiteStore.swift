@@ -242,6 +242,8 @@ final class RAGGovernanceSQLiteStore: RAGGovernanceRepository, DatabaseWriterPro
 
     // MARK: - 检索质量指标
 
+    /// 计算 Hit@K — Top-K 检索结果中至少命中 1 条相关结果的比例。
+    /// 算法：hit@K = (至少一条相关结果的查询数) / 总查询数。
     func calculateHitRate(days: Int, k: Int) async throws -> Double {
         let writer = await dbWriter
         return try await writer.read { db in
@@ -276,6 +278,8 @@ final class RAGGovernanceSQLiteStore: RAGGovernanceRepository, DatabaseWriterPro
         }
     }
 
+    /// 计算 MRR (Mean Reciprocal Rank) — 首个相关结果的排名倒数均值。
+    /// 算法：MRR = (1/n) * Σ(1 / rank_of_first_relevant)，值域 [0, 1]。
     func calculateMRR(days: Int) async throws -> Double {
         let writer = await dbWriter
         return try await writer.read { db in

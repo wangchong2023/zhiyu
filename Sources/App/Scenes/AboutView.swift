@@ -47,7 +47,7 @@ struct AboutView: View {
                 VStack(spacing: 1) {
                     infoRow(title: L10n.Settings.About.developer, value: L10n.Settings.About.developerName)
                     Divider().padding(.leading, Spacing.standardPadding)
-                    infoRow(title: L10n.Settings.About.website, value: "https://www.izhiyu.top")
+                    infoRow(title: L10n.Settings.About.website, value: AppConstants.URLs.officialWebsite)
                     Divider().padding(.leading, Spacing.standardPadding)
                     infoRow(title: L10n.Settings.About.version, value: "1.0.0 (20260512)")
                 }

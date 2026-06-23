@@ -5,7 +5,7 @@
 //  Created by Antigravity on 2026/05/23.
 //  Copyright © 2026 WangChong. All rights reserved.
 //
-//  系统层级：[L2] 业务功能层
+//  系统层级：[L3] 表现层
 //  核心职责：构建 PDFReader 界面的 UI 视图层组件。
 //
 import SwiftUI
@@ -182,9 +182,7 @@ private struct PDFDocumentListView: View {
                 }
             }
         }
-#if os(iOS)
-                .listStyle(.insetGrouped)
-                #endif
+                .insetGroupedListStyleIfIOS()
         .scrollContentBackground(.hidden)
         .background(PageBackgroundView(accentColor: .appAccent))
     }
@@ -329,9 +327,7 @@ struct PDFReaderView: View {
 
             TextField(L10n.Ingest.PDF.addNote, text: $highlightNote)
                 .font(.caption)
-#if os(iOS) || os(macOS)
-        .textFieldStyle(.roundedBorder)
-        #endif
+        .roundedBorderTextFieldStyle()
 
             Button(action: saveHighlight) {
                 Text(L10n.Ingest.PDF.saveAnnotation)

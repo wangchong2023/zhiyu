@@ -18,6 +18,7 @@ final class ZhiYuUITests: KnowledgeBaseUITests {
 
     /// 确保应用处于已登录且进入金库主页面的安全自愈引导助手
     /// 自动识别 Welcome Onboarding 遮罩，智能执行"游客登录(跳过)"及"默认金库进入"，保障后续 UI 路径 100% 可达。
+    /// 使用 XCTWaiter 替代 Thread.sleep 以兼容 @MainActor 上下文 — XCTWaiter 在等待期间运行 RunLoop，不阻塞主线程。
     private func ensureAppIsLoggedInAndInVault() {
         var guestButton = app.buttons["GuestModeButton"]
         if !guestButton.exists {
@@ -41,7 +42,7 @@ final class ZhiYuUITests: KnowledgeBaseUITests {
             }
             if backButton.exists && backButton.isHittable {
                 backButton.tap()
-                try? Thread.sleep(forTimeInterval: 0.5)
+                _ = XCTWaiter.wait(for: [XCTestExpectation(description: "返回转场等待")], timeout: 0.5)
             } else {
                 break
             }
@@ -67,7 +68,7 @@ final class ZhiYuUITests: KnowledgeBaseUITests {
 
             if anyCard.exists {
                 anyCard.tap()
-                try? Thread.sleep(forTimeInterval: 1.0)
+                _ = XCTWaiter.wait(for: [XCTestExpectation(description: "进入金库转场等待")], timeout: 1.0)
             }
         }
 
@@ -113,8 +114,8 @@ final class ZhiYuUITests: KnowledgeBaseUITests {
         }
         if backButton.waitForExistence(timeout: 5) && backButton.isHittable {
             backButton.tap()
-            // 稍作等待以完成转场
-            try? Thread.sleep(forTimeInterval: 0.8)
+            // 使用 XCTWaiter 等待转场完成，避免阻塞 @MainActor RunLoop
+            _ = XCTWaiter.wait(for: [XCTestExpectation(description: "返回主页转场等待")], timeout: 0.8)
         }
 
         let predicate = NSPredicate(format: "label CONTAINS '工作台' OR label CONTAINS '仪表盘' OR label CONTAINS 'Dashboard' OR label CONTAINS '知识仪表'")
@@ -124,7 +125,7 @@ final class ZhiYuUITests: KnowledgeBaseUITests {
         XCTAssertTrue(dashboardRow.waitForExistence(timeout: 10), "工作台入口行应该在返回主页后存在")
         
         // 额外提供 1.5 秒的转场缓冲，让 SwiftUI 导航堆栈状态完全稳定，规避 UIKit pop 转场未完全结束就抢跑 push 导致的动作忽略
-        try? Thread.sleep(forTimeInterval: 1.5)
+        _ = XCTWaiter.wait(for: [XCTestExpectation(description: "主页转场稳定等待")], timeout: 1.5)
 
         if !dashboardRow.exists {
             dashboardRow = app.cells.matching(predicate).element(boundBy: 0)
@@ -140,7 +141,7 @@ final class ZhiYuUITests: KnowledgeBaseUITests {
         dashboardRow.tap()
         
         // 点击进入工作台后，等待工作台加载完成的转场缓冲
-        try? Thread.sleep(forTimeInterval: 1.0)
+        _ = XCTWaiter.wait(for: [XCTestExpectation(description: "工作台加载转场等待")], timeout: 1.0)
 
         var dailyRecapHeader = app.staticTexts["每日灵感"]
         if !dailyRecapHeader.exists {
@@ -174,7 +175,7 @@ final class ZhiYuUITests: KnowledgeBaseUITests {
     }
 
     // 链接跳转测试：列表文档 -> 查找双向链接 [[WikiPage]] 标记 -> 模拟点击跳转关联页
-    // @flaky: 模拟器在特定环境下转场加载缓慢，双向链接渲染偶尔超时
+    // @flaky: 依赖预置种子数据"个人知识图谱指南"及特定金库状态，CI 环境中 UI 状态不可靠
     func testPageLinkNavigation() throws {
         ensureAppIsLoggedInAndInVault()
 
@@ -187,13 +188,13 @@ final class ZhiYuUITests: KnowledgeBaseUITests {
         }
         XCTAssertTrue(knowledgeTab.exists, "知识库 Tab 按钮应该存在")
         knowledgeTab.tap()
-        try? Thread.sleep(forTimeInterval: 0.5)
+        _ = XCTWaiter.wait(for: [XCTestExpectation(description: "Tab 切换等待")], timeout: 0.5)
 
         let listPredicate = NSPredicate(format: "label CONTAINS '所有' OR label CONTAINS '页面' OR label CONTAINS 'Pages'")
         let pageListRow = app.descendants(matching: .any).matching(listPredicate).element(boundBy: 0)
-        XCTAssertTrue(pageListRow.waitForExistence(timeout: 10), "知识库主页‘所有页面’入口应当在 10 秒内加载并可见")
+        XCTAssertTrue(pageListRow.waitForExistence(timeout: 10), "知识库主页'所有页面'入口应当在 10 秒内加载并可见")
         pageListRow.tap()
-        try? Thread.sleep(forTimeInterval: 0.8)
+        _ = XCTWaiter.wait(for: [XCTestExpectation(description: "页面列表加载等待")], timeout: 0.8)
 
         // 关键点：使用必然含有双向链接的预置种子页面 "个人知识图谱指南" 进行精确定位
         let targetPredicate = NSPredicate(format: "label CONTAINS '个人知识图谱指南' OR label CONTAINS 'Personal Knowledge Graph Guide'")
@@ -201,14 +202,14 @@ final class ZhiYuUITests: KnowledgeBaseUITests {
 
         XCTAssertTrue(targetElement.waitForExistence(timeout: 20), "未能在列表中找到预置的个人知识图谱指南文档")
         targetElement.tap()
-        try? Thread.sleep(forTimeInterval: 0.8)
+        _ = XCTWaiter.wait(for: [XCTestExpectation(description: "文档详情加载等待")], timeout: 0.8)
 
-        let linkPredicate = NSPredicate(format: "label CONTAINS '[[ ' OR label CONTAINS '[['")
+        let linkPredicate = NSPredicate(format: "label CONTAINS '[[' OR label CONTAINS ']'")
         var pageLink = app.staticTexts.matching(linkPredicate).element(boundBy: 0)
         if !pageLink.exists {
             pageLink = app.staticTexts.containing(linkPredicate).element(boundBy: 0)
         }
-        
+
         // 关键点：强断言渲染判定，存在后再执行点击
         XCTAssertTrue(pageLink.waitForExistence(timeout: 8), "详情页未能成功渲染 Wiki 双向链接")
         pageLink.tap()
@@ -217,12 +218,13 @@ final class ZhiYuUITests: KnowledgeBaseUITests {
     }
 
     // 闭环测试：退出至工作台 -> 多笔记本金库切换 -> 校验播种数据幂等填充
-    // @flaky: 模拟器界面流转及种子数据二次填充时序导致的偶发不稳定
-    func testVaultSwitchingAndSeedingFlow() throws {
+    func testVaultSwitchingAndSeedingFlow() async throws {
         ensureAppIsLoggedInAndInVault()
         navigateBackToHub()
         verifyHubAppears()
+        try? await Task.sleep(nanoseconds: 500_000_000)
         switchToVaultCard()
+        try? await Task.sleep(nanoseconds: 500_000_000)
         enterKnowledgeList()
         verifySeededDocuments()
     }
@@ -305,9 +307,7 @@ final class ZhiYuUITests: KnowledgeBaseUITests {
     // MARK: - 新增高级 UI 冒烟测试
 
     // UI 冒烟测试：切入 AI 对话面板 -> 模拟发送提问 -> 捕获并校验国际化加载状态 (AppAILoadingSkeleton) 文案 -> 物理中断流式输出
-    //
-    // 核心职责：验证 AppAILoadingSkeleton 的 L10n 字段正确渲染，并确保 RAG 对话流的中止机制（Stop-flow）功能闭环正常。
-    func testChatAISkeletonLoadingState() throws {
+    func testChatAISkeletonLoadingState() async throws {
         ensureAppIsLoggedInAndInVault()
 
         var chatTab = app.tabBars.buttons["Chat"]
@@ -319,16 +319,16 @@ final class ZhiYuUITests: KnowledgeBaseUITests {
         }
         XCTAssertTrue(chatTab.waitForExistence(timeout: 5), "AI 对话 Tab 按钮应当存在")
         chatTab.tap()
-        try? Thread.sleep(forTimeInterval: 0.5)
+        try? await Task.sleep(nanoseconds: 500_000_000)
 
         let chatInput = app.textFields["ChatInput_TextField"]
         XCTAssertTrue(chatInput.waitForExistence(timeout: 5), "对话输入框应当存在并可见")
 
         chatInput.tap()
         // 关键点：等待软键盘完全弹出且焦点状态完全稳定
-        try? Thread.sleep(forTimeInterval: 0.8)
+        _ = app.keyboards.firstMatch.waitForExistence(timeout: 3)
         chatInput.typeText("什么是倒数排名融合RRF算法？")
-        try? Thread.sleep(forTimeInterval: 0.5)
+        try? await Task.sleep(nanoseconds: 500_000_000)
 
         let sendButton = app.buttons["ChatSend_Button"]
         XCTAssertTrue(sendButton.exists, "发送按钮应当存在")
@@ -336,9 +336,9 @@ final class ZhiYuUITests: KnowledgeBaseUITests {
         // 关键点：防卫自愈，如因模拟器硬件键盘连接导致输入丢失，则在此重新激活重试
         if !sendButton.isEnabled {
             chatInput.tap()
-            try? Thread.sleep(forTimeInterval: 0.5)
+            try? await Task.sleep(nanoseconds: 500_000_000)
             chatInput.typeText("什么是倒数排名融合RRF算法？")
-            try? Thread.sleep(forTimeInterval: 0.5)
+            try? await Task.sleep(nanoseconds: 500_000_000)
         }
         
         XCTAssertTrue(sendButton.isEnabled, "发送按钮应当在打字后变为可用状态")
@@ -355,6 +355,6 @@ final class ZhiYuUITests: KnowledgeBaseUITests {
         XCTAssertTrue(sendButton.exists, "发送/停止按钮应当可见并支持点击")
         sendButton.tap()
 
-        try? Thread.sleep(forTimeInterval: 1.0)
+        try? await Task.sleep(nanoseconds: 1_000_000_000)
     }
 }

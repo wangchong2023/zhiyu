@@ -56,6 +56,11 @@ struct iOSPlatformRegistrar: PlatformRegistrar {
         
         // 5. 搜索索引
         container.register(iOSSpotlightIndexer(), for: (any SearchIndexerProtocol).self)
+
+        // 6. 设备信息 / URL 打开 / 分享面板
+        container.register(iOSDeviceInfoService(), for: (any DeviceInfoProtocol).self)
+        container.register(iOSURLOpenerService(), for: (any URLOpenerProtocol).self)
+        container.register(iOSShareSheetService(), for: (any ShareSheetProtocol).self)
     }
 }
 #endif

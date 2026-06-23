@@ -5,7 +5,7 @@
 //  Created by Antigravity on 2026/06/10.
 //  Copyright © 2026 WangChong. All rights reserved.
 //
-//  系统层级：[L2] 业务功能层
+//  系统层级：[L3] 表现层
 //  核心职责：导入原始内容卡片组件
 
 import SwiftUI

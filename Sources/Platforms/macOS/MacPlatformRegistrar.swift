@@ -43,6 +43,11 @@ struct MacPlatformRegistrar: PlatformRegistrar {
         container.register(iOSReminderService(), for: (any ReminderServiceProtocol).self)
         container.register(UnsupportedExportService(), for: (any ExportServiceProtocol).self)
         container.register(UnsupportedSearchIndexer(), for: (any SearchIndexerProtocol).self)
+
+        // 5. 设备信息 / URL 打开 / 分享面板
+        container.register(MacDeviceInfoService(), for: (any DeviceInfoProtocol).self)
+        container.register(MacURLOpenerService(), for: (any URLOpenerProtocol).self)
+        container.register(MacShareSheetService(), for: (any ShareSheetProtocol).self)
     }
 }
 #endif
