@@ -22,8 +22,8 @@ export PROJECT="ZhiYu.xcodeproj"
 # 默认构建 Scheme
 export SCHEME="ZhiYu"
 
-# SPM 依赖库共享缓存目录
-export SPM_CACHE_DIR="${HOME}/.cache/zhiyu-spm"
+# SPM 依赖库共享缓存目录（固定路径，确保 CI worker 与宿主机共享）
+export SPM_CACHE_DIR="${SPM_CACHE_DIR:-/tmp/zhiyu-spm-cache}"
 
 # 集中化构建输出根目录
 export BUILD_DIR="build"
@@ -76,6 +76,38 @@ if candidates:
 " 2>/dev/null)
 
     echo "${sim:-iPhone 16}"
+}
+
+#
+# 函数名称: find_ipad_simulator
+# 函数功能: 动态寻找本机可用的最新 iPad 模拟器（供 iPad 专用 UI 测试使用）。
+#          优先寻找 iPad Pro 13-inch (M5)，若无则回退至最新 iPad。
+# 返回结果: 打印模拟器名称（stdout），并可由调用者捕获
+#
+find_ipad_simulator() {
+    local sim
+    # 优先精确匹配列表
+    local preferred=("iPad Pro 13-inch (M5)" "iPad Pro 11-inch (M5)" "iPad Air 13-inch (M4)")
+    for name in "${preferred[@]}"; do
+        sim=$(xcrun simctl list devices available -j 2>/dev/null \
+            | python3 -c "
+import json, sys
+target = '$name'
+data = json.load(sys.stdin)
+for runtime, devices in data.get('devices', {}).items():
+    for d in devices:
+        if d.get('name') == target and d.get('isAvailable', False):
+            print(d['name']); exit()
+" 2>/dev/null)
+        if [ -n "${sim}" ]; then
+            echo "${sim}"
+            return
+        fi
+    done
+
+    # 二级回退：任意可用 iPad
+    sim=$(xcrun simctl list devices available | grep -i "ipad" | head -1 | sed 's/^[[:space:]]*//' | sed 's/ ([A-F0-9-]*)$//')
+    echo "${sim:-iPad Pro 13-inch (M5)}"
 }
 
 # 
