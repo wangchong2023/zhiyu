@@ -5,9 +5,12 @@
 # 用法: ./Tools/CI/collect_flaky_tests.sh
 # 输出: 打印 -skip-testing:Target/TestClass/testName 参数列表 (stdout)
 # ==============================================================================
-set -euo pipefail
+# 仅在直接执行时启用严格模式，source 引入时不改变父脚本设置
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    set -euo pipefail
+fi
 
-TESTS_DIR="$(cd "$(dirname "$0")/../../../Tests" && pwd)"
+TESTS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../../Tests" && pwd)"
 OUTPUT_FILE="build/.flaky_tests"
 
 echo "🔍 扫描 @flaky 标记的测试..." >&2
@@ -48,4 +51,5 @@ while IFS= read -r test_id; do
     [ -n "$test_id" ] && echo "-skip-testing:${test_id}"
 done < "$OUTPUT_FILE"
 
-exit 0
+# 仅在直接执行时退出，source 引入时 return（避免终止父脚本）
+return 0 2>/dev/null || exit 0
