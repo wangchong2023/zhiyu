@@ -79,6 +79,10 @@ extension L10n {
             public static var notFound: String { Common.tr("Error.notFound") }
         }
 
+        public enum Status {
+            public static var simulatorNotSupported: String { Common.tr("common.status.simulatorNotSupported") }
+        }
+
         public enum Security {
             public static var title: String { Common.tr("security") }
             public static var unlockReason: String { Common.tr("security.unlockReason") }

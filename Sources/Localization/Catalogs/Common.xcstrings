@@ -545,6 +545,23 @@
         }
       }
     },
+    "common.status.simulatorNotSupported": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This feature is not available in the simulator"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此功能在模拟器中不可用"
+          }
+        }
+      }
+    },
     "components.noBackLinks": {
       "extractionState": "manual",
       "localizations": {

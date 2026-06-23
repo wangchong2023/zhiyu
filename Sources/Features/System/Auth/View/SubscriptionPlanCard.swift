@@ -103,7 +103,7 @@ struct SubscriptionPlanCard: View {
                     Image(systemName: "lightbulb")
                         .font(.title3)
                         .foregroundStyle(.appSecondary)
-                        .frame(width: Spacing.iconCircleSize, height: Spacing.iconCircleSize)
+                        .frame(width: DesignSystem.Timeline.iconCircleSize, height: DesignSystem.Timeline.iconCircleSize)
                         .background(Color.appBorder.opacity(DesignSystem.Opacity.subtle))
                         .clipShape(Circle())
 
@@ -142,7 +142,7 @@ struct SubscriptionPlanCard: View {
                     Image(systemName: "bolt.fill")
                         .font(.title3)
                         .foregroundStyle(.white)
-                        .frame(width: Spacing.iconCircleSize, height: Spacing.iconCircleSize)
+                        .frame(width: DesignSystem.Timeline.iconCircleSize, height: DesignSystem.Timeline.iconCircleSize)
                         .background(LinearGradient(colors: [.purple, .blue], startPoint: .topLeading, endPoint: .bottomTrailing))
                         .clipShape(Circle())
 
