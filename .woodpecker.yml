@@ -46,7 +46,9 @@ steps:
     depends_on: [clone-repo]
     image: bash
     commands:
-      - bash Tools/CI/Build/prepare_build_environment.sh
+      - xcodegen generate
+      - mkdir -p build /tmp/zhiyu-spm-cache
+      - xcodebuild -resolvePackageDependencies -project ZhiYu.xcodeproj -scheme ZhiYu -clonedSourcePackagesDirPath /tmp/zhiyu-spm-cache
 
   build-ios:
     depends_on: [prepare]
