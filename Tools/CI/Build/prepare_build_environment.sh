@@ -11,7 +11,17 @@ set -euo pipefail
 PROJECT="ZhiYu.xcodeproj"
 SCHEME="ZhiYu"
 DESTINATION="generic/platform=iOS Simulator"
-SPM_CACHE_DIR="${HOME}/.cache/zhiyu-spm"
+# SPM 缓存双路径：优先 /tmp（CI 共享），次选 ~/.cache（备份）
+PERSISTENT_CACHE="${HOME}/.cache/zhiyu-spm"
+SHARED_CACHE="/tmp/zhiyu-spm-cache"
+if [ -d "$SHARED_CACHE/checkouts" ]; then
+    SPM_CACHE_DIR="$SHARED_CACHE"
+elif [ -d "$PERSISTENT_CACHE/checkouts" ]; then
+    cp -a "$PERSISTENT_CACHE" "$SHARED_CACHE"
+    SPM_CACHE_DIR="$SHARED_CACHE"
+else
+    SPM_CACHE_DIR="$SHARED_CACHE"
+fi
 LOG_FILE="build/test_compile.log"
 ERROR_SUMMARY="build/test_compile_errors.txt"
 
