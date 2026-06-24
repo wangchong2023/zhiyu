@@ -160,8 +160,8 @@ final class Router {
     /// 全局单例，方便非视图层级调用（如 DeepLink 处理）
     static let shared = Router()
     
-    @Inject @ObservationIgnored var keyStore: any KeyStoreProtocol
-    
+    // keyStore 已全部通过 resolveOptional() 手动解析，不再使用 @Inject 声明
+
     /// 核心导航路径
     var path = NavigationPath()
     

@@ -17,7 +17,7 @@ import Combine
 @Observable
 public final class SettingsStore {
     @ObservationIgnored private var cancellables = Set<AnyCancellable>()
-    @ObservationIgnored @Inject var keyStore: any KeyStoreProtocol
+    // keyStore 已全部通过 resolveOptional() 手动解析，不再使用 @Inject 声明
 
     public init() {
         AppEventBus.shared.subscribe()
