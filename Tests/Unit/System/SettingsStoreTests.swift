@@ -23,8 +23,10 @@ final class SettingsStoreTests: XCTestCase {
     /// 在每次测试执行前清空并搭建纯净的 UserDefaults 隔离环境
     override func setUp() async throws {
         try await super.setUp()
+        // 注册 KeyStoreProtocol 以支持设置持久化验证
+        setupFullMockEnvironment()
         settingsStore = SettingsStore()
-        
+
         // 抹除可能残留的 UserDefaults 偏好数据，防止测试用例之间产生状态污染
         settingsStore.reset()
     }
