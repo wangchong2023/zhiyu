@@ -239,6 +239,10 @@ extension XCTestCase {
         ServiceContainer.shared.register(iOSHapticService() as any HapticFeedbackProtocol, for: (any HapticFeedbackProtocol).self)
         #endif
         
+        // KeyStore — 键值存储抽象（测试环境使用标准 UserDefaults 实现）
+        // ⚠️ 必须在 Router.shared 之前注册：Router.init() 依赖 KeyStoreProtocol 恢复上次选中的 Tab。
+        ServiceContainer.shared.register(UserDefaultsKeyStore.shared as any KeyStoreProtocol, for: (any KeyStoreProtocol).self)
+
         ServiceContainer.shared.register(HapticFeedback.shared, for: HapticFeedback.self)
         #if !os(watchOS)
         ServiceContainer.shared.register(Router.shared, for: Router.self)
@@ -248,9 +252,6 @@ extension XCTestCase {
         ServiceContainer.shared.register(AccessibilityService(), for: AccessibilityService.self)
         ServiceContainer.shared.register(SnapshotService(), for: SnapshotService.self)
         ServiceContainer.shared.register(WorkflowService.shared, for: WorkflowService.self)
-
-        // KeyStore — 键值存储抽象（测试环境使用标准 UserDefaults 实现）
-        ServiceContainer.shared.register(UserDefaultsKeyStore.shared as any KeyStoreProtocol, for: (any KeyStoreProtocol).self)
         
         ServiceContainer.shared.register(MockBiometricAuthProvider() as any BiometricAuthProviderProtocol, for: (any BiometricAuthProviderProtocol).self)
         ServiceContainer.shared.register(DummyActivityService() as any LiveActivityProtocol, for: (any LiveActivityProtocol).self)

@@ -25,11 +25,14 @@ public final class SettingsStore {
             .store(in: &cancellables)
     }
     // ── 隐私与安全 ──
+    /// 使用 resolveOptional 优雅降级：DI 容器未就绪（如单测 setUp 早期）时回退到默认 true。
     @ObservationIgnored private var _isPrivacyModeEnabled: Bool = {
-        // NOTE: Lazy initializer context — resolve directly since @Inject not yet available
-        return ServiceContainer.shared.resolve((any KeyStoreProtocol).self).object(forKey: AppConstants.Keys.Storage.isPrivacyModeEnabled) as? Bool ?? true
+        guard let keyStore = ServiceContainer.shared.resolveOptional((any KeyStoreProtocol).self) else {
+            return true
+        }
+        return keyStore.object(forKey: AppConstants.Keys.Storage.isPrivacyModeEnabled) as? Bool ?? true
     }()
-    
+
     public var isPrivacyModeEnabled: Bool {
         get {
             access(keyPath: \.isPrivacyModeEnabled)
@@ -38,13 +41,16 @@ public final class SettingsStore {
         set {
             withMutation(keyPath: \.isPrivacyModeEnabled) {
                 _isPrivacyModeEnabled = newValue
-                keyStore.set(newValue, forKey: AppConstants.Keys.Storage.isPrivacyModeEnabled)
+                ServiceContainer.shared.resolveOptional((any KeyStoreProtocol).self)?.set(newValue, forKey: AppConstants.Keys.Storage.isPrivacyModeEnabled)
             }
         }
     }
 
     @ObservationIgnored private var _isBiometricEnabled: Bool = {
-        return ServiceContainer.shared.resolve((any KeyStoreProtocol).self).object(forKey: AppConstants.Keys.Storage.isBiometricEnabled) as? Bool ?? true
+        guard let keyStore = ServiceContainer.shared.resolveOptional((any KeyStoreProtocol).self) else {
+            return true
+        }
+        return keyStore.object(forKey: AppConstants.Keys.Storage.isBiometricEnabled) as? Bool ?? true
     }()
     
     public var isBiometricEnabled: Bool {
@@ -55,7 +61,7 @@ public final class SettingsStore {
         set {
             withMutation(keyPath: \.isBiometricEnabled) {
                 _isBiometricEnabled = newValue
-                keyStore.set(newValue, forKey: AppConstants.Keys.Storage.isBiometricEnabled)
+                ServiceContainer.shared.resolveOptional((any KeyStoreProtocol).self)?.set(newValue, forKey: AppConstants.Keys.Storage.isBiometricEnabled)
             }
         }
     }
@@ -66,32 +72,36 @@ public final class SettingsStore {
     // ── 引导状态 ──
     public var hasShownGraphCoachMark: Bool {
         get {
-            return keyStore.bool(forKey: AppConstants.Keys.Storage.hasShownGraphCoachMark)
+            guard let ks = ServiceContainer.shared.resolveOptional((any KeyStoreProtocol).self) else { return false }
+            return ks.bool(forKey: AppConstants.Keys.Storage.hasShownGraphCoachMark)
         }
-        set { keyStore.set(newValue, forKey: AppConstants.Keys.Storage.hasShownGraphCoachMark) }
+        set { ServiceContainer.shared.resolveOptional((any KeyStoreProtocol).self)?.set(newValue, forKey: AppConstants.Keys.Storage.hasShownGraphCoachMark) }
     }
 
     // ── iCloud 同步偏好 ──
     public var iCloudConflictResolution: String {
         get {
-            return keyStore.string(forKey: AppConstants.Keys.Storage.iCloudConflictResolution) ?? "merge"
+            guard let ks = ServiceContainer.shared.resolveOptional((any KeyStoreProtocol).self) else { return "merge" }
+            return ks.string(forKey: AppConstants.Keys.Storage.iCloudConflictResolution) ?? "merge"
         }
-        set { keyStore.set(newValue, forKey: AppConstants.Keys.Storage.iCloudConflictResolution) }
+        set { ServiceContainer.shared.resolveOptional((any KeyStoreProtocol).self)?.set(newValue, forKey: AppConstants.Keys.Storage.iCloudConflictResolution) }
     }
 
     public var iCloudAutoSync: Bool {
         get {
-            return keyStore.bool(forKey: AppConstants.Keys.Storage.iCloudAutoSync)
+            guard let ks = ServiceContainer.shared.resolveOptional((any KeyStoreProtocol).self) else { return false }
+            return ks.bool(forKey: AppConstants.Keys.Storage.iCloudAutoSync)
         }
-        set { keyStore.set(newValue, forKey: AppConstants.Keys.Storage.iCloudAutoSync) }
+        set { ServiceContainer.shared.resolveOptional((any KeyStoreProtocol).self)?.set(newValue, forKey: AppConstants.Keys.Storage.iCloudAutoSync) }
     }
 
     // ── 协作用户名 ──
     public var collabUsername: String {
         get {
-            return keyStore.string(forKey: AppConstants.Keys.Storage.userName) ?? ""
+            guard let ks = ServiceContainer.shared.resolveOptional((any KeyStoreProtocol).self) else { return "" }
+            return ks.string(forKey: AppConstants.Keys.Storage.userName) ?? ""
         }
-        set { keyStore.set(newValue, forKey: AppConstants.Keys.Storage.userName) }
+        set { ServiceContainer.shared.resolveOptional((any KeyStoreProtocol).self)?.set(newValue, forKey: AppConstants.Keys.Storage.userName) }
     }
 
     /// 重置
@@ -100,8 +110,9 @@ public final class SettingsStore {
         isBiometricEnabled = true
         showPerfDashboard = false
         hasShownGraphCoachMark = false
-        keyStore.removeObject(forKey: AppConstants.Keys.Storage.iCloudConflictResolution)
-        keyStore.removeObject(forKey: AppConstants.Keys.Storage.iCloudAutoSync)
-        keyStore.removeObject(forKey: AppConstants.Keys.Storage.userName)
+        guard let ks = ServiceContainer.shared.resolveOptional((any KeyStoreProtocol).self) else { return }
+        ks.removeObject(forKey: AppConstants.Keys.Storage.iCloudConflictResolution)
+        ks.removeObject(forKey: AppConstants.Keys.Storage.iCloudAutoSync)
+        ks.removeObject(forKey: AppConstants.Keys.Storage.userName)
     }
 }

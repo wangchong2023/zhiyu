@@ -29,8 +29,9 @@ import Combine
     
     init() {
         // NOTE: init() 内不能使用 @Inject 属性包装器（尚未完成初始化），
-        // 直接通过 ServiceContainer 解析获取 KeyStore 实例。
-        self.hasCompletedOnboarding = ServiceContainer.shared.resolve((any KeyStoreProtocol).self).bool(forKey: AppConstants.Keys.Storage.hasCompletedOnboarding)
+        // 使用 resolveOptional 优雅降级：DI 容器未就绪时默认为 false（未完成引导）。
+        self.hasCompletedOnboarding = ServiceContainer.shared.resolveOptional((any KeyStoreProtocol).self)?
+            .bool(forKey: AppConstants.Keys.Storage.hasCompletedOnboarding) ?? false
     }
     
     enum OnboardingStep: Int, CaseIterable, Identifiable {

@@ -103,7 +103,8 @@ class TaskCenter: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     
     /// 注入实时活动能力，支持跨平台解耦
-    private let activityService: any LiveActivityProtocol = ServiceContainer.shared.resolve((any LiveActivityProtocol).self)
+    /// 使用 resolveOptional 优雅降级：DI 容器未就绪时静默跳过，避免启动崩溃。
+    private lazy var activityService: (any LiveActivityProtocol)? = ServiceContainer.shared.resolveOptional((any LiveActivityProtocol).self)
 
     init() {
         setupSubscriptions()
@@ -128,9 +129,9 @@ class TaskCenter: ObservableObject {
         if let firstRunningTask = tasks.first(where: { if case .running = $0.status { return true }; return false }) {
             Task {
                 if case .running(let progress, _) = firstRunningTask.status {
-                    await activityService.updateProgress(id: firstRunningTask.id, progress: progress, message: text)
+                    await activityService?.updateProgress(id: firstRunningTask.id, progress: progress, message: text)
                 } else {
-                    await activityService.updateProgress(id: firstRunningTask.id, progress: 0.5, message: text)
+                    await activityService?.updateProgress(id: firstRunningTask.id, progress: 0.5, message: text)
                 }
             }
         }
@@ -178,7 +179,7 @@ class TaskCenter: ObservableObject {
         self.tasks.insert(task, at: 0)
         self.latestStatus = L10n.AI.Task.starting( name, target)
 
-        activityService.startActivity(id: task.id, name: name, target: target)
+        activityService?.startActivity(id: task.id, name: name, target: target)
 
         return task.id
     }
@@ -199,19 +200,19 @@ class TaskCenter: ObservableObject {
             case .running(let progress, _):
                 self.latestStatus = L10n.AI.Task.running( task.name, task.target)
                 Task {
-                    await activityService.updateProgress(id: task.id, progress: progress, message: self.latestStatus)
+                    await activityService?.updateProgress(id: task.id, progress: progress, message: self.latestStatus)
                 }
             case .completed:
                 self.latestStatus = L10n.AI.Task.completed( task.name)
                 NotificationCenter.default.post(name: .taskCompleted, object: task)
                 Task {
-                    await activityService.endActivity(id: task.id)
+                    await activityService?.endActivity(id: task.id)
                 }
             case .failed:
                 self.latestStatus = L10n.AI.Task.failed( task.name)
                 NotificationCenter.default.post(name: .taskCompleted, object: task)
                 Task {
-                    await activityService.endActivity(id: task.id)
+                    await activityService?.endActivity(id: task.id)
                 }
             case .pending:
                 break
