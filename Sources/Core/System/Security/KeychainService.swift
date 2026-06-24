@@ -24,8 +24,9 @@ class KeychainService: @unchecked Sendable {
     private let serviceName = "com.zhiyu.keychain"
 
     /// 键值存储抽象，用于 Keychain entitlements 缺失时的 DEBUG 降级回退。
-    private var keyStore: any KeyStoreProtocol {
-        ServiceContainer.shared.resolve((any KeyStoreProtocol).self)
+    /// 使用 resolveOptional 优雅降级：DI 容器未就绪时返回 nil，避免启动/测试崩溃。
+    private var keyStore: (any KeyStoreProtocol)? {
+        ServiceContainer.shared.resolveOptional((any KeyStoreProtocol).self)
     }
 
     init() {}
@@ -53,7 +54,7 @@ class KeychainService: @unchecked Sendable {
         guard status == errSecSuccess else {
             if status == errSecMissingEntitlement {
                 #if DEBUG
-                keyStore.set(value, forKey: key)
+                keyStore?.set(value, forKey: key)
                 return
                 #endif
             }
@@ -88,7 +89,7 @@ class KeychainService: @unchecked Sendable {
         default:
             if status == errSecMissingEntitlement {
                 #if DEBUG
-                if let val = keyStore.string(forKey: key) {
+                if let val = keyStore?.string(forKey: key) {
                     return val
                 }
                 #endif
@@ -108,7 +109,7 @@ class KeychainService: @unchecked Sendable {
         let status = SecItemDelete(query as CFDictionary)
         #if DEBUG
         // 在 DEBUG 模式下，无论 Keychain 删除结果如何，都同步清理 KeyStore 回退缓存
-        keyStore.removeObject(forKey: key)
+        keyStore?.removeObject(forKey: key)
         #endif
         guard status == errSecSuccess || status == errSecItemNotFound else {
             if status == errSecMissingEntitlement {
