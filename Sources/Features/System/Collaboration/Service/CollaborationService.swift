@@ -45,6 +45,7 @@ final class CollaborationService: NSObject, ObservableObject, @unchecked Sendabl
     /// 注入的协作提供商实现
     @Inject private var provider: any CollaborationProviderProtocol
     @Inject private var appEnv: any AppEnvironmentProtocol
+    @Inject private var keyStore: any KeyStoreProtocol
 
     /// 数据应用代理
     weak var delegate: CollaborationDelegate?
@@ -52,7 +53,7 @@ final class CollaborationService: NSObject, ObservableObject, @unchecked Sendabl
     private let maxRecentEdits = 100
 
     private var userName: String {
-        UserDefaults.standard.string(forKey: AppConstants.Keys.Storage.userName) ?? appEnv.deviceName
+        keyStore.string(forKey: AppConstants.Keys.Storage.userName) ?? appEnv.deviceName
     }
 
     // MARK: - Init
@@ -179,7 +180,7 @@ final class CollaborationService: NSObject, ObservableObject, @unchecked Sendabl
     /// setUserName
     /// - Parameter name: name
     func setUserName(_ name: String) {
-        UserDefaults.standard.set(name, forKey: AppConstants.Keys.Storage.userName)
+        keyStore.set(name, forKey: AppConstants.Keys.Storage.userName)
     }
 
     private func appendEdit(_ edit: CollabEdit) {

@@ -9,7 +9,6 @@
 //  核心职责：笔记本中心：入口页面、笔记本卡片、创建表单。
 //
 import Foundation
-import SwiftUI
 
 /// [L2] 笔记本主题工厂：负责基于 AI 语义启发生成动态背景配置
 public struct NotebookThemeFactory {

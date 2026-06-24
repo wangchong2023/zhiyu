@@ -25,6 +25,7 @@ public final class GlobalModelManager {
     
     @ObservationIgnored @Inject private var remoteConfig: any RemoteConfigCapabilities
     @ObservationIgnored @Inject private var downloadManager: any ModelDownloadCapabilities
+    @ObservationIgnored @Inject private var keyStore: any KeyStoreProtocol
     
     // MARK: - 全局响应式属性
     
@@ -70,11 +71,11 @@ public final class GlobalModelManager {
     public var activeModelId: String {
         get {
             access(keyPath: \.activeModelId)
-            return UserDefaults.standard.string(forKey: AppConstants.Keys.Storage.activeModelId) ?? "gemma-4-e2b-it"
+            return keyStore.string(forKey: AppConstants.Keys.Storage.activeModelId) ?? "gemma-4-e2b-it"
         }
         set {
             withMutation(keyPath: \.activeModelId) {
-                UserDefaults.standard.set(newValue, forKey: AppConstants.Keys.Storage.activeModelId)
+                keyStore.set(newValue, forKey: AppConstants.Keys.Storage.activeModelId)
             }
         }
     }
@@ -83,11 +84,11 @@ public final class GlobalModelManager {
     public var isCloudEscalationEnabled: Bool {
         get {
             access(keyPath: \.isCloudEscalationEnabled)
-            return UserDefaults.standard.bool(forKey: AppConstants.Keys.Storage.isCloudEscalationEnabled)
+            return keyStore.bool(forKey: AppConstants.Keys.Storage.isCloudEscalationEnabled)
         }
         set {
             withMutation(keyPath: \.isCloudEscalationEnabled) {
-                UserDefaults.standard.set(newValue, forKey: AppConstants.Keys.Storage.isCloudEscalationEnabled)
+                keyStore.set(newValue, forKey: AppConstants.Keys.Storage.isCloudEscalationEnabled)
             }
         }
     }
@@ -96,11 +97,11 @@ public final class GlobalModelManager {
     public var activeCloudModelId: String {
         get {
             access(keyPath: \.activeCloudModelId)
-            return UserDefaults.standard.string(forKey: AppConstants.Keys.Storage.activeCloudModelId) ?? "gpt-4o"
+            return keyStore.string(forKey: AppConstants.Keys.Storage.activeCloudModelId) ?? "gpt-4o"
         }
         set {
             withMutation(keyPath: \.activeCloudModelId) {
-                UserDefaults.standard.set(newValue, forKey: AppConstants.Keys.Storage.activeCloudModelId)
+                keyStore.set(newValue, forKey: AppConstants.Keys.Storage.activeCloudModelId)
             }
         }
     }

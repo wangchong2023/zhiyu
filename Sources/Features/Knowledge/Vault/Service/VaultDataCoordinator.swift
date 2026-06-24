@@ -1,0 +1,140 @@
+//
+//  VaultDataCoordinator.swift
+//  ZhiYu
+//
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：Vault 数据协调器 — 笔记本元数据加载/初始化、演示库构建与自动热恢复活跃金库连接。
+//
+import Foundation
+
+// MARK: - 数据迁移与统计
+
+extension VaultService {
+
+    /// 加载所有笔记本元数据。
+    /// 若全局配置表为空，则冷启动触发系统预置的初始笔记本（"知识管理"与"项目调研"）。
+    func loadVaults() {
+        Task {
+            guard let vaultRepository = vaultRepository else {
+                Logger.shared.warning(" [VaultService] loadVaults 被跳过，因为 vaultRepository 未在 DI 注册")
+                return
+            }
+            do {
+                var loadedVaults = try await vaultRepository.fetchAllVaults()
+
+                // 物理清理遗留的历史内置"我的知识库"笔记本
+                let oldNames = [
+                    String(data: Data(base64Encoded: "5oiR55qE55+l6K+G5bqT") ?? Data(), encoding: .utf8) ?? "",
+                    String(data: Data(base64Encoded: "TXkgVmF1bHQ=") ?? Data(), encoding: .utf8) ?? "",
+                    String(data: Data(base64Encoded: "TXkgS25vd2xlZGdlIEJhc2U=") ?? Data(), encoding: .utf8) ?? ""
+                ]
+                let legacyVaults = loadedVaults.filter { oldNames.contains($0.name) }
+                for oldVault in legacyVaults {
+                    try? await vaultRepository.deleteVault(id: oldVault.id)
+                    let dbURL = getVaultDatabaseURL(for: oldVault.id)
+                    let folderURL = dbURL.deletingLastPathComponent()
+                    if FileManager.default.fileExists(atPath: folderURL.path) {
+                        try? FileManager.default.removeItem(at: folderURL)
+                    }
+                    Logger.shared.info("[VaultService] Automatically removed legacy initial notebook: \(oldVault.name)")
+                }
+
+                loadedVaults.removeAll { oldNames.contains($0.name) }
+
+                if loadedVaults.isEmpty {
+                    let demo = buildDefaultDemoVaults()
+                    self.vaults = demo
+                    for vault in demo {
+                        try await vaultRepository.saveVault(vault)
+                    }
+                } else {
+                    self.vaults = loadedVaults
+                }
+                await refreshAllPageCounts()
+            } catch {
+                Logger.shared.error(" [VaultService] Failed to asynchronously load notebook metadata: \(error)", error: error)
+                self.vaults = buildFallbackDemoVaults()
+            }
+        }
+
+        autoRestoreActiveVault()
+    }
+
+    /// 构建初始化的默认演示笔记本
+    func buildDefaultDemoVaults() -> [Vault] {
+        let id1 = UUID()
+        let id2 = UUID()
+        return [
+            Vault(
+                id: id1,
+                name: L10n.Vault.defaultName,
+                createdAt: Date(),
+                updatedAt: Date(),
+                pageCount: 0,
+                themePayload: nil,
+                icon: DesignSystem.Icons.Notebook.defaultBook,
+                description: L10n.Vault.defaultDescription
+            ),
+            Vault(
+                id: id2,
+                name: L10n.Vault.researchName,
+                createdAt: Date(),
+                updatedAt: Date(),
+                pageCount: 0,
+                themePayload: nil,
+                icon: DesignSystem.Icons.Notebook.defaultResearch,
+                description: L10n.Vault.researchDescription
+            )
+        ]
+    }
+
+    /// 极端降级兜底：建立支持多语言本地化的内存级缓存金库
+    func buildFallbackDemoVaults() -> [Vault] {
+        return [
+            Vault(
+                id: UUID(),
+                name: L10n.Vault.defaultName,
+                createdAt: Date(),
+                updatedAt: Date(),
+                pageCount: 12,
+                themePayload: nil,
+                icon: DesignSystem.Icons.Notebook.defaultBook,
+                description: L10n.Vault.defaultDescription
+            ),
+            Vault(
+                id: UUID(),
+                name: L10n.Vault.researchName,
+                createdAt: Date(),
+                updatedAt: Date(),
+                pageCount: 5,
+                themePayload: nil,
+                icon: DesignSystem.Icons.Notebook.defaultResearch,
+                description: L10n.Vault.researchDescription
+            )
+        ]
+    }
+
+    /// 自动从持久化偏好中恢复最近一次使用的金库并执行底层 SQLite 物理热重载联接
+    func autoRestoreActiveVault() {
+        if let idString = keyStore.string(forKey: AppConstants.Keys.Storage.vaultsSelectedID),
+           let id = UUID(uuidString: idString),
+           let vault = vaults.first(where: { $0.id == id }) {
+            self.selectedVaultID = id
+            keyStore.set(vault.englishName, forKey: AppConstants.Keys.Storage.vaultSelectedEnglishName)
+            Task {
+                guard let databaseSwitcher = databaseSwitcher else {
+                    Logger.shared.warning(" [VaultService] autoRestoreActiveVault 被跳过，因为 databaseSwitcher 未在 DI 注册")
+                    return
+                }
+                do {
+                    let dbURL = getVaultDatabaseURL(for: id)
+                    try await databaseSwitcher.switchDatabase(to: id, at: dbURL)
+                } catch {
+                    Logger.shared.error(" [VaultService] Failed to auto-connect to the recently used physical database: \(error)", error: error)
+                }
+            }
+        }
+    }
+}

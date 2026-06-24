@@ -22,21 +22,25 @@ final class PluginStorage {
 
     // MARK: - 封禁列表持久化
 
+    private var keyStore: any KeyStoreProtocol {
+        ServiceContainer.shared.resolve((any KeyStoreProtocol).self)
+    }
+
     /// 从持久化存储加载已挂起的插件 ID 集合
     func loadSuspendedPluginIDs() -> Set<String> {
-        let saved = UserDefaults.standard.stringArray(forKey: AppConstants.Keys.Storage.suspendedPlugins) ?? []
+        let saved = keyStore.object(forKey: AppConstants.Keys.Storage.suspendedPlugins) as? [String] ?? []
         return Set(saved)
     }
 
     /// 持久化已挂起的插件 ID 集合
     func saveSuspendedPluginIDs(_ ids: Set<String>) {
         let array = Array(ids)
-        UserDefaults.standard.set(array, forKey: AppConstants.Keys.Storage.suspendedPlugins)
+        keyStore.set(array, forKey: AppConstants.Keys.Storage.suspendedPlugins)
     }
 
     /// 清除封禁列表持久化
     func clearSuspendedPluginIDs() {
-        UserDefaults.standard.removeObject(forKey: AppConstants.Keys.Storage.suspendedPlugins)
+        keyStore.removeObject(forKey: AppConstants.Keys.Storage.suspendedPlugins)
     }
 
     // MARK: - 插件私有数据

@@ -1,8 +1,8 @@
 # 智宇 (ZhiYu) 概要设计文档 (High Level Design)
 
-**版本**：2.0  
+**版本**：2.1  
 **作者**：架构师团队  
-**日期**：2026-06-10  
+**日期**：2026-06-23  
 
 ---
 
@@ -169,32 +169,39 @@ public protocol LLMServiceProtocol: Sendable {
 | 🟡 P1 | `Sources/Core/Base/Protocols/LLMProtocols.swift:29` | L0 协议引用 Domain 类型 |
 | 🟡 P1 | `Sources/Infrastructure/Storage/Sync/iCloudSyncCoordinator.swift:21-22` | L1 同步协调器引用 L3 AppStore |
 
-### 5.2 模块健康度矩阵
+### 5.2 模块健康度矩阵（2026-06-23 更新）
 
-```
-模块           文件数  P0  P1  P2  P3  健康度  主要改进方向
-─────          ─────  ──  ──  ──  ──  ─────  ────────────
-Core/             75   1   4   6   8   🟡     并发安全 (@unchecked Sendable)
-Infrastructure/   84   2   8  10   6   🟡     God Class 拆分 + NSLock 移除
-Domain/           48   3   1   2   2   🟡     GRDB import 移除
-App/              20   4   3   3   5   🟠     God Class 拆分 + 跨层引用修复
-Features/AI/      23   0   2   5   3   🟡     大型视图拆分 + 协调器瘦身
-Features/Known/   57   2   5   8   4   🟡     硬编码字符串 + 跨层 import
-Shared/           96   0   3  12  15   🟡     #if os 消除 + SRP 拆分
-Platforms/        50   0   0   2   3   🟢     Adaptor 层补全
-Tests/            93   0   1   5   3   🟡     swift-testing 迁移 + 边界测试
-```
+| 模块 | 文件数 | 主要改进方向 |
+|------|--------|-------------|
+| `Core/` | 76 | 并发安全 (@unchecked Sendable → actor) |
+| `Infrastructure/` | 99 | PluginRegistry SRP 拆分完成（706→159） |
+| `Domain/` | 53 | GRDB import 已清零 ✅ |
+| `Features/` | 208 | #if os 宏 46→10 ✅, 9 文件 SRP 重构完成 ✅ |
+| `Shared/` | 103 | PlatformModifiers 协议化, SRP 拆分（3 文件） |
+| `Platforms/` | 62 | 新增 12 个协议实现类 + 3 个 Registrar |
+| `App/` | 18 | AuthView/AuthService/SynthesisView 拆分 |
+| `Localization/` | 41 | — |
+| **合计** | **660** | P0/P1 全部清零 ✅ |
 
 ### 5.3 已完成的代码质量修复
 
-详情见 [CODEBASE_ANALYSIS.md](CODEBASE_ANALYSIS.md)。
-
 | 阶段 | 完成项 | 涉及文件 |
 |------|--------|----------|
-| 架构分析 | 全项目 564 个 Swift 文件 18 项扫描 | 全部 9 个模块 |
+| 架构审计 | 602 文件 18 维度全量代码审计（2026-06-22） | 全项目 |
+| P0 修复 | 98 个 View 文件 `[L2]`→`[L3]` 层级标注修正 | 98 文件 |
+| P0 修复 | 12 个 Domain/Models 文件描述去模板化 | 12 文件 |
+| P1 修复 | 17 处硬编码 URL + 18 处 UserDefaults key → `AppConstants` | 13 文件 |
+| P1 修复 | `#if os()` 宏协议化：Phase 1（46→19）+ Phase 2（19→10） | 11 文件 + 12 新文件 |
+| P1 修复 | `@preconcurrency import SwiftUI` 清理 | 4 文件 |
+| P1 修复 | `iOSSpeechService` 宏密度降低（10→4 处） | 1 文件 → 2 文件 |
+| P1 修复 | 14 大文件 SRP 重构（9 主文件 → 34 新文件） | 9 文件 + 34 新文件 |
+| CI 增强 | 3 个新 Gatekeeper 脚本 + 12 个 CI 检查项全量通过 | Tools/Gatekeeper/ |
+| 测试增强 | 17 个跨平台协议单元测试 + 852 全量测试通过 | Tests/Unit/ |
+| 文档更新 | 新增 `PLATFORM_PROTOCOL_ARCHITECTURE.md` + `srp-file-organization.md` | 2 新文档 |
 | Docker 清理 | 释放 206 GB (85%) — 清理 120+ 旧版镜像 | 3 个微服务 |
-| Mock 服务重构 | 抽取 mock_constants.py, 消除重复参数模板 | 4 个 Python 文件 (-191 行) |
-| 扫描器增强 | check_magic_numbers_v2.py 覆盖 Python 文件 | 2 个扫描目录 |
+| Mock 服务重构 | 抽取 mock_constants.py, 消除重复参数模板 | 4 Python 文件 (-191 行) |
+
+> **审计报告**：[`Tools/Audit/ZhiYu_Codebase_Audit_2026-06-22.md`](../../Tools/Audit/ZhiYu_Codebase_Audit_2026-06-22.md) — P0/P1 全部清零 ✅
 
 ---
 *本文档为智宇系统的高阶概要设计，实现细节请参阅详细设计 [DETAILED_DESIGN.md](../Design/DETAILED_DESIGN.md)。*

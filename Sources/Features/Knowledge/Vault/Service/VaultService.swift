@@ -6,69 +6,67 @@
 //  Copyright © 2026 WangChong. All rights reserved.
 //
 //  系统层级：[L2] 业务功能层
-//  核心职责：实现 Vault 模块的核心业务逻辑服务。
+//  核心职责：Vault 模块中枢协调器 — 持有核心状态、DI 依赖与路径计算，将生命周期/同步/数据操作委托至专用扩展文件。
 //
 import Foundation
 import Observation
-@preconcurrency import GRDB
 
 /// 知识笔记本/金库中枢服务（VaultService）。
-/// 它是业务功能层中负责维护多笔记本租户（Multi-Vault）生命周期的大脑门面，
-/// 支持创建、配置、选择和物理销毁金库，并动态切换底层 SQLite 物理数据库。
+/// 业务功能层中负责维护多笔记本租户（Multi-Vault）生命周期的大脑门面。
 @Observable
 @MainActor
 public final class VaultService: VaultServiceProtocol {
-    
+
     // MARK: - 依赖注入
-    
+
     /// 注入金库元数据持久化仓储协议（vaultRepository），使用可选计算属性安全解析以规避单元测试单例污染崩溃。
-    /// 使用 `@ObservationIgnored` 规避 `Observation` 宏对注入实例的过度包装冲突。
     @ObservationIgnored
-    private var vaultRepository: (any VaultRepository)? {
+    var vaultRepository: (any VaultRepository)? {
         ServiceContainer.shared.optionalResolve((any VaultRepository).self)
     }
-    
+
     /// 注入数据库切换契约（databaseSwitcher），使用可选计算属性安全解析以规避单元测试单例污染崩溃。
     @ObservationIgnored
-    private var databaseSwitcher: (any VaultDatabaseSwitcher)? {
+    var databaseSwitcher: (any VaultDatabaseSwitcher)? {
         ServiceContainer.shared.optionalResolve((any VaultDatabaseSwitcher).self)
     }
-    
+
+    /// 键值存储抽象，替代 UserDefaults.standard 访问。
+    @ObservationIgnored
+    var keyStore: any KeyStoreProtocol {
+        ServiceContainer.shared.resolve((any KeyStoreProtocol).self)
+    }
+
     // MARK: - 状态发布属性
-    
+
     /// 当前已注册挂载的全部笔记本列表。
     public var vaults: [Vault] = []
-    
+
     /// 当前选中的活跃笔记本唯一标识符 UUID。
     public var selectedVaultID: UUID?
-    
+
     /// 当前选中的活跃笔记本实体对象。
     public var currentVault: Vault? {
         vaults.first { $0.id == selectedVaultID }
     }
-    
+
     // MARK: - 单例与初始化
-    
+
     /// 全局唯一的线程安全单例实例。
     public static let shared = VaultService()
-    
+
     /// 私有化单例构造方法，防止外部直接实例化。
     private init() {
-        // 单测环境下禁用自动异步加载初始笔记本，避免跨用例的 DI 容器重置竞态崩溃
         if NSClassFromString("XCTestCase") == nil {
             loadVaults()
         }
     }
-    
+
     // MARK: - 物理路径计算辅助
-    
+
     /// 获取特定笔记本沙盒内的专属物理数据库文件路径。
-    /// - Parameter vaultID: 目标笔记本 UUID。
-    /// - Returns: 指向该笔记本专属 SQLite `vault.sqlite3` 物理文件的绝对路径 URL。
-    ///
-    /// 物理路径结构规范：
-    /// `Application Support/ZhiYu/Vaults/{Vault_UUID}/vault.sqlite3`
-    private func getVaultDatabaseURL(for vaultID: UUID) -> URL {
+    /// 物理路径结构规范：`Application Support/ZhiYu/Vaults/{Vault_UUID}/vault.sqlite3`
+    func getVaultDatabaseURL(for vaultID: UUID) -> URL {
         // swiftlint:disable:next force_unwrapping
         let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
         return appSupport
@@ -76,459 +74,17 @@ public final class VaultService: VaultServiceProtocol {
             .appendingPathComponent(vaultID.uuidString)
             .appendingPathComponent(AppConstants.Storage.vaultDatabaseName)
     }
-    
-    // MARK: - 核心业务操作 API
-    
-    /// 加载所有笔记本元数据。
-    /// 异步载入所有已注册的笔记本元数据列表。
-    /// 若全局配置表为空，则冷启动触发系统预置的初始笔记本（“知识管理”与“项目调研”），
-    /// 该预置演示库支持 100% 国际化多语言翻译适配，自动持久化至全局库中，并安全恢复最近一次激活的物理库。
-    private func loadVaults() {
-        Task {
-            // 🛡️ 防御性检查：规避单测非 DB 环境下因依赖未注册导致的致命错误
-            guard let vaultRepository = vaultRepository else {
-                Logger.shared.warning(" [VaultService] loadVaults 被跳过，因为 vaultRepository 未在 DI 注册")
-                return
-            }
-            do {
-                // 1. 尝试从全局元数据 Repository 中读取所有已注册的金库
-                var loadedVaults = try await vaultRepository.fetchAllVaults()
-                
-                // 物理清理遗留的历史内置“我的知识库”笔记本，防止新老版本共存导致用户体验冲突
-                let oldNames = [
-                    String(data: Data(base64Encoded: "5oiR55qE55+l6K+G5bqT") ?? Data(), encoding: .utf8) ?? "",
-                    String(data: Data(base64Encoded: "TXkgVmF1bHQ=") ?? Data(), encoding: .utf8) ?? "",
-                    String(data: Data(base64Encoded: "TXkgS25vd2xlZGdlIEJhc2U=") ?? Data(), encoding: .utf8) ?? ""
-                ]
-                let legacyVaults = loadedVaults.filter { oldNames.contains($0.name) }
-                for oldVault in legacyVaults {
-                    try? await vaultRepository.deleteVault(id: oldVault.id)
-                    let dbURL = getVaultDatabaseURL(for: oldVault.id)
-                    let folderURL = dbURL.deletingLastPathComponent()
-                    if FileManager.default.fileExists(atPath: folderURL.path) {
-                        try? FileManager.default.removeItem(at: folderURL)
-                    }
-                    Logger.shared.info("[VaultService] Automatically removed legacy initial notebook: \(oldVault.name)")
-                }
-                
-                // 过滤出未被删除的笔记本
-                loadedVaults.removeAll { oldNames.contains($0.name) }
-                
-                if loadedVaults.isEmpty {
-                    // 2. 冷启动：初始化演示金库数据（通过 L10n 支持多语言翻译）
-                    let demo = buildDefaultDemoVaults()
-                    self.vaults = demo
-                    // 3. 将初始化的演示笔记本原子注册并写入全局配置数据库
-                    for vault in demo {
-                        try await vaultRepository.saveVault(vault)
-                    }
-                } else {
-                    self.vaults = loadedVaults
-                }
-                // 4. 异步刷新所有笔记本的页面数量统计
-                await refreshAllPageCounts()
-            } catch {
-                Logger.shared.error(" [VaultService]" + " Failed to" + " asynchronously load" + " notebook metadata:" + " \(error)", error: error)
-                // 5. 极端降级兜底：建立支持多语言本地化的内存级缓存金库
-                self.vaults = buildFallbackDemoVaults()
-            }
-        }
 
-        // 6. 自动从持久化偏好中恢复最近一次使用的金库并执行底层 SQLite 物理热重载联接
-        autoRestoreActiveVault()
-    }
+    // MARK: - 内部持久化辅助
 
-    /// 构建初始化的默认演示笔记本
-    private func buildDefaultDemoVaults() -> [Vault] {
-        let id1 = UUID()
-        let id2 = UUID()
-        return [
-            Vault(
-                id: id1,
-                name: L10n.Vault.defaultName,
-                createdAt: Date(),
-                updatedAt: Date(),
-                pageCount: 0,
-                themePayload: nil,
-                icon: DesignSystem.Icons.Notebook.defaultBook,
-                description: L10n.Vault.defaultDescription
-            ),
-            Vault(
-                id: id2,
-                name: L10n.Vault.researchName,
-                createdAt: Date(),
-                updatedAt: Date(),
-                pageCount: 0,
-                themePayload: nil,
-                icon: DesignSystem.Icons.Notebook.defaultResearch,
-                description: L10n.Vault.researchDescription
-            )
-        ]
-    }
-
-    /// 极端降级兜底：建立支持多语言本地化的内存级缓存金库
-    private func buildFallbackDemoVaults() -> [Vault] {
-        return [
-            Vault(
-                id: UUID(),
-                name: L10n.Vault.defaultName,
-                createdAt: Date(),
-                updatedAt: Date(),
-                pageCount: 12,
-                themePayload: nil,
-                icon: DesignSystem.Icons.Notebook.defaultBook,
-                description: L10n.Vault.defaultDescription
-            ),
-            Vault(
-                id: UUID(),
-                name: L10n.Vault.researchName,
-                createdAt: Date(),
-                updatedAt: Date(),
-                pageCount: 5,
-                themePayload: nil,
-                icon: DesignSystem.Icons.Notebook.defaultResearch,
-                description: L10n.Vault.researchDescription
-            )
-        ]
-    }
-
-    /// 自动从持久化偏好中恢复最近一次使用的金库并执行底层 SQLite 物理热重载联接
-    private func autoRestoreActiveVault() {
-        if let idString = UserDefaults.standard.string(forKey: AppConstants.Keys.Storage.vaultsSelectedID),
-           let id = UUID(uuidString: idString),
-           let vault = vaults.first(where: { $0.id == id }) {
-            self.selectedVaultID = id
-            UserDefaults.standard.set(vault.englishName, forKey: AppConstants.Keys.Storage.vaultSelectedEnglishName)
-            Task {
-                // 🛡️ 防御性检查：规避单测非 DB 环境下因依赖未注册导致的致命错误
-                guard let databaseSwitcher = databaseSwitcher else {
-                    Logger.shared.warning(" [VaultService] autoRestoreActiveVault 被跳过，因为 databaseSwitcher 未在 DI 注册")
-                    return
-                }
-                do {
-                    let dbURL = getVaultDatabaseURL(for: id)
-                    try await databaseSwitcher.switchDatabase(to: id, at: dbURL)
-                } catch {
-                    Logger.shared.error(" [VaultService]" + " Failed to" + " auto-connect to" + " the recently" + " used physical" + " database: \(error)", error: error)
-                }
-            }
-        }
-    }
-    
     /// 将笔记本元数据变更原子写回全局配置表中。
-    /// - Parameter vault: 需要保存更新的 Vault 金库实体。
-    private func saveVaultToDatabase(_ vault: Vault) throws {
+    func saveVaultToDatabase(_ vault: Vault) throws {
         Task {
-            // 🛡️ 防御性检查：规避单测非 DB 环境下因依赖未注册导致的致命错误
             guard let vaultRepository = vaultRepository else {
                 Logger.shared.warning(" [VaultService] saveVaultToDatabase 被跳过，因为 vaultRepository 未在 DI 注册")
                 return
             }
             try await vaultRepository.saveVault(vault)
-        }
-    }
-    
-    /// 异步选择并等待数据库切换完成（用于批量数据操作等需要确保切换完成的场景）
-    /// - Parameter vault: 目标笔记本
-    public func selectVaultAndWait(_ vault: Vault) async throws {
-        self.selectedVaultID = vault.id
-        UserDefaults.standard.set(vault.id.uuidString, forKey: AppConstants.Keys.Storage.vaultsSelectedID)
-        UserDefaults.standard.set(vault.englishName, forKey: AppConstants.Keys.Storage.vaultSelectedEnglishName)
-        
-        // 🛡️ 防御性检查：规避单测非 DB 环境下因依赖未注册导致的致命错误
-        guard let vaultRepository = vaultRepository,
-              let databaseSwitcher = databaseSwitcher else {
-            Logger.shared.warning(" [VaultService] selectVaultAndWait 被跳过，因为相关数据库依赖未在 DI 注册")
-            return
-        }
-        
-        // 同步写入 global_settings 表（供 Widget Extension 读取）
-        try? await vaultRepository.saveSetting(key: AppConstants.Keys.Storage.vaultsSelectedID, value: vault.id.uuidString)
-        NotificationCenter.default.post(name: .vaultWillSwitch, object: vault.id)
-
-        let dbURL = getVaultDatabaseURL(for: vault.id)
-        try await databaseSwitcher.switchDatabase(to: vault.id, at: dbURL)
-        try? await vaultRepository.updateLastAccessed(id: vault.id)
-
-        // 同步实际页面数量
-        await refreshPageCount(for: vault.id)
-    }
-
-    /// 从当前活跃数据库查询实际页面数并写回全局元数据 + App Group JSON 快照
-    public func refreshPageCount(for vaultID: UUID) async {
-        // 🛡️ 防御性检查：规避单测非 DB 环境下因依赖未注册导致的致命错误
-        guard let databaseSwitcher = databaseSwitcher,
-              let vaultRepository = vaultRepository else {
-            Logger.shared.warning(" [VaultService] refreshPageCount 被跳过，因为数据库相关依赖未在 DI 注册")
-            return
-        }
-        do {
-            let count = try await databaseSwitcher.countPagesInCurrentVault()
-            Logger.shared.info("[VaultService] refreshPageCount: vault=\(vaultID.uuidString.prefix(8)) count=\(count)")
-            if let index = vaults.firstIndex(where: { $0.id == vaultID }) {
-                vaults[index].pageCount = count
-                try await vaultRepository.saveVault(vaults[index])
-            }
-            await writeWidgetStatsSnapshot(pageCount: count, linkCount: 0, tagCount: 0)
-        } catch {
-            Logger.shared.warning("[VaultService] refreshPageCount failed: \(error.localizedDescription)")
-        }
-    }
-
-    /// 将当前 vault 的统计快照写入 App Group JSON（供 Widget Extension 读取）
-    private func writeWidgetStatsSnapshot(pageCount: Int, linkCount: Int, tagCount: Int) async {
-        guard let groupURL = FileManager.default.containerURL(
-            forSecurityApplicationGroupIdentifier: "group.com.zhiyu.app"
-        ) else { return }
-
-        let snapshot: [String: Any] = [
-            "pageCount": pageCount,
-            "linkCount": linkCount,
-            "tagCount": tagCount,
-            "recentPages": []
-        ]
-        let url = groupURL.appendingPathComponent("widget_stats.json")
-        do {
-            let data = try JSONSerialization.data(withJSONObject: snapshot)
-            try data.write(to: url, options: .atomic)
-            Logger.shared.info("[VaultService] Widget snapshot written: pageCount=\(pageCount) to \(url.lastPathComponent)")
-        } catch {
-            Logger.shared.warning("[VaultService] Widget snapshot write failed: \(error.localizedDescription)")
-        }
-    }
-
-    /// 启动后刷新全部笔记本的页面计数（直接读取各 vault 数据库 file）
-    private func refreshAllPageCounts() async {
-        // 🛡️ 防御性检查：规避单测非 DB 环境下因依赖未注册导致的致命错误
-        guard let databaseSwitcher = databaseSwitcher,
-              let vaultRepository = vaultRepository else {
-            Logger.shared.warning(" [VaultService] refreshAllPageCounts 被跳过，因为数据库依赖未在 DI 注册")
-            return
-        }
-        var anyVaultHasDB = false
-        for vault in vaults {
-            let dbURL = getVaultDatabaseURL(for: vault.id)
-            guard FileManager.default.fileExists(atPath: dbURL.path) else { continue }
-            anyVaultHasDB = true
-            do {
-                let count = try await databaseSwitcher.countPages(at: dbURL)
-                if let index = vaults.firstIndex(where: { $0.id == vault.id }) {
-                    vaults[index].pageCount = count
-                    try? await vaultRepository.saveVault(vaults[index])
-                }
-            } catch {
-                Logger.shared.warning("[VaultService] refreshPageCount failed for \(vault.name): \(error.localizedDescription)")
-            }
-        }
-        // 兜底：仅在没有任何 vault 专属 DB 存在时（全新冷启动），
-        // 从主 App.sqlite 读取全局页面计数并赋给当前活跃 vault
-        if !anyVaultHasDB, let activeID = selectedVaultID {
-            await refreshPageCountFromMainDB(for: activeID)
-        }
-    }
-
-    /// 从主数据库（App.sqlite）读取页面计数，仅赋值给指定 vault。
-    /// 当前架构下所有页面共享同一个 App.sqlite，仅在 vault 专属 DB 未创建时兜底使用。
-    private func refreshPageCountFromMainDB(for vaultID: UUID) async {
-        guard let writer = DatabaseManager.shared.dbWriter else { return }
-        // 🛡️ 防御性检查：规避单测非 DB 环境下因依赖未注册导致的致命错误
-        guard let vaultRepository = vaultRepository else {
-            Logger.shared.warning(" [VaultService] refreshPageCountFromMainDB 被跳过，因为 vaultRepository 未在 DI 注册")
-            return
-        }
-        do {
-            let count = try await writer.read { db in
-                try KnowledgePage.fetchCount(db)
-            }
-            if let index = vaults.firstIndex(where: { $0.id == vaultID }) {
-                vaults[index].pageCount = count
-                try? await vaultRepository.saveVault(vaults[index])
-            }
-            Logger.shared.info("[VaultService] Fallback: set pageCount=\(count) from main DB for active vault")
-        } catch {
-            Logger.shared.error("[VaultService] refreshPageCountFromMainDB failed", error: error)
-        }
-    }
-
-    /// 选择并激活目标金库，同时触发底层的专属物理数据库 WAL 切换。
-    ///
-    /// - 架构时序与并发安全设计说明 (Thread Safety & Switch Flow):
-    ///   本方法托管于 `@MainActor` 并发沙盒中，确保对 `selectedVaultID` 的动态赋值、
-    ///   偏好项写入以及底层 SQLite 数据库物理 Pool 重建在**主线程串行、原子化执行**，彻底避免多线程对撞与竞争条件。
-    ///   
-    ///   ```
-    ///   ┌────────────────────────────────────────────────────────┐
-    ///   │              Vault 激活与数据库级级联切换时序图              │
-    ///   └────────────────────────────────────────────────────────┘
-    ///         [用户点击 Vault 卡片]
-    ///                  │
-    ///                  ▼
-    ///         1. 绑定 selectedVaultID ──► 驱动 UI 侧边栏/主页响应式秒开
-    ///                  │
-    ///                  ▼
-    ///         2. 写入 UserDefaults   ──► 记录冷启动恢复指针
-    ///                  │
-    ///                  ▼
-    ///         3. switchDatabase()   ──► 彻底销毁旧 Pool 连接，释放 WAL 文件锁
-    ///                  │                挂载新物理库并跑 Schema 迁移
-    ///                  ▼
-    ///         4. 异步 updateAccessed ──► 派发到后台 Task 悄然修改元数据时间戳
-    ///   ```
-    ///   
-    ///   [步骤剖析]：
-    ///   1. **步骤一**：更新状态发布器 `selectedVaultID` 以驱动 UI 响应式局部重绘。
-    ///   2. **步骤二**：通过 `UserDefaults` 持久化记录最近一次选中的 Vault ID，保障下次冷启动热连通。
-    ///   3. **步骤三 (物理切换)**：触发 `DatabaseManager.shared.switchDatabase`。该方法会立即同步销毁旧专属库连接
-    ///      并释放物理文件独占锁，开辟全新的 Pool。
-    ///   4. **步骤四 (异步更新)**：开启独立的物理 Task 异步记录该 Vault 在全局配置表中的最近使用访问时间戳，
-    ///      物理拆分了业务调度与持久化操作，保证操作流畅性。
-    ///
-    /// - Parameter vault: 需要选中的目标 Vault 实体。
-    public func selectVault(_ vault: Vault) {
-        self.selectedVaultID = vault.id
-        UserDefaults.standard.set(vault.id.uuidString, forKey: AppConstants.Keys.Storage.vaultsSelectedID)
-        UserDefaults.standard.set(vault.englishName, forKey: AppConstants.Keys.Storage.vaultSelectedEnglishName)
-        // 同步写入 global_settings 表（供 Widget Extension 读取活跃 vault）
-        Task {
-            guard let vaultRepository = vaultRepository else { return }
-            try? await vaultRepository.saveSetting(key: AppConstants.Keys.Storage.vaultsSelectedID, value: vault.id.uuidString)
-        }
-
-        NotificationCenter.default.post(name: .vaultWillSwitch, object: vault.id)
-
-        // 1. 热插拔重定向：要求 databaseSwitcher 彻底挂载专属物理子库，同步刷新句柄
-        Task {
-            // 🛡️ 防御性检查：规避单测非 DB 环境下因依赖未注册导致的致命错误
-            guard let databaseSwitcher = databaseSwitcher,
-                  let vaultRepository = vaultRepository else {
-                Logger.shared.warning(" [VaultService] selectVault 物理切换被跳过，因为底层依赖未在 DI 注册")
-                return
-            }
-            do {
-                let dbURL = getVaultDatabaseURL(for: vault.id)
-                try await databaseSwitcher.switchDatabase(to: vault.id, at: dbURL)
-
-                // 2. 更新该笔记本的最近访问访问时序，用以在主界面进行最近使用排序
-                try? await vaultRepository.updateLastAccessed(id: vault.id)
-
-                // 3. 同步实际页面数量到元数据
-                await refreshPageCount(for: vault.id)
-            } catch {
-                Logger.shared.error("[VaultService] selectVault switch failed: \(error.localizedDescription)", error: error)
-            }
-        }
-    }
-    
-    /// 退出当前选中的笔记本金库。
-    /// 返回主选择页，在 UserDefaults 中移除偏好项，并安全降级释放当前物理库的连接句柄，防止空转泄露。
-    public func exitVault() {
-        NotificationCenter.default.post(name: .vaultWillSwitch, object: nil)
-        
-        self.selectedVaultID = nil
-        UserDefaults.standard.removeObject(forKey: AppConstants.Keys.Storage.vaultsSelectedID)
-        UserDefaults.standard.removeObject(forKey: AppConstants.Keys.Storage.vaultSelectedEnglishName)
-        // 物理释放专属连接以闭合通道锁
-        databaseSwitcher?.releaseDatabaseConnection()
-    }
-    
-    /// 创建全新的笔记本金库。
-    /// - Parameters:
-    ///   - name: 金库显示的中文或多语言名称。
-    ///   - icon: 金库卡片展示的图标 Token。
-    ///   - description: 描述该金库知识域范围的详情文本。
-    public func createVault(name: String, icon: String? = nil, description: String? = nil) {
-        let newVault = Vault(
-            id: UUID(),
-            name: name,
-            createdAt: Date(),
-            updatedAt: Date(),
-            pageCount: 0,
-            themePayload: nil,
-            icon: icon,
-            description: description
-        )
-        vaults.append(newVault)
-        do {
-            try saveVaultToDatabase(newVault)
-            // MARK: - Bugfix
-            // 手动新建的笔记本不需要被注入冷启动引导数据，
-            // 故在此立刻置位 seeded_vault_{id} = true 以规避 KnowledgeStore 的二次注入
-            UserDefaults.standard.set(true, forKey: "\(AppConstants.Keys.Storage.seededVaultPrefix)\(newVault.id.uuidString)")
-        } catch {
-            Logger.shared.error(" [VaultService]" + " Failed to" + " write new" + " notebook to" + " database: \(error)", error: error)
-        }
-    }
-    
-    /// 更新已存在笔记本的配置元数据。
-    /// - Parameters:
-    ///   - id: 目标笔记本 UUID。
-    ///   - name: 新的配置名称。
-    ///   - icon: 新的图标规格。
-    ///   - description: 新的说明文本。
-    public func updateVault(id: UUID, name: String, icon: String?, description: String?) {
-        if let index = vaults.firstIndex(where: { $0.id == id }) {
-            vaults[index].name = name
-            vaults[index].icon = icon
-            vaults[index].description = description
-            vaults[index].updatedAt = Date()
-            
-            do {
-                try saveVaultToDatabase(vaults[index])
-            } catch {
-                Logger.shared.error(" [VaultService]" + " Failed to" + " write updated" + " notebook metadata" + " to database:" + " \(error)", error: error)
-            }
-        }
-    }
-    
-    /// 重命名特定的笔记本。
-    /// - Parameters:
-    ///   - id: 目标笔记本 UUID。
-    ///   - newName: 新的显示标题。
-    public func renameVault(id: UUID, newName: String) {
-        if let index = vaults.firstIndex(where: { $0.id == id }) {
-            vaults[index].name = newName
-            vaults[index].updatedAt = Date()
-            
-            do {
-                try saveVaultToDatabase(vaults[index])
-            } catch {
-                Logger.shared.error(" [VaultService]" + " Failed to" + " write renamed" + " notebook to" + " database: \(error)", error: error)
-            }
-        }
-    }
-    
-    /// 物理删除特定的笔记本（敏感操作，物理擦除物理磁盘文件）。
-    /// 同时在全局配置表中注销元数据，若删除的是当前所选笔记本，则自动退回至冷启动页面并重置句柄。
-    /// - Parameter id: 待完全注销且彻底擦除的目标笔记本唯一识别码 UUID。
-    public func deleteVault(id: UUID) {
-        vaults.removeAll { $0.id == id }
-        if selectedVaultID == id {
-            selectedVaultID = nil
-            UserDefaults.standard.removeObject(forKey: AppConstants.Keys.Storage.vaultsSelectedID)
-            UserDefaults.standard.removeObject(forKey: AppConstants.Keys.Storage.vaultSelectedEnglishName)
-            databaseSwitcher?.releaseDatabaseConnection()
-        }
-        
-        // 1. 从全局元数据配置数据库中完全抹除
-        Task {
-            // 🛡️ 防御性检查：规避单测非 DB 环境下因依赖未注册导致的致命错误
-            guard let vaultRepository = vaultRepository else {
-                Logger.shared.warning(" [VaultService] deleteVault 中的元数据删除被跳过，因为 vaultRepository 未在 DI 注册")
-                return
-            }
-            do {
-                try await vaultRepository.deleteVault(id: id)
-            } catch {
-                Logger.shared.error(" [VaultService]" + " Failed to" + " delete notebook" + " record from" + " global metadata" + " database: \(error)", error: error)
-            }
-        }
-        
-        // 2. 物理磁盘异步擦除该金库所托管的专属沙盒物理文件夹
-        let dbURL = getVaultDatabaseURL(for: id)
-        let folderURL = dbURL.deletingLastPathComponent()
-        if FileManager.default.fileExists(atPath: folderURL.path) {
-            try? FileManager.default.removeItem(at: folderURL)
-            Logger.shared.info(" [VaultService]" + " Physically erased" + " notebook sandbox" + " storage: \(id.uuidString)")
         }
     }
 }

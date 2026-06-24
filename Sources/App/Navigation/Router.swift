@@ -160,6 +160,8 @@ final class Router {
     /// 全局单例，方便非视图层级调用（如 DeepLink 处理）
     static let shared = Router()
     
+    @Inject @ObservationIgnored var keyStore: any KeyStoreProtocol
+    
     /// 核心导航路径
     var path = NavigationPath()
     
@@ -168,7 +170,7 @@ final class Router {
         didSet {
             // 每次侧边栏选中项发生变动（无论切换还是置空），均需将导航路径清空。
             // 这是为了防止在 iPadOS/Mac Catalyst 上，因详情页导航栈（NavigationPath）历史残留
-            // 导致详情页面被之前的 push 页面盖住，从而表现为“点击菜单右侧无变化”的经典 Bug。
+            // 导致详情页面被之前的 push 页面盖住，从而表现为"点击菜单右侧无变化"的经典 Bug。
             path = NavigationPath()
             
             if let selection = sidebarSelection {
@@ -204,10 +206,10 @@ final class Router {
         }
     }
     
-    /// 当前主 Tab (通过 UserDefaults 持久化，防止后台切换后状态丢失)
-    var selectedTab: AppTab = AppTab(rawValue: UserDefaults.standard.string(forKey: AppConstants.Keys.Storage.selectedTab) ?? "") ?? .knowledge {
+    /// 当前主 Tab (通过 KeyStore 持久化，防止后台切换后状态丢失)
+    var selectedTab: AppTab = .knowledge {
         didSet {
-            UserDefaults.standard.set(selectedTab.rawValue, forKey: AppConstants.Keys.Storage.selectedTab)
+            keyStore.set(selectedTab.rawValue, forKey: AppConstants.Keys.Storage.selectedTab)
             // 切换主 Tab 时自动清空全局的导航路径。
             // 以避免在 iPad 侧边栏/分栏布局下，多个 Tab 共享全局 router.path 导致的导航页重叠干扰问题。
             path = NavigationPath()
@@ -243,7 +245,11 @@ final class Router {
     }
 
     /// 仅用于预览和测试的公开初始化器
-    public init() {}
+    public init() {
+        // 从 KeyStore 恢复上次选中的 Tab
+        let storedRaw = ServiceContainer.shared.resolve((any KeyStoreProtocol).self).string(forKey: AppConstants.Keys.Storage.selectedTab)
+        self.selectedTab = AppTab(rawValue: storedRaw ?? "") ?? .knowledge
+    }
     
     // MARK: - 导航指令
     
@@ -283,7 +289,7 @@ final class Router {
     }
     
     /// 便捷跳转：指定工具
-    func navigateToTool(_ tool: AppStore.ToolItem) {
+    func navigateToTool(_ tool: ToolItem) {
         sidebarSelection = .tool(tool)
         path = NavigationPath()
     }

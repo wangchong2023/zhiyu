@@ -45,7 +45,7 @@ public final class AIWorkflowStore: AIWorkflowCapabilities {
 
     // ── 健康度问题存储 (Lint Issues) ──
     @ObservationIgnored private var _lintIssues: [LintIssue] = {
-        if let data = UserDefaults.standard.data(forKey: AppConstants.Keys.Storage.lastLintIssues),
+        if let data = ServiceContainer.shared.resolve((any KeyStoreProtocol).self).data(forKey: AppConstants.Keys.Storage.lastLintIssues),
            let decoded = try? JSONDecoder().decode([LintIssue].self, from: data) {
             return decoded
         }
@@ -58,7 +58,7 @@ public final class AIWorkflowStore: AIWorkflowCapabilities {
             withMutation(keyPath: \.lintIssues) {
                 _lintIssues = newValue
                 if let data = try? JSONEncoder().encode(newValue) {
-                    UserDefaults.standard.set(data, forKey: AppConstants.Keys.Storage.lastLintIssues)
+                    keyStore.set(data, forKey: AppConstants.Keys.Storage.lastLintIssues)
                 }
             }
         }
@@ -73,6 +73,7 @@ public final class AIWorkflowStore: AIWorkflowCapabilities {
     @ObservationIgnored @Inject private var lintService: LintService
     @ObservationIgnored @Inject private var logger: any LoggerProtocol
     @ObservationIgnored @Inject private var linkService: LinkService
+    @ObservationIgnored @Inject private var keyStore: any KeyStoreProtocol
 
     @ObservationIgnored private var cancellables = Set<AnyCancellable>()
 
@@ -231,7 +232,7 @@ public final class AIWorkflowStore: AIWorkflowCapabilities {
         lastLintScore = 0
         lastLintDate = nil
 
-        UserDefaults.standard.removeObject(forKey: AppConstants.Keys.Storage.lastLintIssues)
+        keyStore.removeObject(forKey: AppConstants.Keys.Storage.lastLintIssues)
 
         logger.addLog(action: .systemInit, target: "AIWorkflowStore", details: "AI Workflow data cleared.", module: "AIWorkflowStore")
     }

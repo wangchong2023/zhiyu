@@ -33,8 +33,9 @@ final class FileImportFileStore: ImportFileStore, Sendable {
         
         let appSupport = fm.urls(for: .applicationSupportDirectory, in: .userDomainMask).first ?? fm.temporaryDirectory
         
-        if let vaultIDString = UserDefaults.standard.string(forKey: AppConstants.Keys.Storage.vaultsSelectedID),
-           let englishName = UserDefaults.standard.string(forKey: "vaultSelectedEnglishName"),
+        let keyStore = ServiceContainer.shared.resolve((any KeyStoreProtocol).self)
+        if let vaultIDString = keyStore.string(forKey: AppConstants.Keys.Storage.vaultsSelectedID),
+           let englishName = keyStore.string(forKey: AppConstants.Keys.Storage.vaultSelectedEnglishName),
            !vaultIDString.isEmpty, !englishName.isEmpty {
             
             // 物理落盘到 Vaults/{Vault_UUID}/raw/{笔记本英文名}/{Category}/

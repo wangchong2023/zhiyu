@@ -17,6 +17,7 @@ import Combine
 @Observable
 public final class SettingsStore {
     @ObservationIgnored private var cancellables = Set<AnyCancellable>()
+    @ObservationIgnored @Inject var keyStore: any KeyStoreProtocol
 
     public init() {
         AppEventBus.shared.subscribe()
@@ -25,7 +26,8 @@ public final class SettingsStore {
     }
     // ── 隐私与安全 ──
     @ObservationIgnored private var _isPrivacyModeEnabled: Bool = {
-        return UserDefaults.standard.object(forKey: AppConstants.Keys.Storage.isPrivacyModeEnabled) as? Bool ?? true
+        // NOTE: Lazy initializer context — resolve directly since @Inject not yet available
+        return ServiceContainer.shared.resolve((any KeyStoreProtocol).self).object(forKey: AppConstants.Keys.Storage.isPrivacyModeEnabled) as? Bool ?? true
     }()
     
     public var isPrivacyModeEnabled: Bool {
@@ -36,13 +38,13 @@ public final class SettingsStore {
         set {
             withMutation(keyPath: \.isPrivacyModeEnabled) {
                 _isPrivacyModeEnabled = newValue
-                UserDefaults.standard.set(newValue, forKey: AppConstants.Keys.Storage.isPrivacyModeEnabled)
+                keyStore.set(newValue, forKey: AppConstants.Keys.Storage.isPrivacyModeEnabled)
             }
         }
     }
 
     @ObservationIgnored private var _isBiometricEnabled: Bool = {
-        return UserDefaults.standard.object(forKey: AppConstants.Keys.Storage.isBiometricEnabled) as? Bool ?? true
+        return ServiceContainer.shared.resolve((any KeyStoreProtocol).self).object(forKey: AppConstants.Keys.Storage.isBiometricEnabled) as? Bool ?? true
     }()
     
     public var isBiometricEnabled: Bool {
@@ -53,7 +55,7 @@ public final class SettingsStore {
         set {
             withMutation(keyPath: \.isBiometricEnabled) {
                 _isBiometricEnabled = newValue
-                UserDefaults.standard.set(newValue, forKey: AppConstants.Keys.Storage.isBiometricEnabled)
+                keyStore.set(newValue, forKey: AppConstants.Keys.Storage.isBiometricEnabled)
             }
         }
     }
@@ -64,32 +66,32 @@ public final class SettingsStore {
     // ── 引导状态 ──
     public var hasShownGraphCoachMark: Bool {
         get {
-            return UserDefaults.standard.bool(forKey: AppConstants.Keys.Storage.hasShownGraphCoachMark)
+            return keyStore.bool(forKey: AppConstants.Keys.Storage.hasShownGraphCoachMark)
         }
-        set { UserDefaults.standard.set(newValue, forKey: AppConstants.Keys.Storage.hasShownGraphCoachMark) }
+        set { keyStore.set(newValue, forKey: AppConstants.Keys.Storage.hasShownGraphCoachMark) }
     }
 
     // ── iCloud 同步偏好 ──
     public var iCloudConflictResolution: String {
         get {
-            return UserDefaults.standard.string(forKey: AppConstants.Keys.Storage.iCloudConflictResolution) ?? "merge"
+            return keyStore.string(forKey: AppConstants.Keys.Storage.iCloudConflictResolution) ?? "merge"
         }
-        set { UserDefaults.standard.set(newValue, forKey: AppConstants.Keys.Storage.iCloudConflictResolution) }
+        set { keyStore.set(newValue, forKey: AppConstants.Keys.Storage.iCloudConflictResolution) }
     }
 
     public var iCloudAutoSync: Bool {
         get {
-            return UserDefaults.standard.bool(forKey: AppConstants.Keys.Storage.iCloudAutoSync)
+            return keyStore.bool(forKey: AppConstants.Keys.Storage.iCloudAutoSync)
         }
-        set { UserDefaults.standard.set(newValue, forKey: AppConstants.Keys.Storage.iCloudAutoSync) }
+        set { keyStore.set(newValue, forKey: AppConstants.Keys.Storage.iCloudAutoSync) }
     }
 
     // ── 协作用户名 ──
     public var collabUsername: String {
         get {
-            return UserDefaults.standard.string(forKey: AppConstants.Keys.Storage.userName) ?? ""
+            return keyStore.string(forKey: AppConstants.Keys.Storage.userName) ?? ""
         }
-        set { UserDefaults.standard.set(newValue, forKey: AppConstants.Keys.Storage.userName) }
+        set { keyStore.set(newValue, forKey: AppConstants.Keys.Storage.userName) }
     }
 
     /// 重置
@@ -98,8 +100,8 @@ public final class SettingsStore {
         isBiometricEnabled = true
         showPerfDashboard = false
         hasShownGraphCoachMark = false
-        UserDefaults.standard.removeObject(forKey: AppConstants.Keys.Storage.iCloudConflictResolution)
-        UserDefaults.standard.removeObject(forKey: AppConstants.Keys.Storage.iCloudAutoSync)
-        UserDefaults.standard.removeObject(forKey: AppConstants.Keys.Storage.userName)
+        keyStore.removeObject(forKey: AppConstants.Keys.Storage.iCloudConflictResolution)
+        keyStore.removeObject(forKey: AppConstants.Keys.Storage.iCloudAutoSync)
+        keyStore.removeObject(forKey: AppConstants.Keys.Storage.userName)
     }
 }

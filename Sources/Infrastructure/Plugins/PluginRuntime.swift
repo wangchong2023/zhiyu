@@ -35,7 +35,8 @@ final class PluginRuntime: ObservableObject {
 
     /// 已挂起的插件 ID (Security Watchdog)，采用持久化存储
     var suspendedPluginIDs: Set<String> = {
-        let saved = UserDefaults.standard.stringArray(forKey: AppConstants.Keys.Storage.suspendedPlugins) ?? []
+        let keyStore = ServiceContainer.shared.resolve((any KeyStoreProtocol).self)
+        let saved = keyStore.object(forKey: AppConstants.Keys.Storage.suspendedPlugins) as? [String] ?? []
         return Set(saved)
     }()
 
@@ -132,7 +133,8 @@ final class PluginRuntime: ObservableObject {
 
         suspendedPluginIDs.insert(id)
         let array = Array(suspendedPluginIDs)
-        UserDefaults.standard.set(array, forKey: AppConstants.Keys.Storage.suspendedPlugins)
+        let keyStore = ServiceContainer.shared.resolve((any KeyStoreProtocol).self)
+        keyStore.set(array, forKey: AppConstants.Keys.Storage.suspendedPlugins)
 
         // 物理回收：从活跃插件列表中彻底移除，释放 JSContext 内存
         if let index = registry.plugins.firstIndex(where: { $0.manifest.id == id }) {
@@ -245,7 +247,8 @@ final class PluginRuntime: ObservableObject {
         registry.customViews.removeAll()
         registry.eventListeners.removeAll()
         suspendedPluginIDs.removeAll()
-        UserDefaults.standard.removeObject(forKey: AppConstants.Keys.Storage.suspendedPlugins)
+        let keyStore = ServiceContainer.shared.resolve((any KeyStoreProtocol).self)
+        keyStore.removeObject(forKey: AppConstants.Keys.Storage.suspendedPlugins)
         pluginCallCounts.removeAll()
         pluginResourceUsage.removeAll()
     }

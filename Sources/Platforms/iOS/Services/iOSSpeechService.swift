@@ -140,11 +140,12 @@ final class iOSSpeechService: NSObject, SpeechServiceProtocol {
     // MARK: - 持久化
 
     private let recordingsKey = AppConstants.Keys.Storage.voiceRecordings
+    private let keyStore = ServiceContainer.shared.resolve((any KeyStoreProtocol).self)
     private func loadRecordings() {
-        if let data = UserDefaults.standard.data(forKey: recordingsKey), let decoded = try? JSONDecoder().decode([VoiceRecording].self, from: data) { recordings = decoded }
+        if let data = keyStore.data(forKey: recordingsKey), let decoded = try? JSONDecoder().decode([VoiceRecording].self, from: data) { recordings = decoded }
     }
     private func saveRecordingsToDisk() {
-        if let data = try? JSONEncoder().encode(recordings) { UserDefaults.standard.set(data, forKey: recordingsKey) }
+        if let data = try? JSONEncoder().encode(recordings) { keyStore.set(data, forKey: recordingsKey) }
     }
 
     // MARK: - no-op 回退（非 Speech 平台）

@@ -95,12 +95,12 @@ struct WatchKnowledgeStatsView: View {
         }
     }
     
-    /// 从标准 UserDefaults 载入表盘所需的统计数据
+    /// 从 KeyStore 载入表盘所需的统计数据
     func loadData() {
-        let defaults = UserDefaults.standard
-        totalPages = defaults.integer(forKey: AppConstants.Keys.Storage.watchTotalPages)
-        totalWords = defaults.integer(forKey: AppConstants.Keys.Storage.watchTotalWords)
-        recentTitles = defaults.stringArray(forKey: AppConstants.Keys.Storage.watchRecentTitles) ?? []
+        let keyStore = ServiceContainer.shared.resolve((any KeyStoreProtocol).self)
+        totalPages = keyStore.integer(forKey: AppConstants.Keys.Storage.watchTotalPages)
+        totalWords = keyStore.integer(forKey: AppConstants.Keys.Storage.watchTotalWords)
+        recentTitles = keyStore.object(forKey: AppConstants.Keys.Storage.watchRecentTitles) as? [String] ?? []
     }
     
     /// 将字数格式化为更易读的字符串形式

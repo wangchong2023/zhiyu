@@ -6,7 +6,8 @@
 //  Copyright © 2026 WangChong. All rights reserved.
 //
 //  系统层级：[L3] 应用层
-//  核心职责：全局状态管理（AppStore），持有应用级 @Observable 状态树。
+//  核心职责：全局状态管理（AppStore），持有应用级 @Observable 状态树与子 Store 聚合。
+//            本文件保留核心类型声明、DI 注入、初始化与事件订阅逻辑。
 //
 import SwiftUI
 import Combine
@@ -18,61 +19,23 @@ import Observation
 @Observable
 @MainActor
 public final class AppStore {
-    
+
     // MARK: - 辅助类型
-    
+
     /// 引导层类型定义
     public enum CoachMarkType: String, Sendable {
         case graphDiscovery = "graph_discovery"
     }
 
-    /// 工具项定义
-    public enum ToolItem: String, CaseIterable, Hashable {
-        case pageList = "index"
-        case dashboard = "dashboard"
-        case tagCloud = "tagCloud"
-        case taskCenter = "chat"
-        case chat = "chat_ai"
-        case synthesis = "synthesis"
-        case weeklyReport = "weeklyReport"
-        case log = "log"
-        case collab = "collab"
-        case pluginMarket = "pluginMarket"
-        case search = "search"
-        case ingest = "ingest"
-        case graph = "graph"
-        case lint = "lint"
-        case healthCheck = "healthCheck"
-        case sources = "sources"
-
-        /// 将工具项映射为对应的路由目标，集中管理路由映射逻辑以降低圈复杂度
-        var route: AppRoute {
-            switch self {
-            case .dashboard: return .dashboard
-            case .pageList: return .pageList()
-            case .lint, .healthCheck: return .lint
-            case .taskCenter: return .taskCenter
-            case .tagCloud: return .tagCloud
-            case .chat: return .chat
-            case .synthesis: return .synthesis
-            case .weeklyReport: return .weeklyReport
-            case .log: return .log
-            case .collab: return .collab
-            case .pluginMarket: return .pluginMarket
-            case .search: return .search()
-            case .ingest: return .ingest
-            case .graph: return .graph
-            case .sources: return .sources
-            }
-        }
-    }
+    // ToolItem 已下移至 L1.5 Domain 层 (Sources/Domain/Models/ToolItem.swift)
+    // 原 AppStore.ToolItem 引用可直接使用 ToolItem（同模块内顶级类型）
 
     /// 知识增长点数据模型
     public struct KnowledgeGrowthPoint: Identifiable {
         public let id = UUID()
         public let date: Date
         public let count: Int
-        
+
         public init(date: Date, count: Int) {
             self.date = date
             self.count = count
@@ -81,7 +44,7 @@ public final class AppStore {
 
     // ── UI 状态 ──
     public var pendingCoachMark: CoachMarkType?
-    
+
     // ── 转发指标 (由 KnowledgeStore 持有，@Observable 自动追踪) ──
     public var pages: [KnowledgePage] { knowledgeStore.pages }
     public var totalPages: Int { knowledgeStore.totalPages }
@@ -128,26 +91,24 @@ public final class AppStore {
     @ObservationIgnored public var aiWorkflowStore: AIWorkflowStore!
     @ObservationIgnored public var tagStore: TagStore!
     @ObservationIgnored public var knowledgeStore: KnowledgeStore!
-    
+
     public var aiInsightStore: AIInsightStore { aiWorkflowStore.insightStore }
 
     // ── 私有属性 ──
     @ObservationIgnored private var cancellables = Set<AnyCancellable>()
 
     // MARK: - 初始化
-    
+
     public init() {
         Logger.shared.info(" [AppStore] Initializing core engine...")
-        
+
         // 1. 初始化子 Store
         self.searchStore = SearchStore()
         self.aiWorkflowStore = AIWorkflowStore()
         self.tagStore = TagStore()
         self.knowledgeStore = KnowledgeStore()
-        
+
         // 2. 将核心 Store 及子 Store 自动注册到全局 DI 容器中 (@DIP)
-        // 确保无论生产环境还是单元测试环境，只要 AppStore 被实例化，其内部的子 Store 均立即可供 @Inject 注入
-        // 这样可以彻底打通测试沙盒数据流，并防止因测试多实例覆盖导致的数据订阅和状态不一致问题
         let container = ServiceContainer.shared
         container.register(self, for: AppStore.self)
         container.register(self.searchStore, for: SearchStore.self)
@@ -156,7 +117,7 @@ public final class AppStore {
         container.register(self.aiWorkflowStore.insightStore, for: AIInsightStore.self)
         container.register(self.tagStore, for: TagStore.self)
         container.register(self.knowledgeStore, for: KnowledgeStore.self)
-        
+
         // 3. 注册系统事件订阅
         setupSubscriptions()
     }
@@ -170,7 +131,6 @@ public final class AppStore {
                 case .pagesCleared:
                     break
                 case .pageCreated, .pageUpdated, .pageDeleted:
-                    // 页面事件由 KnowledgeStore 处理，AppStore 仅负责跨模块协调（如 Insight 更新）
                     Task { [weak self] in
                         await self?.aiInsightStore.updateStatistics()
                     }
@@ -178,7 +138,7 @@ public final class AppStore {
                 }
             }
             .store(in: &cancellables)
-            
+
         // 动态绑定物理专属数据库热切换监听
         NotificationCenter.default.publisher(for: .databaseDidSwitch)
             .receive(on: RunLoop.main)
@@ -208,8 +168,6 @@ public final class AppStore {
     // ── 核心业务逻辑 ──
 
     /// pageByTitle
-    /// - Parameter title: title
-    /// - Returns: 可选值
     public func pageByTitle(_ title: String) async -> KnowledgePage? {
         await knowledgeStore.pageByTitle(title)
     }
@@ -243,24 +201,19 @@ public final class AppStore {
     }
 
     /// 获取Backlinks
-    /// - Returns: 列表
     public func getBacklinks(for id: UUID) async -> [KnowledgePage] { await pageStore.fetchBacklinksByID(for: id) }
 
     /// 更新Page
-    /// - Parameter page: page
-    /// - Parameter forceDeepScan: forceDeep扫描
     public func updatePage(_ page: KnowledgePage, forceDeepScan: Bool) async {
         await knowledgeStore.updatePage(page)
     }
 
     /// 保存Page
-    /// - Parameter page: page
     public func savePage(_ page: KnowledgePage) async {
         await knowledgeStore.savePage(page)
     }
 
     /// 删除Page
-    /// - Parameter page: page
     public func deletePage(_ page: KnowledgePage) async {
         await knowledgeStore.deletePage(page)
     }
@@ -281,7 +234,7 @@ public final class AppStore {
     }
 
     /// 加载FromDisk
-    func loadFromDisk() async { 
+    func loadFromDisk() async {
         await knowledgeStore.loadFromDisk()
     }
 
@@ -291,13 +244,6 @@ public final class AppStore {
     }
 
     /// 添加记录日志
-    /// - Parameter action: action
-    /// - Parameter target: target
-    /// - Parameter details: details
-    /// - Parameter duration: duration
-    /// - Parameter startTime: 启动Time
-    /// - Parameter endTime: 结束Time
-    /// - Parameter module: module
     public nonisolated func addLog(action: LogAction, target: String, details: String, duration: TimeInterval? = nil, startTime: Date? = nil, endTime: Date? = nil, module: String? = "AppStore") {
         Logger.shared.addLog(action: action, target: target, details: details, duration: duration, startTime: startTime, endTime: endTime, module: module)
     }
@@ -306,249 +252,27 @@ public final class AppStore {
     func clearLogs() async { await maintenanceService.clearLogs() }
 }
 
-// MARK: - AppStore 业务扩展
-extension AppStore: CollaborationDelegate {
-    @discardableResult
+// MARK: - ToolItem + AppRoute (L3 路由映射扩展)
 
-    /// 生成初始笔记本
-    /// - Returns: 数值
-    func generateInitialNotebooks() async -> (total: Int, details: [(name: String, count: Int)]) {
-        let result = await maintenanceService.generateInitialNotebooks()
-        if result.total > 0 {
-            await refresh()
-            AppEventBus.shared.publish(.graphRelayoutRequested)
-        }
-        return result
-    }
-
-    /// 应用Potential链接
-    /// - Parameter suggestion: suggestion
-    public func applyPotentialLink(_ suggestion: PotentialLinkSuggestion) async {
-        await knowledgeStore.applyPotentialLink(suggestion)
-    }
-
-    /// 应用重构Suggestion
-    /// - Parameter suggestion: suggestion
-    func applyRefactorSuggestion(_ suggestion: RefactorSuggestion) async {
-        await knowledgeStore.applyRefactorSuggestion(suggestion)
-    }
-
-    /// 应用Remote更新
-    /// - Parameter page: page
-    public func applyRemoteUpdate(_ page: KnowledgePage) async {
-        await knowledgeStore.updatePage(page)
-    }
-
-    /// 插入RemotePage
-    /// - Parameter page: page
-    public func insertRemotePage(_ page: KnowledgePage) async {
-        await pageStore.syncRemotePage(page)
-        await refresh()
-    }
-
-    /// 重命名Page
-    /// - Parameter page: page
-    func renamePage(_ page: KnowledgePage, to newTitle: String) async {
-        await knowledgeStore.renamePage(page, to: newTitle)
-    }
-
-    /// 清除AllDeveloperData
-    func clearAllDeveloperData() {
-        Task {
-            AppEventBus.shared.publish(.clearAllDataRequested)
-            await maintenanceService.clearAllDeveloperData()
-            await refresh()
+extension ToolItem {
+    /// 将工具项映射为对应的路由目标，集中管理路由映射逻辑以降低圈复杂度
+    var route: AppRoute {
+        switch self {
+        case .dashboard: return .dashboard
+        case .pageList: return .pageList()
+        case .lint, .healthCheck: return .lint
+        case .taskCenter: return .taskCenter
+        case .tagCloud: return .tagCloud
+        case .chat: return .chat
+        case .synthesis: return .synthesis
+        case .weeklyReport: return .weeklyReport
+        case .log: return .log
+        case .collab: return .collab
+        case .pluginMarket: return .pluginMarket
+        case .search: return .search()
+        case .ingest: return .ingest
+        case .graph: return .graph
+        case .sources: return .sources
         }
     }
-
-    /// 导入摄取Folder
-    func ingestFolder(at url: URL) async {
-        await knowledgeStore.ingestFolder(at: url)
-    }
-
-    // MARK: - 标签管理 (转发至 TagStore)
-
-    /// 获取AllTags
-    /// - Returns: 列表
-    public func getAllTags() -> [String: Int] {
-        tagStore.getAllTags(from: pages)
-    }
-
-    /// 重命名Tag
-    /// - Parameter oldTag: oldTag
-    public func renameTag(_ oldTag: String, to newTag: String) async {
-        await tagStore.renameTag(old: oldTag, to: newTag)
-        await knowledgeStore.refresh()
-    }
-
-    /// 删除Tag
-    /// - Parameter tag: tag
-    public func deleteTag(_ tag: String) async {
-        await tagStore.deleteTag(tag)
-        await knowledgeStore.refresh()
-    }
-
-    /// bulk删除Tags
-    /// - Parameter tags: tags
-    public func bulkDeleteTags(_ tags: [String]) async {
-        await tagStore.bulkDeleteTags(tags)
-        await knowledgeStore.refresh()
-    }
-
-    /// 添加NewTag
-    /// - Parameter tag: tag
-    public func addNewTag(_ tag: String) {
-        tagStore.addNewTag(tag)
-    }
-}
-
-// MARK: - AnyPageStore 协议实现
-@MainActor
-extension AppStore: AnyPageStore {
-    public var logEntries: [LogEntry] { [] }
-
-    /// 拉取AllPages
-    /// - Returns: 列表
-    public func fetchAllPages() async throws -> [KnowledgePage] {
-        await knowledgeStore.refresh()
-        return knowledgeStore.pages
-    }
-
-    /// reloadFromDisk
-    public func reloadFromDisk() async {
-        await knowledgeStore.loadFromDisk()
-    }
-
-    /// 替换AllPages
-    /// - Parameter newPages: newPages
-    public func replaceAllPages(_ newPages: [KnowledgePage]) async {
-        await knowledgeStore.saveToDisk() // 这里原逻辑可能有误，通常是覆盖磁盘
-        // 修正为：
-        await pageStore.replaceAllPages(newPages)
-        await knowledgeStore.refresh()
-    }
-
-    /// 重置Database
-    public func resetDatabase() async throws {
-        try await pageStore.resetDatabase()
-        await knowledgeStore.refresh()
-    }
-
-    /// 执行BatchWrite
-    /// - Parameter block: 阻塞
-    /// - Returns: 返回值
-    public func performBatchWrite(_ block: @escaping @Sendable (Database) throws -> Void) async throws {
-        try await pageStore.performBatchWrite(block)
-        await knowledgeStore.refresh()
-    }
-
-    /// 创建Page
-    public func createPage(
-        title: String,
-        pageType: PageType,
-        customIcon: String?,
-        content: String,
-        tags: [String],
-        sourceURL: String?,
-        rawSnippet: String?,
-        fileSize: Int64?,
-        sourceType: String?
-    ) async throws -> KnowledgePage {
-        await knowledgeStore.createPage(
-            title: title,
-            pageType: pageType,
-            customIcon: customIcon,
-            content: content,
-            tags: tags,
-            sourceURL: sourceURL,
-            rawSnippet: rawSnippet,
-            fileSize: fileSize,
-            sourceType: sourceType
-        )
-    }
-
-    /// any创建Page
-    public func anyCreatePage(
-        title: String,
-        pageType: PageType,
-        customIcon: String?,
-        content: String,
-        tags: [String],
-        sourceURL: String?,
-        rawSnippet: String?,
-        fileSize: Int64?,
-        sourceType: String?,
-        forceDeepScan: Bool
-    ) async -> KnowledgePage {
-        await knowledgeStore.createPage(
-            title: title,
-            pageType: pageType,
-            customIcon: customIcon,
-            content: content,
-            tags: tags,
-            sourceURL: sourceURL,
-            rawSnippet: rawSnippet,
-            fileSize: fileSize,
-            sourceType: sourceType
-        )
-    }
-
-    /// 更新Page
-    /// - Parameter page: page
-    public func updatePage(_ page: KnowledgePage) async throws {
-        await knowledgeStore.updatePage(page)
-    }
-
-    /// any更新Page
-    /// - Parameter page: page
-    /// - Parameter forceDeepScan: forceDeep扫描
-    public func anyUpdatePage(_ page: KnowledgePage, forceDeepScan: Bool) async {
-        await knowledgeStore.updatePage(page)
-    }
-
-    /// any删除Page
-    /// - Parameter page: page
-    public func anyDeletePage(_ page: KnowledgePage) async {
-        await knowledgeStore.deletePage(page)
-    }
-
-    /// 同步RemotePage
-    /// - Parameter page: page
-    public func syncRemotePage(_ page: KnowledgePage) async {
-        await pageStore.syncRemotePage(page)
-        await knowledgeStore.refresh()
-    }
-
-    /// 拉取BacklinksByID
-    /// - Returns: 列表
-    public func fetchBacklinksByID(for id: UUID) async -> [KnowledgePage] {
-        await pageStore.fetchBacklinksByID(for: id)
-    }
-
-    /// 搜索Pages
-    /// - Parameter query: query
-    /// - Returns: 列表
-    public func searchPages(query: String) async -> [KnowledgePage] {
-        await pageStore.searchPages(query: query)
-    }
-
-    /// seedDefaultContent
-    /// - Parameter logger: logger
-    /// - Returns: 返回值
-    public func seedDefaultContent(logger: @escaping @Sendable (LogAction, String, String) -> Void) async {
-        await knowledgeStore.seedDefaultContent()
-    }
-
-    /// 获取StorageStats
-    /// - Returns: 返回值
-    public func getStorageStats() async -> StorageStats {
-        await pageStore.getStorageStats()
-    }
-}
-
-// MARK: - GraphDataProvider 协议实现
-@MainActor
-extension AppStore: GraphDataProvider {
-    public var clusters: [GraphClusteringService.Cluster] { [] }
-    public var isAIProcessing: Bool { isScanningAI }
 }

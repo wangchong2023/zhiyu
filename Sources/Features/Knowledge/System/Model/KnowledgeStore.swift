@@ -8,7 +8,7 @@
 //  系统层级：[L2] 业务功能层
 //  核心职责：数据模型与状态管理，定义数据结构与 @Observable 状态。
 //
-import SwiftUI
+import Foundation
 import Combine
 import Observation
 
@@ -45,6 +45,7 @@ public final class KnowledgeStore {
     @ObservationIgnored @Inject private var performanceService: PerformanceService
     @ObservationIgnored @Inject private var settingsStore: SettingsStore
     @ObservationIgnored @Inject private var logger: any LoggerProtocol
+    @ObservationIgnored @Inject private var keyStore: any KeyStoreProtocol
 
     // MARK: - 私有属性
     
@@ -106,11 +107,11 @@ public final class KnowledgeStore {
                     if let vaultID = notification.userInfo?["vaultID"] as? UUID {
                         let isTesting = ProcessInfo.processInfo.arguments.contains("--uitesting") || ProcessInfo.processInfo.environment["UITesting"] == "true"
                         let seedKey = "seeded_vault_\(vaultID.uuidString)"
-                        if !UserDefaults.standard.bool(forKey: seedKey) || isTesting {
+                        if !keyStore.bool(forKey: seedKey) || isTesting {
                             Logger.shared.info(" [KnowledgeStore] Seeding guide data for vault \(vaultID.uuidString)...")
                             let vaultName = VaultService.shared.vaults.first(where: { $0.id == vaultID })?.name
                             await self.seedDefaultContent(vaultName: vaultName)
-                            UserDefaults.standard.set(true, forKey: seedKey)
+                            keyStore.set(true, forKey: seedKey)
                         }
                     }
                 }

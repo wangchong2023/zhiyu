@@ -46,18 +46,21 @@ public enum OnboardingMilestone: String, CaseIterable, Sendable {
     case pageCount50
     case pageCount100
 
-    // MARK: - UserDefaults
+    // MARK: - KeyStore
 
     private static let prefix = "onboarding.milestone"
+    private static var keyStore: any KeyStoreProtocol {
+        ServiceContainer.shared.resolve((any KeyStoreProtocol).self)
+    }
 
     var key: String { "\(Self.prefix).\(rawValue)" }
 
     public var hasBeenShown: Bool {
-        UserDefaults.standard.bool(forKey: key)
+        Self.keyStore.bool(forKey: key)
     }
 
     public func markAsShown() {
-        UserDefaults.standard.set(true, forKey: key)
+        Self.keyStore.set(true, forKey: key)
     }
 
     // MARK: - Toast

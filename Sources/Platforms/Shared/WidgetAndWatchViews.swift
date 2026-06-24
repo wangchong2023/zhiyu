@@ -95,10 +95,10 @@ struct WatchKnowledgeStatsView: View {
     }
     
     private func loadData() {
-        let defaults = UserDefaults.standard
-        totalPages = defaults.integer(forKey: AppConstants.Keys.Storage.watchTotalPages)
-        totalWords = defaults.integer(forKey: AppConstants.Keys.Storage.watchTotalWords)
-        recentTitles = defaults.stringArray(forKey: AppConstants.Keys.Storage.watchRecentTitles) ?? []
+        let keyStore = ServiceContainer.shared.resolve((any KeyStoreProtocol).self)
+        totalPages = keyStore.integer(forKey: AppConstants.Keys.Storage.watchTotalPages)
+        totalWords = keyStore.integer(forKey: AppConstants.Keys.Storage.watchTotalWords)
+        recentTitles = keyStore.object(forKey: AppConstants.Keys.Storage.watchRecentTitles) as? [String] ?? []
     }
     
     private func formatNumber(_ n: Int) -> String {

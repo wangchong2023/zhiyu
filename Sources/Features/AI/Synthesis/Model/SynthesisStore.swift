@@ -129,9 +129,10 @@ public final class SynthesisStore {
 
     /// 加载SynthesisResults
     public func loadSynthesisResults() {
+        let keyStore = ServiceContainer.shared.resolve((any KeyStoreProtocol).self)
         for type in SynthesisType.allCases {
             let key = AppConstants.Keys.Storage.Legacy.synthesisDocsPrefix + type.rawValue
-            if let data = UserDefaults.standard.data(forKey: key),
+            if let data = keyStore.data(forKey: key),
                let docs = try? JSONDecoder().decode([SynthesisDocument].self, from: data) {
                 _synthesisResults[type] = docs
             }
@@ -279,8 +280,9 @@ public final class SynthesisStore {
     /// 清除All
     public func clearAll() {
         synthesisResults.removeAll()
+        let keyStore = ServiceContainer.shared.resolve((any KeyStoreProtocol).self)
         for type in SynthesisType.allCases {
-            UserDefaults.standard.removeObject(forKey: AppConstants.Keys.Storage.Legacy.synthesisDocsPrefix + type.rawValue)
+            keyStore.removeObject(forKey: AppConstants.Keys.Storage.Legacy.synthesisDocsPrefix + type.rawValue)
             synthesisStates[type] = .idle
         }
     }
@@ -329,7 +331,8 @@ public final class SynthesisStore {
     private func persistResults(for type: SynthesisType) {
         guard let docs = _synthesisResults[type] else { return }
         if let data = try? JSONEncoder().encode(docs) {
-            UserDefaults.standard.set(data, forKey: AppConstants.Keys.Storage.Legacy.synthesisDocsPrefix + type.rawValue)
+            let keyStore = ServiceContainer.shared.resolve((any KeyStoreProtocol).self)
+            keyStore.set(data, forKey: AppConstants.Keys.Storage.Legacy.synthesisDocsPrefix + type.rawValue)
         }
     }
 }

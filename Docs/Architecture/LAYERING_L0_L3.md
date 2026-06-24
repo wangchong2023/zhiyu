@@ -137,31 +137,30 @@ public final class ChatViewModel: ObservableObject {
 ## 5. 已知违例案例与修复指引
 
 ### 红线 4：L0 基座层引用 L3 应用层类型
-*   **违例文件**：`Sources/Core/Base/Protocols/RouterProtocol.swift` (L0)
-*   **具体问题**：引用了 `ToolItem` (定义于 `Sources/App/Store/AppModels.swift`, L3) 和 `AppTab` (定义于 `Sources/App/AppTab.swift`, L3)
-*   **示例代码**：
-    ```swift
-    // RouterProtocol.swift (L0) — 不应引用 L3 类型
-    func navigateToTool(_ tool: ToolItem)  // ToolItem ∈ L3
-    var selectedTab: AppTab { get set }    // AppTab ∈ L3
-    var path: NavigationPath               // NavigationPath ∈ SwiftUI
-    ```
-*   **修复指引**：
-    1. 将 `AppTab`、`ToolItem` 等导航相关类型定义迁移至 `Core/Base/Constants/` (L0)
-    2. 或将 `RouterProtocol` 泛型化：`protocol RouterProtocol<Tab, Tool>`
-    3. 使用 `AnyNavigationPath` 包装器隔离 SwiftUI 依赖
+
+> ✅ **已修复** (2026-06-24)：`ToolItem` 已下移至 `Domain/Models/ToolItem.swift` (L1.5)，L0 RouterProtocol 自然解析。`AppRoute`/`SidebarSelection` 属 L3 导航概念，RouterProtocol 已用 `#if !os(watchOS)` 隔离，维持现状。
+
+*   **已修复**：
+    - `ToolItem` 从 L3 `AppModels.swift` 移至 L1.5 `Domain/Models/ToolItem.swift` ✅
+    - `RouterProtocol` 使用未限定 `ToolItem` → 自然解析至 L1.5 ✅
+    - `AppStore.ToolItem` 替换为全局 `ToolItem` + `extension ToolItem { var route }` ✅
+*   **维持现状**：
+    - `AppRoute`、`SidebarSelection` — L3 导航概念，RouterProtocol 中已 `#if !os(watchOS)` 隔离
+    - `AppTab` — 已在 `Domain/Models/AppTab.swift` (L1.5)，L0→L1.5 合规 ⚠️ 审计误报
 
 ### 红线 5：L1-L2 领域/业务层直接 import 框架实现
-*   **违例文件** (共 6 处)：
 
-| 文件 | 层级 | 违规框架 | 修复指引 |
-|------|------|----------|----------|
-| `Domain/Models/RAGModels.swift:12` | L1.5 | `import GRDB` | 抽取 Record 封装至 L1 |
-| `Domain/Models/PluginRecord.swift:12` | L1.5 | `import GRDB` | 同上 |
-| `Domain/Models/PluginRecordFTS.swift:12` | L1.5 | `import GRDB` | 同上 |
-| `Features/Vault/VaultService.swift:13-14` | L2 | `import GRDB` + `import SwiftUI` | 移除 SwiftUI；GRDB 移至 Repository |
-| `Features/Knowledge/System/Model/KnowledgeStore.swift:11` | L2 | `import SwiftUI` | 改用 `import Observation` |
-| `Features/Knowledge/NotebookHub/Model/NotebookThemeFactory.swift:12` | L2 | `import SwiftUI` | 移除 (仅需 Foundation) |
+> ✅ **全部已修复** (2026-06-24)：SRP 重构使 GRDB 依赖移至 VaultDatabaseSwitcher 协议，SwiftUI 改为 Observation。
+
+*   **已修复** (共 6 处)：
+    - `Domain/Models/RAGModels.swift` — GRDB import 已删除 ✅
+    - `Domain/Models/PluginRecord.swift` — GRDB import 已删除 ✅
+    - `Domain/Models/PluginRecordFTS.swift` — GRDB import 已删除 ✅
+    - `Features/Vault/VaultService.swift` — `@preconcurrency import GRDB` 已删除 ✅
+    - `Features/Knowledge/System/Model/KnowledgeStore.swift` — `import SwiftUI`→`import Observation` ✅
+    - `Features/Knowledge/NotebookHub/Model/NotebookThemeFactory.swift` — `import SwiftUI` 已删除 ✅
+
+> **违规清单已清零** 🎉
 
 *   **危害**：领域模型与 GRDB 绑定则无法在不同持久化方案间切换；业务层引入 SwiftUI 则无法在非 UI 上下文中复用。
 *   **最佳实践**：
@@ -189,12 +188,50 @@ public final class ChatViewModel: ObservableObject {
     - 不可变值类型 → 标注 `struct: Sendable`
     - 真正需要 `os_unfair_lock` 的场景 → 封装到独立的 `Locked<T>` 包装器中
 
+### 红线 7：业务层 (Features) 禁止直接使用 `#if os()` 平台宏
+
+> ✅ **已修复** (2026-06-22)：经过 Phase 1+2 协议化改造，Features 层 `#if os()` 宏从 **46 处降至 10 处**（-78%）。剩余 10 处为 watchOS 结构性差异（如 `NavigationStack` vs `NavigationView`），属合理保留。
+
+*   **违规行为**：在 `Sources/Features/` 和 `Sources/Domain/` 的任何文件中使用 `#if os(iOS)`、`#if os(macOS)`、`#if os(watchOS)` 宏。
+*   **危害**：将平台差异散落在业务逻辑中，导致代码分支膨胀、难以测试、新增平台时需修改大量业务文件。
+*   **最佳实践**（已验证生效）：
+    1. 在 `Core/Base/Protocols/` 定义平台能力协议（`DeviceInfoProtocol`、`URLOpenerProtocol`、`ShareSheetProtocol`、`PasteboardProtocol`）
+    2. 在 `Platforms/iOS/`、`Platforms/macOS/`、`Platforms/watchOS/` 分别实现（如 `iOSDeviceInfoService`、`MacURLOpenerService` 等共 12 个实现类）
+    3. 通过 `PlatformRegistrar` 注册到 `ServiceContainer`，业务层通过 `@Inject` 注入协议
+    4. UI 层面的平台差异使用 `PlatformModifiers` View extension（如 `adaptiveListStyle()`）
+*   **例外**：`Platforms/` 目录本身、`Sources/App/` 入口层可合理使用 `#if os()` 宏。
+*   **详细设计**：参见 [`Docs/Architecture/PLATFORM_PROTOCOL_ARCHITECTURE.md`](./PLATFORM_PROTOCOL_ARCHITECTURE.md)
+
+### 红线 8：View 文件必须标注为 [L3]，不是 [L2]
+
+> ⚠️ **审计发现** (2026-06-22)：**100 个 View 文件**错误标注为 `[L2] 业务功能层`，应标注为 `[L3] 表现层`。
+
+*   **违规行为**：在 `Sources/Features/**/View/` 下的文件中，文件头标注 `系统层级：[L2]`。
+*   **正确标注**：所有 View 文件应标注 `系统层级：[L3] 表现层`。
+*   **区分规则**：
+    - `[L2]` → Service、Model、ViewModel、Coordinator（不含 UI 框架依赖）
+    - `[L3]` → View、ViewProvider、View Components（含 SwiftUI import）
+
 ---
 
 ## 6. 架构门禁自动扫描规范
 
-为了确保规范在团队协作中不被突破，配置以下构建门禁：
-1. **XcodeGen 配置**：在 `project.yml` 中将各个子 Slice 划分为独立的 Target。通过限制 `dependencies`，强制实现在编译期拦截不合规依赖。
-2. **SwiftLint 脚本拦截**：在 `.swiftlint.yml` 中配置 `custom_rules`，限制物理路径下的非法 `import` 语句。
-3. **自定义扫描**：集成 `Tools/Gatekeeper/check_magic_numbers_v2.py` 到 CI，新增 Python 文件扫描。
-4. **CodeGraph 集成**：初始化 `.codegraph/` 知识图谱以支持自动化架构违规检测。
+为了确保规范在团队协作中不被突破，配置以下构建门禁（全部通过 `Tools/CI/Analyze/run_static_analysis.sh` 集成串行执行）：
+
+| # | 脚本 | 检测内容 | 路径 |
+|---|------|---------|------|
+| 1 | `check_platform_macros.py` | Features/Domain 层 `#if os()` 宏阻断 | `Tools/Gatekeeper/` |
+| 2 | `check_magic_strings.py` | 硬编码 URL / UserDefaults key 检测 | `Tools/Gatekeeper/` |
+| 3 | `check_file_headers.py` | 文件层级标注 + 核心职责完整性验证 | `Tools/Gatekeeper/` |
+| 4 | `check_architecture_dependency.py` | L0-L3 跨层非法依赖扫描 | `Tools/Gatekeeper/Architecture/` |
+| 5 | `check_domain_purity.py` | Domain 层平台无关性（禁止 import UIKit/SwiftUI） | `Tools/Gatekeeper/Architecture/` |
+| 6 | `check_hardcoded_secrets.py` | 硬编码密钥/Token 检测 | `Tools/Gatekeeper/Release/` |
+| 7 | `check_magic_numbers.py` | 魔鬼数字/字符串检测（排除 Widget） | `Tools/Gatekeeper/Compliance/` |
+| 8 | `check_localization.py` | 国际化字符串合规（禁止硬编码中文） | `Tools/Gatekeeper/Compliance/` |
+| 9 | `check_layer_markers.sh` | 文件层级标注覆盖率统计 | `Tools/Gatekeeper/Architecture/` |
+| 10 | `check_swift_quality.py` | Swift 注释、文件头、代码长度审计 | `Tools/Gatekeeper/Sanity/` |
+| 11 | `check_root_hygiene.py` | 根目录垃圾文件/临时脚本扫描 | `Tools/Gatekeeper/Sanity/` |
+| 12 | `check_test_di_setup.py` | 测试文件 DI Mock 环境完整性 | `Tools/Gatekeeper/Architecture/` |
+| 13 | `check_complexity.py` | 🆕 圈复杂度门禁（SwiftLint cyclomatic_complexity, error≤10） | `Tools/Gatekeeper/Compliance/` |
+
+> **执行方式**：本地开发使用 `bash Tools/CI/Analyze/run_static_analysis.sh`；CI 流水线同脚本自动执行。全部 **13 项**并行执行，任一项失败即熔断构建。完整的 CI 体系见 [`Docs/Architecture/CI_CD_WORKFLOW.md`](./CI_CD_WORKFLOW.md)。

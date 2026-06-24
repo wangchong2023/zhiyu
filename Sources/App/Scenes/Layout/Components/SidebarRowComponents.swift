@@ -19,7 +19,7 @@ public enum SidebarSelection: Hashable {
     case page(UUID)
     
     /// 跳转到系统预设的工具项 (如：仪表盘、页面列表、设置等)
-    case tool(AppStore.ToolItem)
+    case tool(ToolItem)
     
     /// 按特定 PageType 类型过滤后的知识列表 (如：仅查看实体或概念)
     case filteredIndex(PageType)

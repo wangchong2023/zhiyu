@@ -24,6 +24,10 @@ final class WatchWatchSyncService: NSObject, WatchSyncProtocol, WCSessionDelegat
     var mockActivationState: WCSessionActivationState?
     #endif
     
+    private var keyStore: any KeyStoreProtocol {
+        ServiceContainer.shared.resolve((any KeyStoreProtocol).self)
+    }
+    
     override init() {
         super.init()
         if WCSession.isSupported() {
@@ -53,7 +57,7 @@ final class WatchWatchSyncService: NSObject, WatchSyncProtocol, WCSessionDelegat
         let chunks = AudioSplitter.split(data: data)
         let total = chunks.count
         
-        var pendingTransfers = UserDefaults.standard.dictionary(forKey: AppConstants.Keys.Storage.watchPendingAudioTransfers) as? [String: [String: Any]] ?? [:]
+        var pendingTransfers = keyStore.object(forKey: AppConstants.Keys.Storage.watchPendingAudioTransfers) as? [String: [String: Any]] ?? [:]
         
         var chunkDicts: [[String: Any]] = []
         for (index, chunk) in chunks.enumerated() {
@@ -73,7 +77,7 @@ final class WatchWatchSyncService: NSObject, WatchSyncProtocol, WCSessionDelegat
             "total": total,
             "chunks": chunkDicts
         ]
-        UserDefaults.standard.set(pendingTransfers, forKey: AppConstants.Keys.Storage.watchPendingAudioTransfers)
+        keyStore.set(pendingTransfers, forKey: AppConstants.Keys.Storage.watchPendingAudioTransfers)
         
         triggerPendingTransfers()
     }
@@ -88,7 +92,7 @@ final class WatchWatchSyncService: NSObject, WatchSyncProtocol, WCSessionDelegat
         #endif
         guard activationState == .activated else { return }
         
-        guard var pendingTransfers = UserDefaults.standard.dictionary(forKey: AppConstants.Keys.Storage.watchPendingAudioTransfers) as? [String: [String: Any]] else { return }
+        guard var pendingTransfers = keyStore.object(forKey: AppConstants.Keys.Storage.watchPendingAudioTransfers) as? [String: [String: Any]] else { return }
         
         var hasUpdates = false
         for (transferId, transferInfo) in pendingTransfers {
@@ -126,7 +130,7 @@ final class WatchWatchSyncService: NSObject, WatchSyncProtocol, WCSessionDelegat
         }
         
         if hasUpdates {
-            UserDefaults.standard.set(pendingTransfers, forKey: AppConstants.Keys.Storage.watchPendingAudioTransfers)
+            keyStore.set(pendingTransfers, forKey: AppConstants.Keys.Storage.watchPendingAudioTransfers)
         }
     }
     

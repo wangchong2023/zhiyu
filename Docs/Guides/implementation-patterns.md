@@ -163,7 +163,24 @@ throw AppError.exportNotSupported()
 
 **已应用范围**: Insight(6处), Ingest(4处), Auth(10处), Synthesis(2处), Security(1处)
 
-## 平台适配模式 (v2.0 新增)
+## 平台适配模式 (v2.1 更新)
+
+### 协议驱动跨平台架构
+
+> 完整设计见 [`Docs/Architecture/PLATFORM_PROTOCOL_ARCHITECTURE.md`](../Architecture/PLATFORM_PROTOCOL_ARCHITECTURE.md)
+
+**核心原则**：业务层（Features/Domain）绝不使用 `#if os()` 宏。平台差异通过协议抽象 + DI 注入解决。
+
+**协议定义** → `Core/Base/Protocols/`:
+| 协议 | 能力 |
+|------|------|
+| `DeviceInfoProtocol` | 系统版本、设备型号、屏幕高度 |
+| `URLOpenerProtocol` | 异步打开 URL |
+| `ShareSheetProtocol` | 展示系统分享面板 |
+| `PasteboardProtocol` | 剪贴板读写（已支持 mutation） |
+
+**平台实现** → `Platforms/{iOS,macOS,watchOS}/Services/` (共 12 个实现类)
+**DI 注册** → `Platforms/{iOS,macOS,watchOS}/Registrar/` (通过 `PlatformRegistrar` 模式)
 
 ### PlatformModifiers — View 层平台差异封装
 
@@ -254,7 +271,9 @@ actor IngestService {
 }
 ```
 
-## 代码拆分模式 (v2.0 新增)
+## 代码拆分模式 (v2.1 更新)
+
+> 完整 SRP 方法论见 [`Docs/Guides/srp-file-organization.md`](./srp-file-organization.md) — 含 9 个实战案例、View/Service 拆分模式、编译验证流程。
 
 ### View 文件分组件拆分
 

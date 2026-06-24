@@ -13,6 +13,7 @@ import Foundation
 /// 负责生成知识周报与核心趋势分析。
 actor KnowledgeInsightService {
     static let shared = KnowledgeInsightService()
+    private let keyStore = ServiceContainer.shared.resolve((any KeyStoreProtocol).self)
 
     public struct WeeklyInsight: Codable, Equatable {
         public let dateRange: String
@@ -146,7 +147,7 @@ actor KnowledgeInsightService {
 
     private func loadCachedDailyRecap() -> DailyRecap? {
         let key = cacheKey()
-        guard let data = UserDefaults.standard.data(forKey: key),
+        guard let data = keyStore.data(forKey: key),
               let recap = try? JSONDecoder().decode(DailyRecap.self, from: data) else {
             return nil
         }
@@ -156,7 +157,7 @@ actor KnowledgeInsightService {
     private func saveCachedDailyRecap(_ recap: DailyRecap) {
         let key = cacheKey()
         if let data = try? JSONEncoder().encode(recap) {
-            UserDefaults.standard.set(data, forKey: key)
+            keyStore.set(data, forKey: key)
         }
     }
 

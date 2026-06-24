@@ -18,7 +18,10 @@ class ThemeManager: ObservableObject {
     @AppStorage(AppConstants.Keys.Storage.colorSchemeMode) var colorSchemeModeRaw: String = ColorSchemeMode.dark.rawValue
     
     nonisolated var accentColorRaw: String {
-        get { UserDefaults.standard.string(forKey: AppConstants.Keys.Storage.accentColor) ?? "blue" }
+        get {
+            let keyStore = ServiceContainer.shared.resolve((any KeyStoreProtocol).self)
+            return keyStore.string(forKey: AppConstants.Keys.Storage.accentColor) ?? "blue"
+        }
     }
 
     /// Migrate legacy isDarkMode key on first access
@@ -28,25 +31,26 @@ class ThemeManager: ObservableObject {
         get {
             if !Self.didMigrate {
                 Self.didMigrate = true
+                let keyStore = ServiceContainer.shared.resolve((any KeyStoreProtocol).self)
                 // Migrate: if old key exists and new key is default
-                if UserDefaults.standard.object(forKey: AppConstants.Keys.Storage.Legacy.isDarkMode) != nil,
-                   UserDefaults.standard.string(forKey: AppConstants.Keys.Storage.colorSchemeMode) == nil {
-                    let wasDark = UserDefaults.standard.bool(forKey: AppConstants.Keys.Storage.Legacy.isDarkMode)
+                if keyStore.object(forKey: AppConstants.Keys.Storage.Legacy.isDarkMode) != nil,
+                   keyStore.string(forKey: AppConstants.Keys.Storage.colorSchemeMode) == nil {
+                    let wasDark = keyStore.bool(forKey: AppConstants.Keys.Storage.Legacy.isDarkMode)
                     colorSchemeModeRaw = wasDark ? ColorSchemeMode.dark.rawValue : ColorSchemeMode.light.rawValue
-                    UserDefaults.standard.removeObject(forKey: AppConstants.Keys.Storage.Legacy.isDarkMode)
+                    keyStore.removeObject(forKey: AppConstants.Keys.Storage.Legacy.isDarkMode)
                 }
 
                 // 额外迁移：处理从 colorSchemeMode 到 app_color_scheme_mode 的重命名
-                if let oldMode = UserDefaults.standard.string(forKey: AppConstants.Keys.Storage.Legacy.colorSchemeMode),
-                   UserDefaults.standard.string(forKey: AppConstants.Keys.Storage.colorSchemeMode) == nil {
+                if let oldMode = keyStore.string(forKey: AppConstants.Keys.Storage.Legacy.colorSchemeMode),
+                   keyStore.string(forKey: AppConstants.Keys.Storage.colorSchemeMode) == nil {
                     colorSchemeModeRaw = oldMode
-                    UserDefaults.standard.removeObject(forKey: AppConstants.Keys.Storage.Legacy.colorSchemeMode)
+                    keyStore.removeObject(forKey: AppConstants.Keys.Storage.Legacy.colorSchemeMode)
                 }
 
-                if let oldAccent = UserDefaults.standard.string(forKey: AppConstants.Keys.Storage.Legacy.accentColor),
-                   UserDefaults.standard.string(forKey: AppConstants.Keys.Storage.accentColor) == nil {
-                    UserDefaults.standard.set(oldAccent, forKey: AppConstants.Keys.Storage.accentColor)
-                    UserDefaults.standard.removeObject(forKey: AppConstants.Keys.Storage.Legacy.accentColor)
+                if let oldAccent = keyStore.string(forKey: AppConstants.Keys.Storage.Legacy.accentColor),
+                   keyStore.string(forKey: AppConstants.Keys.Storage.accentColor) == nil {
+                    keyStore.set(oldAccent, forKey: AppConstants.Keys.Storage.accentColor)
+                    keyStore.removeObject(forKey: AppConstants.Keys.Storage.Legacy.accentColor)
                 }
             }
             return ColorSchemeMode(rawValue: colorSchemeModeRaw) ?? .dark
@@ -59,7 +63,8 @@ class ThemeManager: ObservableObject {
     /// setAccentColor
     /// - Parameter color: color
     func setAccentColor(_ color: String) {
-        UserDefaults.standard.set(color, forKey: AppConstants.Keys.Storage.accentColor)
+        let keyStore = ServiceContainer.shared.resolve((any KeyStoreProtocol).self)
+        keyStore.set(color, forKey: AppConstants.Keys.Storage.accentColor)
         objectWillChange.send()
     }
 

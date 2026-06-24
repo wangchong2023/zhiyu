@@ -19,29 +19,6 @@ public enum CoachMarkType: String, Sendable {
     case graphDiscovery = "graph_discovery"
 }
 
-// MARK: - 工具栏路由项
-
-/// 应用内工具页面路由枚举
-/// 对应侧边栏或工具栏中的各功能入口，与 SidebarSelection 共同构成路由系统
-public enum ToolItem: String, CaseIterable, Hashable {
-    case pageList     = "index"
-    case dashboard    = "dashboard"
-    case tagCloud     = "tagCloud"
-    case taskCenter   = "chat"
-    case chat         = "chat_ai"
-    case synthesis    = "synthesis"
-    case weeklyReport = "weeklyReport"
-    case log          = "log"
-    case collab       = "collab"
-    case pluginMarket = "pluginMarket"
-    case search       = "search"
-    case ingest       = "ingest"
-    case graph        = "graph"
-    case lint         = "lint"
-    case healthCheck  = "healthCheck"
-    case sources      = "sources"
-}
-
 // MARK: - 知识增长趋势数据点
 
 /// 知识库增长趋势数据点

@@ -17,20 +17,20 @@ import Combine
     static let shared = OnboardingService()
     
     private let onboardingKey = AppConstants.Keys.Storage.hasCompletedOnboarding
+    @Inject var keyStore: any KeyStoreProtocol
     
     @Published var hasCompletedOnboarding: Bool {
         didSet {
-            UserDefaults.standard.set(hasCompletedOnboarding, forKey: onboardingKey)
+            keyStore.set(hasCompletedOnboarding, forKey: onboardingKey)
         }
     }
     
     @Published var currentStep: OnboardingStep?
     
     init() {
-        // Standardize on the constant key. 
-        // If the legacy key exists, it will be handled by reading from the new key if they match,
-        // or by accepting that we are standardizing on the new constant-defined key.
-        self.hasCompletedOnboarding = UserDefaults.standard.bool(forKey: AppConstants.Keys.Storage.hasCompletedOnboarding)
+        // NOTE: init() 内不能使用 @Inject 属性包装器（尚未完成初始化），
+        // 直接通过 ServiceContainer 解析获取 KeyStore 实例。
+        self.hasCompletedOnboarding = ServiceContainer.shared.resolve((any KeyStoreProtocol).self).bool(forKey: AppConstants.Keys.Storage.hasCompletedOnboarding)
     }
     
     enum OnboardingStep: Int, CaseIterable, Identifiable {

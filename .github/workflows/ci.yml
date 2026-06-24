@@ -199,6 +199,90 @@ jobs:
             build/ui_test_output.log
             build/DerivedData/Logs/Test/*.xcresult
 
+  # ── Stage 3b: iPad UI 测试（并行 to Stage 3）───────────────────────────
+  ipad-ui-test:
+    name: UI Tests (iPad)
+    needs: lint-and-audit
+    runs-on: macos-15
+    continue-on-error: true
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Select Xcode Version
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: 'latest-stable'
+
+      - name: Download Xcode Project Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: xcode-project
+          path: ZhiYu.xcodeproj/
+
+      - name: Restore SPM Cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ~/Library/Developer/Xcode/DerivedData/*/SourcePackages
+          key: spm-${{ runner.os }}-${{ hashFiles('ZhiYu.xcodeproj/project.pbxproj') }}
+          restore-keys: spm-${{ runner.os }}-
+
+      - name: Run iPad UI Tests
+        run: bash Tools/CI/Test/run_ipad_ui_tests.sh
+        timeout-minutes: 20
+
+      - name: Upload Test Artifacts (on failure)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-ipad
+          path: |
+            build/ipad_ui_test.log
+            build/DerivedData/Logs/Test/*.xcresult
+
+  # ── Stage 3c: Mac Catalyst UI 测试（并行 to Stage 3）────────────────────
+  mac-catalyst-ui-test:
+    name: UI Tests (Mac Catalyst)
+    needs: lint-and-audit
+    runs-on: macos-15
+    continue-on-error: true
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Select Xcode Version
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: 'latest-stable'
+
+      - name: Download Xcode Project Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: xcode-project
+          path: ZhiYu.xcodeproj/
+
+      - name: Restore SPM Cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ~/Library/Developer/Xcode/DerivedData/*/SourcePackages
+          key: spm-${{ runner.os }}-${{ hashFiles('ZhiYu.xcodeproj/project.pbxproj') }}
+          restore-keys: spm-${{ runner.os }}-
+
+      - name: Run Mac Catalyst UI Tests
+        run: bash Tools/CI/Test/run_mac_catalyst_ui_tests.sh
+        timeout-minutes: 20
+
+      - name: Upload Test Artifacts (on failure)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-mac-catalyst
+          path: |
+            build/mac_catalyst_ui_test.log
+            build/DerivedData/Logs/Test/*.xcresult
+
   # ── Stage 4: 多平台编译验证（矩阵并行）───────────────────────────────
   multi-platform:
     name: Build ${{ matrix.platform }}

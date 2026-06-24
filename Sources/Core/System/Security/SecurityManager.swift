@@ -29,6 +29,11 @@ class SecurityManager: @unchecked Sendable {
         ServiceContainer.shared.resolveOptional((any FileSignatureRepository).self)
     }
 
+    /// 键值存储抽象，用于 Keychain 故障时的 DEBUG 降级回退。
+    private var keyStore: any KeyStoreProtocol {
+        ServiceContainer.shared.resolve((any KeyStoreProtocol).self)
+    }
+
     // MARK: - 存储键名
     private let saltKey = AppConstants.Keys.Storage.securitySalt
     private let dbPassphraseKey = AppConstants.Keys.Storage.dbPassphrase
@@ -63,8 +68,8 @@ class SecurityManager: @unchecked Sendable {
         }
         
         #if DEBUG
-        // 2. DEBUG 模式下，尝试从 UserDefaults 兜底 (用于模拟器环境)
-        if let fallback = UserDefaults.standard.string(forKey: key) {
+        // 2. DEBUG 模式下，尝试从 KeyStore 兜底 (用于模拟器环境)
+        if let fallback = keyStore.string(forKey: key) {
             return fallback
         }
         #endif
@@ -78,7 +83,7 @@ class SecurityManager: @unchecked Sendable {
             return newValue
         } catch {
             #if DEBUG
-            UserDefaults.standard.set(newValue, forKey: key)
+            keyStore.set(newValue, forKey: key)
             return newValue
             #else
             // 生产环境下安全存储故障是致命的
@@ -139,13 +144,13 @@ class SecurityManager: @unchecked Sendable {
                 let legacySalt = AppConstants.Keys.Storage.defaultLegacySalt
                 let newSalt = UUID().uuidString + "-" + UUID().uuidString
                 
-                var hasSignatures = UserDefaults.standard.dictionaryRepresentation().keys.contains { $0.hasPrefix(signatureKeyPrefix) }
+                var hasSignatures = keyStore.dictionaryRepresentation().keys.contains { $0.hasPrefix(signatureKeyPrefix) }
                 
                 if !hasSignatures {
                     // 异步调用需要特殊处理，由于 getOrGenerateKey 是同步的
                     // 这里我们采用阻塞式等待或预先检测。为了保持 getOrGenerateKey 简单，
                     // 我们在闭包内采用同步降级策略
-                    hasSignatures = UserDefaults.standard.string(forKey: saltKey) != nil
+                    hasSignatures = keyStore.string(forKey: saltKey) != nil
                 }
                 
                 return hasSignatures ? legacySalt : newSalt
@@ -177,10 +182,10 @@ class SecurityManager: @unchecked Sendable {
             try await repo.saveSignature(signature, forFilePath: filePath, salt: currentSalt)
         } catch {
             #if DEBUG
-            // 仅在 DEBUG 下允许降级到 UserDefaults，用于模拟器未签名环境
-            Logger.shared.debug(" [SecurityManager] HMAC fallback to UserDefaults: \(error.localizedDescription)")
+            // 仅在 DEBUG 下允许降级到 KeyStore，用于模拟器未签名环境
+            Logger.shared.debug(" [SecurityManager] HMAC fallback to KeyStore: \(error.localizedDescription)")
             let fileName = URL(fileURLWithPath: filePath).lastPathComponent
-            UserDefaults.standard.set(signature, forKey: signatureKeyPrefix + fileName)
+            keyStore.set(signature, forKey: signatureKeyPrefix + fileName)
             #else
             // 生产环境：签名持久化失败属于严重安全错误，不允许明文降级
             Logger.shared.addLog(
@@ -208,7 +213,7 @@ class SecurityManager: @unchecked Sendable {
         var finalStoredSig = storedSig
         if finalStoredSig == nil {
             let fileName = fileURL.lastPathComponent
-            finalStoredSig = UserDefaults.standard.string(forKey: signatureKeyPrefix + fileName)
+            finalStoredSig = keyStore.string(forKey: signatureKeyPrefix + fileName)
         }
         
         guard let expectedSig = finalStoredSig else { return true }

@@ -73,9 +73,13 @@ internal struct Localized {
     
     /// 用户在应用偏好设置中手动指定的语言模式。
     static var languageMode: LanguageMode {
-        get { LanguageMode(rawValue: UserDefaults.standard.string(forKey: AppConstants.Keys.Storage.languageMode) ?? "auto") ?? .auto }
+        get {
+            let keyStore = ServiceContainer.shared.resolve((any KeyStoreProtocol).self)
+            return LanguageMode(rawValue: keyStore.string(forKey: AppConstants.Keys.Storage.languageMode) ?? "auto") ?? .auto
+        }
         set { 
-            UserDefaults.standard.set(newValue.rawValue, forKey: AppConstants.Keys.Storage.languageMode)
+            let keyStore = ServiceContainer.shared.resolve((any KeyStoreProtocol).self)
+            keyStore.set(newValue.rawValue, forKey: AppConstants.Keys.Storage.languageMode)
             // 语言变更时，重置内存常驻的 Bundle 缓存
             clearBundleCache()
         }

@@ -64,23 +64,9 @@ run_parallel_task "Docs & Config Integrity" "docs_and_configs" "python3 Tools/Ga
 run_parallel_task "SPM Integrity" "spm_integrity" "bash Tools/CI/Analyze/verify_spm_integrity.sh" & pid9=$!
 run_parallel_task "Tools Quality Gatekeeper" "tools_quality" "$PYTHON3 Tools/Gatekeeper/Sanity/check_scripts_quality.py" & pid10=$!
 run_parallel_task "Swift Quality Guard" "swift_quality" "$PYTHON3 Tools/Gatekeeper/Sanity/check_swift_quality.py" & pid11=$!
+run_parallel_task "Cyclomatic Complexity" "complexity" "python3 Tools/Gatekeeper/Compliance/check_complexity.py" & pid12=$!
 
-# SBOM 串行链路整体放入后台
-(
-    python3 Tools/CI/Analyze/generate_sbom.py && \
-    (syft . --exclude "./build" --exclude "./env" -o cyclonedx-json=build/syft.cdx.json 2>/dev/null || echo "Syft skipped") && \
-    python3 Tools/CI/Analyze/merge_sbom.py
-) > "$LOG_DIR/sbom_generation.log" 2>&1
-status_sbom=$?
-if [ $status_sbom -ne 0 ]; then
-    echo "  ❌ [FAILED] SBOM Generation & Syft Scan"
-    echo "     👉 错误日志详见: file://$PWD/$LOG_DIR/sbom_generation.log"
-    echo "--------------------------------------------------"
-    tail -n 10 "$LOG_DIR/sbom_generation.log"
-    echo "--------------------------------------------------"
-else
-    echo "  ✅ [PASSED] SBOM Generation & Syft Scan"
-fi & pid12=$!
+run_parallel_task "SBOM Generation & Syft Scan" "sbom_generation" "(python3 Tools/CI/Analyze/generate_sbom.py && (syft . --exclude ./build --exclude ./env -o cyclonedx-json=build/syft.cdx.json 2>/dev/null || echo Syft skipped) && python3 Tools/CI/Analyze/merge_sbom.py)" & pid13=$!
 
 # 等待所有后台任务，并收拢退出状态
 wait $pid1 || EXIT_CODE=1
@@ -95,6 +81,7 @@ wait $pid9 || EXIT_CODE=1
 wait $pid10 || EXIT_CODE=1
 wait $pid11 || EXIT_CODE=1
 wait $pid12 || EXIT_CODE=1
+wait $pid13 || EXIT_CODE=1
 
 echo ""
 if [ $EXIT_CODE -ne 0 ]; then

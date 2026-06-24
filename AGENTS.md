@@ -9,13 +9,16 @@
 | [swift-coding-style.md](Docs/Guides/swift-coding-style.md) | 命名、Protocol、Localization key、CodingKeys、Boolean 前缀等 Swift 编码约定 |
 | [config-conventions.md](Docs/Guides/config-conventions.md) | project.yml、AppConfig.json、Asset Catalog、.xcstrings、文档目录规范 |
 | [implementation-patterns.md](Docs/Guides/implementation-patterns.md) | Swift 6 变通方案、图谱模式、合成文档、缓存策略、Mermaid、UI 框架等 |
+| [file-header-template.md](Docs/Guides/file-header-template.md) | 文件头注释模板：`系统层级` + `核心职责` 标注规范 |
 
 ## 文档索引
 
 | 文档 | 内容 |
 |------|------|
 | `Docs/Architecture/HIGH_LEVEL_DESIGN.md` | L0-L3 分层、模块依赖、数据流 |
-| `Docs/Architecture/LAYERING_L0_L3.md` | 严格分层架构定义与依赖规则 |
+| `Docs/Architecture/LAYERING_L0_L3.md` | 严格分层架构定义与依赖规则（含 8 条红线 + 12 项 CI 门禁） |
+| `Docs/Architecture/PLATFORM_PROTOCOL_ARCHITECTURE.md` | 🆕 跨平台协议分层设计、#if os() 宏协议化、PlatformRegistrar 模式 |
+| `Docs/Guides/srp-file-organization.md` | 🆕 SRP 文件拆分原则、重构方法论、View/Service 拆分模式 |
 | `Docs/Architecture/AUTH_ARCHITECTURE.md` | 认证架构与多平台登录流程 |
 | `Docs/Design/DATABASE_SCHEMA.md` | 完整 DDL、ER 关系、索引设计 |
 | `Docs/Design/SECURITY_DESIGN.md` | 安全设计、OWASP、个人信息保护 |
@@ -31,10 +34,11 @@
 | `Docs/Requirements/ROADMAP.md` | 版本路线图 |
 | `Docs/Guides/CONTRIBUTING.md` | 贡献指南 |
 | `Docs/Guides/USER_GUIDE.md` | 用户使用手册 |
+| `Tools/Audit/ZhiYu_Codebase_Audit_2026-06-22.md` | 全量代码审计报告（2026-06-22）：模块划分、注释、SOLID、循环依赖、平台解耦等 18 维度 |
 
 ## 项目概览
 
-智宇 (ZhiYu) — 面向 iOS/macOS/watchOS 的 AI 原生知识管理应用，基于 Karpathy 的 LLM Wiki 方法论构建。不仅是一个 Markdown 编辑器，更是一个 RAG 闭环系统：语义分块 → 混合 FTS5+向量存储 → AI 合成实验室（含深度引用）。
+智宇 (ZhiYu) — 面向 iOS/macOS/watchOS 的 AI 原生知识管理应用，基于 Karpathy 的 LLM Wiki 方法论构建。不仅是一个 Markdown 编辑器，更是一个 RAG 闭环系统：语义分块 → 混合 FTS5+向量存储 → AI 合成实验室（含深度引用）。660 个 Swift 文件，~90K 行代码。
 
 ## 构建与开发
 

@@ -26,18 +26,24 @@ PERCENT_CONVERSION = 100.0
 
 
 def find_latest_xcresult():
-    """在测试日志目录中检索最新的 xcresult 报告文件包."""
-    xcresult_path = None
+    """在测试日志目录中按修改时间检索最新的 xcresult 报告文件包."""
     if not os.path.exists(XCRESULT_DIR):
         return None
+    candidates = []
     for root, dirs, _ in os.walk(XCRESULT_DIR):
         for d in dirs:
             if d.endswith(".xcresult"):
-                xcresult_path = os.path.join(root, d)
-                break
-        if xcresult_path:
-            break
-    return xcresult_path
+                full_path = os.path.join(root, d)
+                try:
+                    mtime = os.path.getmtime(full_path)
+                except OSError:
+                    mtime = 0
+                candidates.append((mtime, full_path))
+    if not candidates:
+        return None
+    # 按修改时间降序排列，返回最新的
+    candidates.sort(key=lambda x: x[0], reverse=True)
+    return candidates[0][1]
 
 
 def find_tests_ref(node):
