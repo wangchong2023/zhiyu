@@ -264,7 +264,10 @@ final class ServiceContainer: @unchecked Sendable {
 ///
 /// Factory 路线的核心机制：通过 Swift 类型系统区分依赖的可选性，
 /// 而非发明第二个属性包装器名称。
-private protocol OptionalDetectableProtocol {
+///
+/// ⚠️ 必须为 internal（不可 private）：泛型特化时运行时需通过 witness table 验证协议遵循，
+/// private 协议的 witness 在跨文件泛型调用中可能不可见，导致动态 cast 失败并误入 fatalError 路径。
+protocol OptionalDetectableProtocol {
     static var injectWrappedType: Any.Type { get }
     /// 将解析出的值包装为 Optional<Wrapped>，用于安全构造返回类型
     static func injectWrap(_ value: Any) -> Any
