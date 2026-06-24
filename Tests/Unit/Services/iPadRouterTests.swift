@@ -77,7 +77,7 @@ final class iPadRouterTests: XCTestCase {
         XCTAssertEqual(router.selectedTab, .knowledge, "搜索功能应合并在 .knowledge Tab 中显示")
         
         // 9. 验证其他工具分支的 syncTab 行为
-        let otherTools: [AppStore.ToolItem] = [
+        let otherTools: [ToolItem] = [
             .pageList, .lint, .tagCloud, .taskCenter, .weeklyReport, .log, .collab, .pluginMarket
         ]
         for tool in otherTools {
@@ -237,7 +237,7 @@ final class iPadRouterTests: XCTestCase {
         XCTAssertEqual(router.path.count, 1, "navigateToPage 后 path 中应有 1 个元素")
         
         // 4. 测试便捷工具项跳转
-        for tool in AppStore.ToolItem.allCases {
+        for tool in ToolItem.allCases {
             router.navigateToTool(tool)
             XCTAssertEqual(router.sidebarSelection, .tool(tool), "navigateToTool 后 sidebarSelection 应被置为对应的 .tool(\(tool.rawValue))")
             XCTAssertEqual(router.path.count, 0, "navigateToTool 属于顶层切换，应清空 NavigationPath 导航栈")

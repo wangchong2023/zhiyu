@@ -35,7 +35,7 @@ final class iPadEnvironmentTests: XCTestCase {
         ///          2. 验证相应属性（isMobile, screenClass, supportsPencil）随 idiom 的转换是否符合逻辑；
         ///          3. 验证 interactionStyle 等静态能力属性。
         let env = iOSAppEnvironment()
-        let currentIdiom = await UIDevice.current.userInterfaceIdiom
+        let currentIdiom = UIDevice.current.userInterfaceIdiom
         
         // 关键过程：提前提取 @MainActor 隔离属性值至局部变量，规避 Swift 6 自动闭包（autoclosure）引起的线程逃逸编译报错
         let screenClass = env.screenClass
