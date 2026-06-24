@@ -66,7 +66,7 @@ final class ServiceContainer: @unchecked Sendable {
     /// 标记是否由生产注册链（AppEnvironment）完成初始化，防止测试误清
     private var isProductionChainPopulated = false
 
-    /// 标记生产链已完成，禁止 reset() 清空
+    /// 标记生产链已完成，禁止 reset() 清空 / 标记 DI 生命周期就绪
     func markProductionChainComplete() {
         isProductionChainPopulated = true
         // 记录生产链完成时的诊断快照
@@ -78,6 +78,10 @@ final class ServiceContainer: @unchecked Sendable {
         os_log(.info, log: diLog, "%{public}@", info)
         Logger.shared.info(info)
     }
+
+    /// DI 容器是否已就绪（生产注册链已完成）
+    /// 在 registerDIModules() 完成前访问 resolve() 的任何代码都是潜在崩溃源。
+    var isReady: Bool { isProductionChainPopulated }
 
     /// 诊断属性：是否被生产链锁定（公开只读）
     var isProductionChainLocked: Bool { isProductionChainPopulated }
@@ -131,7 +135,10 @@ final class ServiceContainer: @unchecked Sendable {
 
         // ── 服务未注册：输出多层次诊断信息 ──
         let rawTypeString = String(describing: type)
-        let errorSummary = "DI Error: Service [\(key)] not registered. Expected type: \(rawTypeString). Registered keys (\(registeredKeys.count)): \(registeredKeys.sorted().joined(separator: ", "))"
+        let readyHint = isProductionChainPopulated
+            ? "[DI Ready — service missing from registration?]"
+            : "[DI NOT READY — resolve() called before AppEnvironment.registerDIModules()]"
+        let errorSummary = "DI Error: Service [\(key)] not registered. \(readyHint) Type: \(rawTypeString). Keys (\(registeredKeys.count)): \(registeredKeys.sorted().joined(separator: ", "))"
 
         // 层级 1: os_log .fault — 崩溃后仍可在系统日志中检索
         os_log(.fault, log: diLog, "%{public}@", errorSummary)
@@ -223,10 +230,20 @@ final class ServiceContainer: @unchecked Sendable {
     }
 }
 
-/// 服务注入助手属性包装器
+/// 依赖注入属性包装器。
+///
+/// 在初始化早期（`AppEnvironment.registerDIModules()` 之前）通过 `@Inject` 访问服务
+/// 会触发明确诊断信息的崩溃，帮助开发者快速定位 DI 时序问题。
+///
+/// - SeeAlso: `ServiceContainer.isReady` 用于检查 DI 是否就绪
 @propertyWrapper
 struct Inject<T>: @unchecked Sendable {
     var wrappedValue: T {
         ServiceContainer.shared.resolve(T.self)
+    }
+
+    /// 安全访问：DI 未就绪时返回 nil，用于初始化早期或单测环境
+    var safeValue: T? {
+        ServiceContainer.shared.resolveOptional(T.self)
     }
 }
