@@ -12,7 +12,7 @@
 import XCTest
 @testable import ZhiYu
 
-final class AgentToolTests: XCTestCase {
+final class AgentToolTests: ZhiYuTestCase {
 
     /// 测试 AgentTool 构造函数各参数的实例化与默认版本号行为
     func testAgentToolInitialization() {

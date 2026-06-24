@@ -12,7 +12,7 @@
 import XCTest
 @testable import ZhiYu
 
-final class FileTextPreviewTests: XCTestCase {
+final class FileTextPreviewTests: ZhiYuTestCase {
     
     private var tempFilePath: String!
     private let chunkSize = 100_000 // 100KB

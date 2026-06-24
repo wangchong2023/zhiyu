@@ -15,7 +15,7 @@ import SwiftUI
 
 // MARK: - BackupService Tests
 @MainActor
-final class BackupServiceTests: XCTestCase {
+final class BackupServiceTests: ZhiYuTestCase {
 
     var backupService: BackupService!
     var tempDir: URL!
@@ -112,7 +112,7 @@ final class BackupServiceTests: XCTestCase {
 
 // MARK: - CollaborationService Tests
 import MultipeerConnectivity
-final class ZhiYuServiceCollaborationTests: XCTestCase {
+final class ZhiYuServiceCollaborationTests: ZhiYuTestCase {
 
     var collabService: CollaborationService!
     var store: AppStore!
@@ -121,7 +121,6 @@ final class ZhiYuServiceCollaborationTests: XCTestCase {
         try await super.setUp()
         // 统一配置标准测试 Mock 环境，将协作提供商与环境适配等服务一并就绪，确保完全物理隔离且不崩溃
         await MainActor.run {
-            setupFullMockEnvironment()
             collabService = CollaborationService()
             store = AppStore()
         }
@@ -195,7 +194,7 @@ final class ZhiYuServiceCollaborationTests: XCTestCase {
 
 // MARK: - Speech Service Tests
 @MainActor
-final class SpeechServiceTests: XCTestCase {
+final class SpeechServiceTests: ZhiYuTestCase {
 
     var speechService: iOSSpeechService!
 
@@ -239,7 +238,7 @@ final class SpeechServiceTests: XCTestCase {
 }
 
 // MARK: - DocumentFormat Edge Cases
-final class DocumentFormatEdgeCaseTests: XCTestCase {
+final class DocumentFormatEdgeCaseTests: ZhiYuTestCase {
 
     func testDetectFormatMixedCaseExtension() {
         XCTAssertEqual(DocumentFormat.detectFormat(from: URL(fileURLWithPath: "/test.MD")), .markdown)
@@ -264,7 +263,7 @@ final class DocumentFormatEdgeCaseTests: XCTestCase {
 }
 
 // MARK: - MarkdownProcessor Edge Cases
-final class MarkdownProcessorEdgeCaseTests: XCTestCase {
+final class MarkdownProcessorEdgeCaseTests: ZhiYuTestCase {
 
     var parser: MarkdownProcessor!
 
@@ -384,7 +383,7 @@ final class MarkdownProcessorEdgeCaseTests: XCTestCase {
 
 // MARK: - LinkService Edge Cases
 @MainActor
-final class LinkServiceEdgeCasesTests: XCTestCase {
+final class LinkServiceEdgeCasesTests: ZhiYuTestCase {
 
     var linkService: LinkService!
 
@@ -441,7 +440,7 @@ final class LinkServiceEdgeCasesTests: XCTestCase {
 
 // MARK: - LintService Edge Cases
 @MainActor
-final class LintServiceEdgeCasesTests: XCTestCase {
+final class LintServiceEdgeCasesTests: ZhiYuTestCase {
 
     var lintService: LintService!
     var linkService: LinkService!
@@ -509,7 +508,7 @@ final class LintServiceEdgeCasesTests: XCTestCase {
 
 // MARK: - IngestService Edge Cases
 @MainActor
-final class IngestServiceEdgeCasesTests: XCTestCase {
+final class IngestServiceEdgeCasesTests: ZhiYuTestCase {
 
     var ingestService: IngestService!
 
@@ -548,7 +547,7 @@ final class IngestServiceEdgeCasesTests: XCTestCase {
 
 // MARK: - Page Lifecycle Integration Tests
 @MainActor
-final class PageLifecycleIntegrationTests: XCTestCase {
+final class PageLifecycleIntegrationTests: ZhiYuTestCase {
 
     var linkService: LinkService!
     var lintService: LintService!
@@ -631,13 +630,10 @@ final class PageLifecycleIntegrationTests: XCTestCase {
 }
 
 // MARK: - Plugin Registry Tests (Security & Consistency)
-final class PluginRegistryTests: XCTestCase {
+final class PluginRegistryTests: ZhiYuTestCase {
     
     @MainActor
-    override func setUp() async throws {
-        try await super.setUp()
-        setupFullMockEnvironment()
-    }
+    // setUp 已由 ZhiYuTestCase 基类处理（DI 自动注册）
     
     @MainActor
     override func tearDown() async throws {

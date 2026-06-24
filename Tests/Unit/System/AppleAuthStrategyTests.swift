@@ -12,7 +12,7 @@ import XCTest
 @testable import ZhiYu
 
 @MainActor
-final class AppleAuthStrategyTests: XCTestCase {
+final class AppleAuthStrategyTests: ZhiYuTestCase {
 
     var strategy: AppleAuthStrategy!
 

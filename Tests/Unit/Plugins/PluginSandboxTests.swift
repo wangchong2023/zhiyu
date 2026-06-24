@@ -14,7 +14,7 @@ import XCTest
 /// 插件沙箱安全测试
 /// 验证 PluginRegistry 的加载/卸载、权限拦截、崩溃隔离及流控降级。
 @MainActor
-final class PluginSandboxTests: XCTestCase {
+final class PluginSandboxTests: ZhiYuTestCase {
 
     var registry: PluginRegistry!
     var dbQueue: Any!

@@ -16,7 +16,7 @@ import Combine
 @testable import ZhiYu
 
 @MainActor
-final class ComponentSnapshots: XCTestCase {
+final class ComponentSnapshots: ZhiYuTestCase {
     
     /// 依据环境变量判断是否启用快照录制模式，用于支持 CI/CD 脚本自动更新基准图片
     private var isRecordModeEnabled: Bool {
@@ -41,7 +41,6 @@ final class ComponentSnapshots: XCTestCase {
     /// 统一配置 Mock 测试环境并控制快照录制模式
     /// - Parameter record: 显式控制是否开启录制。若传入 true 则强制开启录制，若为 false 则强制对比，不传则默认使用环境变量 RECORD_SNAPSHOTS 决定
     private func setupMockEnvironment(record: Bool? = nil) {
-        setupFullMockEnvironment()
         isRecording = record ?? isRecordModeEnabled
         
         // 清理聊天历史，防止其他测试（如 UI 测试）的残留数据污染快照测试

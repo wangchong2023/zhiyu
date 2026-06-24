@@ -16,7 +16,7 @@ import JavaScriptCore
 
 /// 插件加载/卸载端到端测试 — 真实 JSContext 覆盖池化污染导致的 SyntaxError
 @MainActor
-final class PluginLoadUnloadTests: XCTestCase {
+final class PluginLoadUnloadTests: ZhiYuTestCase {
 
     /// 项目根目录：通过编译期路径自适应解析，防止硬编码个人物理路径
     private static let projectRoot: String = {

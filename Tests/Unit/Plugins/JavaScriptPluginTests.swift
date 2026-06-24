@@ -15,7 +15,7 @@ import XCTest
 
 /// JavaScriptCore 沙盒运行时安全防御与通信网关测试套件
 @MainActor
-final class JavaScriptPluginTests: XCTestCase {
+final class JavaScriptPluginTests: ZhiYuTestCase {
     
     // MARK: - 1. CPU 超时看门狗物理熔断测试
     

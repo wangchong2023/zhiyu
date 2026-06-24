@@ -20,7 +20,7 @@ import AppIntents
 
 /// 验证 watchOS SwiftUI 视图及表盘小组件 (Widget) 的加载和核心业务交互逻辑
 @MainActor
-final class WatchViewTests: XCTestCase {
+final class WatchViewTests: ZhiYuTestCase {
     
     override func setUp() async throws {
         try await super.setUp()

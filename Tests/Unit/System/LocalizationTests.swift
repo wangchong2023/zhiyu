@@ -11,7 +11,7 @@
 import XCTest
 @testable import ZhiYu
 
-final class LocalizationTests: XCTestCase {
+final class LocalizationTests: ZhiYuTestCase {
 
     /// 验证核心模块的 Key 是否能正确解析（而非原样返回 Key）
     func testLocalizationKeysExistence() {

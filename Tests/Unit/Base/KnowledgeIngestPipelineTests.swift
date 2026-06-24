@@ -3,14 +3,13 @@ import XCTest
 
 /// KnowledgeIngestPipeline 集成测试（通过 process() 公共接口验证管道流程）
 @MainActor
-final class KnowledgeIngestPipelineTests: XCTestCase {
+final class KnowledgeIngestPipelineTests: ZhiYuTestCase {
 
     private let pipeline = KnowledgeIngestPipeline.shared
     private var mockEmbedding: MockEmbeddingProvider!
 
     override func setUp() async throws {
         try await super.setUp()
-        setupFullMockEnvironment()
         mockEmbedding = MockEmbeddingProvider()
     }
 

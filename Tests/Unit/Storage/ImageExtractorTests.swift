@@ -11,7 +11,7 @@
 import XCTest
 @testable import ZhiYu
 
-final class ImageExtractorTests: XCTestCase {
+final class ImageExtractorTests: ZhiYuTestCase {
 
     let extractor = ImageExtractor()
 

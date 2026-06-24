@@ -12,7 +12,7 @@
 import XCTest
 @testable import ZhiYu
 
-final class LintServiceHealthCheckTests: XCTestCase {
+final class LintServiceHealthCheckTests: ZhiYuTestCase {
 
     private let service = LintService()
     private let linkService = LinkService()

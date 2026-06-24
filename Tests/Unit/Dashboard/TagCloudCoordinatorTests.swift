@@ -13,7 +13,7 @@ import XCTest
 @testable import ZhiYu
 
 @MainActor
-final class TagCloudCoordinatorTests: XCTestCase {
+final class TagCloudCoordinatorTests: ZhiYuTestCase {
     
     /// 被测协调器实例
     private var coordinator: TagCloudCoordinator!
@@ -24,7 +24,6 @@ final class TagCloudCoordinatorTests: XCTestCase {
     override func setUp() async throws {
         try await super.setUp()
         // 1. 初始化测试用全 Mock 依赖注入环境
-        setupFullMockEnvironment()
         
         // 2. 初始化被测对象和依赖的 AppStore
         store = AppStore()

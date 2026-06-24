@@ -13,7 +13,7 @@ import Combine
 @testable import ZhiYu
 
 @MainActor
-final class LLMServiceTests: XCTestCase {
+final class LLMServiceTests: ZhiYuTestCase {
     var service: LLMService!
     
     var mockChat: MockChatLLMService!

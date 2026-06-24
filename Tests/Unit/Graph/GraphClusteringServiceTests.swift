@@ -12,7 +12,7 @@
 import XCTest
 @testable import ZhiYu
 
-final class GraphClusteringServiceTests: XCTestCase {
+final class GraphClusteringServiceTests: ZhiYuTestCase {
 
     private let service = GraphClusteringService()
 

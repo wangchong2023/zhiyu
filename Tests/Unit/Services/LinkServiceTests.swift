@@ -12,7 +12,7 @@ import XCTest
 @testable import ZhiYu
 
 @MainActor
-final class LinkServiceTests: XCTestCase {
+final class LinkServiceTests: ZhiYuTestCase {
     var sut: LinkService!
     var mockPages: [KnowledgePage]!
     
@@ -130,7 +130,6 @@ final class LinkServiceTests: XCTestCase {
     
     // MARK: - Test Hybrid Search with Diagnostics and All Branches
     func testHybridSearch_AllDiagnosticBranches() async throws {
-        setupFullMockEnvironment()
         let embeddingManager = ServiceContainer.shared.resolve(EmbeddingManager.self)
         
         // 构造测试页面

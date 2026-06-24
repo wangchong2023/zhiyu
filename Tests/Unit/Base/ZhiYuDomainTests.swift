@@ -12,13 +12,12 @@ import XCTest
 @preconcurrency import GRDB
 @testable import ZhiYu
 
-final class ZhiYuDomainTests: XCTestCase {
+final class ZhiYuDomainTests: ZhiYuTestCase {
     
     @MainActor
     override func setUp() async throws {
         try await super.setUp()
         // 统一配置标准测试 Mock 环境，确保 LiveActivityProtocol 等所有基础 DI 服务注册完成
-        setupFullMockEnvironment()
         
         // 确保在 DI 注册就绪后再重置/访问单例状态，规避初始化时由于容器缺失服务导致的 assertion 闪退
         TaskCenter.shared.reset()

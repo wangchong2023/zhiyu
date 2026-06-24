@@ -12,13 +12,12 @@ import XCTest
 @testable import ZhiYu
 
 @MainActor
-final class AuthServiceTests: XCTestCase {
+final class AuthServiceTests: ZhiYuTestCase {
 
     private var testSession: URLSession!
 
     override func setUp() async throws {
         try await super.setUp()
-        setupFullMockEnvironment()
 
         // 注入 Mock Keychain，绕过模拟器 errSecMissingEntitlement -34018 限制
         KeychainService.testOverride = MockKeychainService()

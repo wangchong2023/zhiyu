@@ -12,7 +12,7 @@ import XCTest
 @testable import ZhiYu
 
 @MainActor
-final class GitHubAuthStrategyTests: XCTestCase {
+final class GitHubAuthStrategyTests: ZhiYuTestCase {
 
     func testGitHubAuthIdentityType() {
         let strategy = GitHubAuthStrategy()

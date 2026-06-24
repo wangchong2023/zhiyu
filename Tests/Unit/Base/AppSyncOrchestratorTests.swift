@@ -52,7 +52,7 @@ final class MockSyncConflictResolver: SyncConflictResolver, @unchecked Sendable 
 }
 
 @MainActor
-final class AppSyncOrchestratorTests: XCTestCase {
+final class AppSyncOrchestratorTests: ZhiYuTestCase {
     
     private var provider: MockCloudStorageProvider!
     private var resolver: MockSyncConflictResolver!

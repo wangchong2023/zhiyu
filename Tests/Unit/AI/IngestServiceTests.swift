@@ -12,7 +12,7 @@
 import XCTest
 @testable import ZhiYu
 
-final class IngestServicePureLogicTests: XCTestCase {
+final class IngestServicePureLogicTests: ZhiYuTestCase {
 
     private let service = IngestService()
 

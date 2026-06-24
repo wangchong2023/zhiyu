@@ -12,7 +12,7 @@
 import XCTest
 @testable import ZhiYu
 
-final class LLMUtilsTests: XCTestCase {
+final class LLMUtilsTests: ZhiYuTestCase {
 
     // MARK: - stripMarkdown
 

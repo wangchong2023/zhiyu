@@ -10,7 +10,7 @@ import XCTest
 @testable import ZhiYu
 
 @MainActor
-final class AuthIntegrationTests: XCTestCase {
+final class AuthIntegrationTests: ZhiYuTestCase {
     
     override func setUpWithError() throws {
         // 强制关闭 Mock，走真实后端网络

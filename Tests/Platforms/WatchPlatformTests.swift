@@ -17,7 +17,7 @@ import LocalAuthentication
 #endif
 
 /// 验证 watchOS 专有平台能力降级类 (Stub) 的行为
-final class WatchPlatformTests: XCTestCase {
+final class WatchPlatformTests: ZhiYuTestCase {
 
     /// 测试 WatchModelCompiler 降级机制
     /// 验证其 supportsCompilation 返回 false，且 compileModel 方法能正确抛出不可编译的 NSError 异常

@@ -14,12 +14,11 @@ import XCTest
 import SwiftUI
 @testable import ZhiYu
 
-final class HapticFeedbackTests: XCTestCase {
+final class HapticFeedbackTests: ZhiYuTestCase {
     
     @MainActor
     override func setUp() {
         super.setUp()
-        setupFullMockEnvironment()
     }
     
     /// TC-HAP-01: 测试 iOSHapticService 的 trigger 接口不会发生 crash，且能正常被调用

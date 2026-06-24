@@ -13,7 +13,7 @@ import XCTest
 @testable import ZhiYu
 
 @MainActor
-final class NetworkClientTests: XCTestCase {
+final class NetworkClientTests: ZhiYuTestCase {
     
     private var testSession: URLSession!
 

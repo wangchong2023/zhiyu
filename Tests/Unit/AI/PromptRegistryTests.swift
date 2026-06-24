@@ -12,7 +12,7 @@
 import XCTest
 @testable import ZhiYu
 
-final class PromptRegistryTests: XCTestCase {
+final class PromptRegistryTests: ZhiYuTestCase {
 
     // MARK: - Ingest.summary
 

@@ -17,7 +17,7 @@ import XCTest
 @testable import ZhiYu
 
 @MainActor
-final class GoogleAuthStrategyTests: XCTestCase {
+final class GoogleAuthStrategyTests: ZhiYuTestCase {
 
     var strategy: GoogleAuthStrategy!
 

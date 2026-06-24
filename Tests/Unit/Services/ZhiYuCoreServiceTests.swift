@@ -15,7 +15,7 @@ import SwiftUI
 
 // MARK: - 历史撤销与恢复 (UndoService) 单元测试
 @MainActor
-final class UndoServiceTests: XCTestCase {
+final class UndoServiceTests: ZhiYuTestCase {
     
     var undoService: UndoService!
     
@@ -105,7 +105,7 @@ final class UndoServiceTests: XCTestCase {
 
 // MARK: - 内容智能诊断 (LintService) 单元测试
 @MainActor
-final class LintServiceTests: XCTestCase {
+final class LintServiceTests: ZhiYuTestCase {
     
     var lintService: LintService!
     var linkService: LinkService!
@@ -170,7 +170,7 @@ final class LintServiceTests: XCTestCase {
 
 // MARK: - 智能知识摄入 (IngestService) 单元测试
 @MainActor
-final class IngestServiceTests: XCTestCase {
+final class IngestServiceTests: ZhiYuTestCase {
     
     var ingestService: IngestService!
     
@@ -217,7 +217,7 @@ final class IngestServiceTests: XCTestCase {
 
 // MARK: - 异步系统日志与安全审计 (Logger) 单元测试
 @MainActor
-final class LoggerTests: XCTestCase {
+final class LoggerTests: ZhiYuTestCase {
     
     var logService: Logger!
     

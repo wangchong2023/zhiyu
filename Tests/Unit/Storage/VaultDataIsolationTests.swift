@@ -16,7 +16,7 @@ import XCTest
 /// 物理笔记本数据强隔离功能单元测试类（VaultDataIsolationTests）
 /// 专职验证系统核心功能：当物理切换不同的知识金库（Vault）时，底层的物理 SQLite 数据库能够实现强力物理数据隔离与完整性保护。
 @MainActor
-final class VaultDataIsolationTests: XCTestCase {
+final class VaultDataIsolationTests: ZhiYuTestCase {
     
     /// 临时物理沙盒隔离存储目录
     private var tempDirectory: URL!
@@ -48,7 +48,6 @@ final class VaultDataIsolationTests: XCTestCase {
         
         // 核心步骤 3：重置并搭建纯净的全 Mock 运行环境以防止 DI 服务泄漏与死锁
         ServiceContainer.shared.reset()
-        setupFullMockEnvironment()
     }
     
     /// 单元测试的后置收尾清理工作

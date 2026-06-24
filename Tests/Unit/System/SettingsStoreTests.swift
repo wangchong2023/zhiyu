@@ -15,7 +15,7 @@ import XCTest
 /// 系统设置与偏好存储单元测试类（SettingsStoreTests）
 /// 专职验证 `SettingsStore` 的数据读写持久化、观察者机制以及一键重置逻辑。
 @MainActor
-final class SettingsStoreTests: XCTestCase {
+final class SettingsStoreTests: ZhiYuTestCase {
     
     /// 测试专用的 SettingsStore 实例
     private var settingsStore: SettingsStore!
@@ -24,7 +24,6 @@ final class SettingsStoreTests: XCTestCase {
     override func setUp() async throws {
         try await super.setUp()
         // 注册 KeyStoreProtocol 以支持设置持久化验证
-        setupFullMockEnvironment()
         settingsStore = SettingsStore()
 
         // 抹除可能残留的 UserDefaults 偏好数据，防止测试用例之间产生状态污染

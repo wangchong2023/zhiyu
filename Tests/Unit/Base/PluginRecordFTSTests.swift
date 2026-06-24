@@ -12,7 +12,7 @@
 import XCTest
 @testable import ZhiYu
 
-final class PluginRecordFTSTests: XCTestCase {
+final class PluginRecordFTSTests: ZhiYuTestCase {
 
     /// 测试 PluginRecordFTS 构造函数的赋值
     func testPluginRecordFTSInitialization() {

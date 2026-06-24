@@ -12,12 +12,11 @@ import XCTest
 @testable import ZhiYu
 
 @MainActor
-final class AppStoreTests: XCTestCase {
+final class AppStoreTests: ZhiYuTestCase {
     var store: AppStore!
     
     override func setUp() async throws {
         try await super.setUp()
-        setupFullMockEnvironment()
         store = AppStore()
     }
     

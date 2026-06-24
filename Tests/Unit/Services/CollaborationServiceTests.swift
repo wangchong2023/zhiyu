@@ -81,7 +81,7 @@ final class MockCollaborationProvider: CollaborationProviderProtocol {
 }
 
 @MainActor
-final class CollaborationServiceTests: XCTestCase {
+final class CollaborationServiceTests: ZhiYuTestCase {
     var service: CollaborationService!
     var mockProvider: MockCollaborationProvider!
     var mockDelegate: MockCollaborationDelegate!
@@ -90,7 +90,6 @@ final class CollaborationServiceTests: XCTestCase {
     @MainActor
     override func setUp() {
         super.setUp()
-        setupFullMockEnvironment()
         mockProvider = MockCollaborationProvider()
         
         // 动态替换 DI 容器中的提供商，实现模拟器环境解耦

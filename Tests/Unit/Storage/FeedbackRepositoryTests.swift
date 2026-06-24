@@ -13,7 +13,7 @@ import XCTest
 @testable import ZhiYu
 
 @MainActor
-final class FeedbackRepositoryTests: XCTestCase {
+final class FeedbackRepositoryTests: ZhiYuTestCase {
 
     private var dbQueue: DatabaseQueue!
     private var repo: SQLiteFeedbackRepository!

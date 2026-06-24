@@ -12,7 +12,7 @@
 import XCTest
 @testable import ZhiYu
 
-final class RAGGovernanceRepositoryTests: XCTestCase {
+final class RAGGovernanceRepositoryTests: ZhiYuTestCase {
 
     /// 测试 TokenStats 构造与 Equatable
     func testTokenStats() {

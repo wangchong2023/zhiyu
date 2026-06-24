@@ -14,13 +14,8 @@ import SwiftUI
 @testable import ZhiYu
 
 @MainActor
-final class PluginCenterViewTests: XCTestCase {
-    
-    override func setUp() {
-        super.setUp()
-        setupFullMockEnvironment()
-    }
-    
+final class PluginCenterViewTests: ZhiYuTestCase {
+
     /// TC-PLG-01: 验证 PluginCenterView 能成功实例化且不因依赖项缺失崩溃
     func testPluginCenterViewInstantiation() {
         let store = AppStore()

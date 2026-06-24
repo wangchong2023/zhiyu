@@ -13,7 +13,7 @@ import XCTest
 
 /// 力导向图谱布局引擎测试
 /// 验证 GraphLayoutProcessor 的布局计算、边创建及边界条件处理。
-final class GraphLayoutProcessorTests: XCTestCase {
+final class GraphLayoutProcessorTests: ZhiYuTestCase {
 
     // MARK: - 空输入
 

@@ -20,7 +20,7 @@ import XCTest
 // MARK: - 测试 1：协议定义正确性
 
 /// 验证三个跨平台协议的定义签名、Sendable 标注、以及成员列表的编译期一致性
-final class CrossPlatformProtocolDefinitionTests: XCTestCase {
+final class CrossPlatformProtocolDefinitionTests: ZhiYuTestCase {
 
     // ── DeviceInfoProtocol ──
 
@@ -93,7 +93,7 @@ final class CrossPlatformProtocolDefinitionTests: XCTestCase {
 // MARK: - 测试 2：iOS 平台实现验证
 
 /// 验证 iOS 平台实现类正确遵从对应协议，且关键方法/属性返回值非空
-final class CrossPlatformiOSImplementationTests: XCTestCase {
+final class CrossPlatformiOSImplementationTests: ZhiYuTestCase {
 
     /// TC-IOS-01: iOSDeviceInfoService 实现 DeviceInfoProtocol，返回值非空
     func test_iOSDeviceInfoService_conformsToProtocol_andReturnsNonNil() {
@@ -148,7 +148,7 @@ final class CrossPlatformiOSImplementationTests: XCTestCase {
 // MARK: - 测试 3：Mock 实现业务层可用性验证
 
 /// 验证 Mock 实现可用于替代真实平台服务编写业务层测试
-final class CrossPlatformMockUsabilityTests: XCTestCase {
+final class CrossPlatformMockUsabilityTests: ZhiYuTestCase {
 
     /// TC-MK-01: MockDeviceInfoService 返回固定测试值，且可通过协议类型访问
     func test_MockDeviceInfoService_returnsFixedValues_viaProtocol() {
@@ -256,7 +256,7 @@ final class CrossPlatformMockUsabilityTests: XCTestCase {
 
 /// 验证 ServiceContainer 可注册并解析三个跨平台协议，确保 PlatformRegistrar 链完整性
 @MainActor
-final class CrossPlatformDIRegistrationTests: XCTestCase {
+final class CrossPlatformDIRegistrationTests: ZhiYuTestCase {
 
     override func setUp() {
         super.setUp()

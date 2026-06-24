@@ -13,7 +13,7 @@ import XCTest
 @testable import ZhiYu
 
 @MainActor
-final class CloudChaosTests: XCTestCase {
+final class CloudChaosTests: ZhiYuTestCase {
 
     func testVersionConflictResolution() async throws {
         let pageId = UUID()

@@ -13,7 +13,7 @@ import XCTest
 @testable import ZhiYu
 
 @MainActor
-final class ModelLabManagerTests: XCTestCase {
+final class ModelLabManagerTests: ZhiYuTestCase {
     
     private var manager: ModelLabManager!
     private var mockChatModel: LLMManifest!

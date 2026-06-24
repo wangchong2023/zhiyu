@@ -11,7 +11,7 @@
 import XCTest
 @testable import ZhiYu
 
-final class NotebookThemeConfigTests: XCTestCase {
+final class NotebookThemeConfigTests: ZhiYuTestCase {
     
     func testNotebookThemeConfigInitialization() {
         let colors = ["#FFFFFF", "#000000"]

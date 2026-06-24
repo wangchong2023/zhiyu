@@ -17,7 +17,7 @@ import XCTest
 @testable import ZhiYu
 
 @MainActor
-final class PrivacySecurityFeatureTests: XCTestCase {
+final class PrivacySecurityFeatureTests: ZhiYuTestCase {
 
     // MARK: - User.hasPrivacySecurity 权限计算测试
 

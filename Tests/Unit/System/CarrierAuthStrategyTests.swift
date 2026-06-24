@@ -12,7 +12,7 @@ import XCTest
 @testable import ZhiYu
 
 @MainActor
-final class CarrierAuthStrategyTests: XCTestCase {
+final class CarrierAuthStrategyTests: ZhiYuTestCase {
 
     var strategy: CarrierAuthStrategy!
 

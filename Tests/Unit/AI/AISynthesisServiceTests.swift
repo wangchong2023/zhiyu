@@ -21,7 +21,7 @@ import XCTest
 import Combine
 @testable import ZhiYu
 
-final class AISynthesisServicePureLogicTests: XCTestCase {
+final class AISynthesisServicePureLogicTests: ZhiYuTestCase {
 
     // MARK: - 实例 Mock
 

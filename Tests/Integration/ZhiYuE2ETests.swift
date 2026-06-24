@@ -16,7 +16,7 @@ import MultipeerConnectivity
 // MARK: - E2E: Complete Knowledge Page Workflow Tests
 /// 覆盖从创建→编辑→链接→健康检查→删除的完整页面生命周期
 @MainActor
-final class KnowledgePageWorkflowTests: XCTestCase {
+final class KnowledgePageWorkflowTests: ZhiYuTestCase {
 
     var store: AppStore!
     var linkService: LinkService!
@@ -233,7 +233,7 @@ final class KnowledgePageWorkflowTests: XCTestCase {
 
 // MARK: - E2E: Search and Filter Workflow
 @MainActor
-final class SearchFilterWorkflowTests: XCTestCase {
+final class SearchFilterWorkflowTests: ZhiYuTestCase {
 
     var linkService: LinkService!
 
@@ -346,7 +346,7 @@ final class SearchFilterWorkflowTests: XCTestCase {
 
 // MARK: - E2E: Collaboration Workflow
 @MainActor
-final class CollaborationWorkflowTests: XCTestCase {
+final class CollaborationWorkflowTests: ZhiYuTestCase {
 
     func testCollabEditStructure() {
         let edit = CollabEdit(
@@ -398,7 +398,7 @@ final class CollaborationWorkflowTests: XCTestCase {
 
 // MARK: - E2E: Backup and Restore Workflow
 @MainActor
-final class BackupRestoreWorkflowTests: XCTestCase {
+final class BackupRestoreWorkflowTests: ZhiYuTestCase {
 
     var backupService: BackupService!
 
@@ -475,13 +475,12 @@ final class BackupRestoreWorkflowTests: XCTestCase {
 
 // MARK: - E2E: Ingest Pipeline
 @MainActor
-final class IngestPipelineTests: XCTestCase {
+final class IngestPipelineTests: ZhiYuTestCase {
 
     var ingestService: IngestService!
 
     override func setUp() async throws {
         try await super.setUp()
-        setupFullMockEnvironment()
         ingestService = IngestService()
         ServiceContainer.shared.register(ingestService, for: IngestService.self)
     }
@@ -536,7 +535,7 @@ final class IngestPipelineTests: XCTestCase {
 
 // MARK: - E2E: Graph Layout with Realistic Data
 @MainActor
-final class GraphLayoutRealisticTests: XCTestCase {
+final class GraphLayoutRealisticTests: ZhiYuTestCase {
 
     func testLayoutWith100NodesCompletesInReasonableTime() {
         var pages: [KnowledgePage] = []
@@ -657,7 +656,7 @@ final class GraphLayoutRealisticTests: XCTestCase {
 }
 
 // MARK: - E2E: Markdown Rendering
-final class MarkdownRenderingTests: XCTestCase {
+final class MarkdownRenderingTests: ZhiYuTestCase {
 
     var parser: MarkdownProcessor!
 
@@ -730,7 +729,7 @@ final class MarkdownRenderingTests: XCTestCase {
 
 // MARK: - E2E: Log and Audit Trail
 @MainActor
-final class LogAuditTrailTests: XCTestCase {
+final class LogAuditTrailTests: ZhiYuTestCase {
 
     var logService: Logger!
     var tempDir: URL!

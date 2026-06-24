@@ -87,7 +87,7 @@ final class MockWatchdogInterceptionPlugin: KnowledgePlugin, InterceptionPlugin 
 
 // MARK: - 看门狗与安全沙盒测试套件
 @MainActor
-final class PluginWatchdogTests: XCTestCase {
+final class PluginWatchdogTests: ZhiYuTestCase {
     
     private var registry: PluginRegistry!
     

@@ -12,7 +12,7 @@ import XCTest
 @testable import ZhiYu
 
 @MainActor
-final class RAGEvaluationServiceTests: XCTestCase {
+final class RAGEvaluationServiceTests: ZhiYuTestCase {
     
     private var mockLLM: MockLLMService!
     private var governanceStore: (any RAGGovernanceRepository)!

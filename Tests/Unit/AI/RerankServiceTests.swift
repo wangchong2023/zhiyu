@@ -12,7 +12,7 @@
 import XCTest
 @testable import ZhiYu
 
-final class RerankServiceTests: XCTestCase {
+final class RerankServiceTests: ZhiYuTestCase {
 
     private let service = RerankService.shared
 

@@ -12,7 +12,7 @@
 import XCTest
 @testable import ZhiYu
 
-final class KnowledgePageFTSTests: XCTestCase {
+final class KnowledgePageFTSTests: ZhiYuTestCase {
 
     /// 测试 KnowledgePageFTS 构造函数的各种默认及赋值行为
     func testKnowledgePageFTSInitialization() {

@@ -12,7 +12,7 @@
 import XCTest
 @testable import ZhiYu
 
-final class VaultTests: XCTestCase {
+final class VaultTests: ZhiYuTestCase {
     
     /// 测试内置默认笔记本的中英文及本地化翻译映射
     func testBuiltInVaultEnglishNames() {

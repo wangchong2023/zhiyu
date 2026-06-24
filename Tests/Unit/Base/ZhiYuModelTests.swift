@@ -15,7 +15,7 @@ import SwiftUI
 
 // MARK: - 知识页面模型单元测试
 @MainActor
-final class ModelsTests: XCTestCase {
+final class ModelsTests: ZhiYuTestCase {
     
     // MARK: - 基础属性创建测试
     /// 验证知识页面（KnowledgePage）的基本属性创建和初始值设定是否符合预期
@@ -335,7 +335,7 @@ final class ModelsTests: XCTestCase {
 
 // MARK: - 知识图谱相关模型测试
 @MainActor
-final class GraphModelsTests: XCTestCase {
+final class GraphModelsTests: ZhiYuTestCase {
     
     /// 验证知识图谱节点的模型构建与初始化值
     func testGraphNodeCreation() {
@@ -369,7 +369,7 @@ final class GraphModelsTests: XCTestCase {
 
 // MARK: - 智宇内容诊断问题（LintIssue）测试
 @MainActor
-final class LintIssueTests: XCTestCase {
+final class LintIssueTests: ZhiYuTestCase {
     
     /// 验证致命错误级别诊断问题的图标与视觉色彩表现
     func testLintIssueSeverityError() {
@@ -448,7 +448,7 @@ final class LintIssueTests: XCTestCase {
 
 // MARK: - 智宇多端协同模型（CollaborationModels）测试
 @MainActor
-final class CollaborationModelsTests: XCTestCase {
+final class CollaborationModelsTests: ZhiYuTestCase {
     
     /// 验证在线协作用户的展示字段格式
     func testCollabUserDisplayLabel() {
@@ -484,7 +484,7 @@ final class CollaborationModelsTests: XCTestCase {
 
 // MARK: - 语音备忘录（VoiceRecording）模型测试
 @MainActor
-final class VoiceRecordingTests: XCTestCase {
+final class VoiceRecordingTests: ZhiYuTestCase {
     
     /// 验证录音片段基础模型构造
     func testVoiceRecordingCreation() {
@@ -514,7 +514,7 @@ final class VoiceRecordingTests: XCTestCase {
 
 // MARK: - PDF 多媒体文案与元数据相关模型测试
 @MainActor
-final class PDFDocumentInfoTests: XCTestCase {
+final class PDFDocumentInfoTests: ZhiYuTestCase {
     
     /// 验证 PDF 文档及其高亮标注 (PDFHighlight) 在主线程下的安全创建与数据持有验证
     func testPDFDocCreation() async {

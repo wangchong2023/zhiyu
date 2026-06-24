@@ -12,7 +12,7 @@ import XCTest
 @testable import ZhiYu
 
 @MainActor
-final class SecurityIntegrityTests: XCTestCase {
+final class SecurityIntegrityTests: ZhiYuTestCase {
 
     var securityManager: SecurityManager!
     let testFileName = "test_db.sqlite"
@@ -20,7 +20,6 @@ final class SecurityIntegrityTests: XCTestCase {
 
     override func setUpWithError() throws {
         try super.setUpWithError()
-        setupFullMockEnvironment()
         securityManager = SecurityManager.shared
         let tempDir = FileManager.default.temporaryDirectory
         testFileURL = tempDir.appendingPathComponent(testFileName)

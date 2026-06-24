@@ -14,7 +14,7 @@ import Combine
 @testable import ZhiYu
 
 @MainActor
-final class iCloudSyncIntegrationTests: XCTestCase {
+final class iCloudSyncIntegrationTests: ZhiYuTestCase {
     var syncManager: iCloudSyncManager!
     
     @MainActor

@@ -11,7 +11,7 @@
 import XCTest
 @testable import ZhiYu
 
-final class OnboardingMilestoneTests: XCTestCase {
+final class OnboardingMilestoneTests: ZhiYuTestCase {
 
     override func setUp() {
         super.setUp()

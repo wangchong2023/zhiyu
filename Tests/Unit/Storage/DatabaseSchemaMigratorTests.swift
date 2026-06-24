@@ -13,7 +13,7 @@ import XCTest
 @testable import ZhiYu
 
 @MainActor
-final class DatabaseSchemaMigratorTests: XCTestCase {
+final class DatabaseSchemaMigratorTests: ZhiYuTestCase {
 
     var dbQueue: DatabaseQueue!
     var globalQueue: DatabaseQueue!

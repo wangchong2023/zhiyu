@@ -12,7 +12,7 @@
 import XCTest
 @testable import ZhiYu
 
-final class QuizProcessorTests: XCTestCase {
+final class QuizProcessorTests: ZhiYuTestCase {
 
     // MARK: - canDecodeAsQuizModel
 

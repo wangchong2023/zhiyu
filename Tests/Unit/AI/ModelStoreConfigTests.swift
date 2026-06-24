@@ -12,7 +12,7 @@ import XCTest
 import CommonCrypto
 @testable import ZhiYu
 
-final class ModelStoreConfigTests: XCTestCase {
+final class ModelStoreConfigTests: ZhiYuTestCase {
     
     private var remoteConfigService: RemoteConfigService!
     private var downloadManager: ModelDownloadManager!

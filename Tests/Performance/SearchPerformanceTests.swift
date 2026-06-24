@@ -14,13 +14,12 @@ import XCTest
 /// 性能基准测试 (Expert QA Item #4)
 /// 监控向量检索、FTS5 全文检索和多笔记本热插拔在不同数据量级下的延迟。
 @MainActor
-final class SearchPerformanceTests: XCTestCase {
+final class SearchPerformanceTests: ZhiYuTestCase {
     var store: AppStore!
     private var tempDirectory: URL!
 
     override func setUp() async throws {
         try await super.setUp()
-        setupFullMockEnvironment()
         store = AppStore()
         
         // 初始化专属性能测试沙盒路径

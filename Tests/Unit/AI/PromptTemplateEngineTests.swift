@@ -11,7 +11,7 @@
 import XCTest
 @testable import ZhiYu
 
-final class PromptTemplateEngineTests: XCTestCase {
+final class PromptTemplateEngineTests: ZhiYuTestCase {
     
     private var promptEngine: PromptTemplateEngine!
     private var mockSession: URLSession!

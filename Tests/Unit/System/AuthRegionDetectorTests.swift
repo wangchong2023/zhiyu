@@ -12,7 +12,7 @@
 import XCTest
 @testable import ZhiYu
 
-final class AuthRegionDetectorTests: XCTestCase {
+final class AuthRegionDetectorTests: ZhiYuTestCase {
     
     private var detector: AuthRegionDetector!
     
