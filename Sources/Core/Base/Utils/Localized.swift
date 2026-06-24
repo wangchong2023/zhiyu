@@ -71,23 +71,23 @@ internal struct Localized {
         currentLanguage.hasPrefix("zh")
     }
     
+    /// 内存回退：当 KeyStoreProtocol 未就绪时（单测环境），用静态变量暂存语言偏好。
+    nonisolated(unsafe) private static var _inMemoryFallback: String?
+
     /// 用户在应用偏好设置中手动指定的语言模式。
-    /// getter 使用 resolveOptional 优雅降级：单元测试环境未注册 KeyStoreProtocol 时自动回退到 .auto。
+    /// getter/setter 使用 resolveOptional 优雅降级：DI 未就绪时回退到内存存储。
     static var languageMode: LanguageMode {
         get {
             guard let keyStore = ServiceContainer.shared.resolveOptional((any KeyStoreProtocol).self) else {
-                return .auto
+                return LanguageMode(rawValue: _inMemoryFallback ?? "auto") ?? .auto
             }
             return LanguageMode(rawValue: keyStore.string(forKey: AppConstants.Keys.Storage.languageMode) ?? "auto") ?? .auto
         }
         set {
-            guard let keyStore = ServiceContainer.shared.resolveOptional((any KeyStoreProtocol).self) else {
-                // 单测环境下 KeyStoreProtocol 未注册，无法持久化语言偏好，仅清除缓存
-                clearBundleCache()
-                return
+            _inMemoryFallback = newValue.rawValue
+            if let keyStore = ServiceContainer.shared.resolveOptional((any KeyStoreProtocol).self) {
+                keyStore.set(newValue.rawValue, forKey: AppConstants.Keys.Storage.languageMode)
             }
-            keyStore.set(newValue.rawValue, forKey: AppConstants.Keys.Storage.languageMode)
-            // 语言变更时，重置内存常驻的 Bundle 缓存
             clearBundleCache()
         }
     }
