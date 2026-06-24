@@ -95,6 +95,9 @@ targets:
       - script: "python3 Tools/Gatekeeper/Sanity/check_layout.py"
         name: "[Gatekeeper] Cross-Platform Layout Audit"
         basedOnDependencyAnalysis: false
+      - script: "python3 Tools/Gatekeeper/check_inject_safety.py"
+        name: "[Gatekeeper] DI Inject Safety Audit"
+        basedOnDependencyAnalysis: false
     dependencies:
       - package: GRDB
       - package: Lottie

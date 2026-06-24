@@ -5902,6 +5902,7 @@
 				AE0B46F26F0A7E13AF323F19 /* [Gatekeeper] Architecture Dependency Check */,
 				5A14795F3FF364E52B7253E1 /* [Gatekeeper] Tools Scripts Quality Audit */,
 				DCCE0DE01ABCB7FCD769834D /* [Gatekeeper] Cross-Platform Layout Audit */,
+				4A4C3B08610FFCC50795CA33 /* [Gatekeeper] DI Inject Safety Audit */,
 				E063B9A33663ED664F0692A4 /* Sources */,
 				B0DD082C1B2AF7EA4E17CFCD /* Resources */,
 				0AFAF95542CAF86BC9C615A3 /* Frameworks */,
@@ -6317,6 +6318,25 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "export PATH=\"$PATH:/opt/homebrew/bin:/usr/local/bin\"\nif which swiftlint >/dev/null; then swiftlint lint --strict; else echo 'warning: SwiftLint not installed. Please download from https://github.com/realm/SwiftLint'; fi";
+		};
+		4A4C3B08610FFCC50795CA33 /* [Gatekeeper] DI Inject Safety Audit */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "[Gatekeeper] DI Inject Safety Audit";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "python3 Tools/Gatekeeper/check_inject_safety.py";
 		};
 		4A5A6ABBAAAB1ACD347D1C22 /* [Gatekeeper] HIG Compliance Check */ = {
 			isa = PBXShellScriptBuildPhase;
