@@ -14,7 +14,7 @@ import WatchConnectivity
 
 /// 验证 WatchConnectivity 同步可靠性
 @MainActor
-final class WatchConnectivityTests: XCTestCase {
+final class WatchConnectivityTests: ZhiYuTestCase {
     
     var service: iOSWatchSyncService!
     

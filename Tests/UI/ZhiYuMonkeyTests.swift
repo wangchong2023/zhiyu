@@ -15,7 +15,7 @@ import XCTest
 /// 本测试通过遍历屏幕上的活动 hittable 元素，结合防死锁的过滤安全逻辑和随机交互，
 /// 狂暴碰撞并深度压力遍历应用内各种隐藏的弹窗与深层嵌套导航。
 @MainActor
-final class ZhiYuMonkeyTests: XCTestCase {
+final class ZhiYuMonkeyTests: ZhiYuTestCase {
     
     /// XCUIApplication 实例句柄
     var app: XCUIApplication!

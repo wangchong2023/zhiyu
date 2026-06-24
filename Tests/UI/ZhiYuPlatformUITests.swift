@@ -18,7 +18,7 @@ import XCTest
 ///   3. 选择对应模拟器（iPhone 17 Pro / iPad Pro / Mac）
 ///   4. Cmd+U 运行测试
 @MainActor
-class ZhiYuPlatformUITests: XCTestCase {
+class ZhiYuPlatformUITests: ZhiYuTestCase {
 
     var app: XCUIApplication!
 
