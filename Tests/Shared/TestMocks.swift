@@ -248,6 +248,9 @@ extension XCTestCase {
         ServiceContainer.shared.register(AccessibilityService(), for: AccessibilityService.self)
         ServiceContainer.shared.register(SnapshotService(), for: SnapshotService.self)
         ServiceContainer.shared.register(WorkflowService.shared, for: WorkflowService.self)
+
+        // KeyStore — 键值存储抽象（测试环境使用标准 UserDefaults 实现）
+        ServiceContainer.shared.register(UserDefaultsKeyStore.shared as any KeyStoreProtocol, for: (any KeyStoreProtocol).self)
         
         ServiceContainer.shared.register(MockBiometricAuthProvider() as any BiometricAuthProviderProtocol, for: (any BiometricAuthProviderProtocol).self)
         ServiceContainer.shared.register(DummyActivityService() as any LiveActivityProtocol, for: (any LiveActivityProtocol).self)
