@@ -93,6 +93,7 @@ final class PluginWatchdogTests: XCTestCase {
     
     override func setUp() async throws {
         try await super.setUp()
+        setupFullMockEnvironment()
         registry = PluginRegistry.shared
         await registry.reset() // 重置为初始空白状态
     }
