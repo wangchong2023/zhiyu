@@ -42,14 +42,18 @@ final class ZhiYuMonkeyTests: XCTestCase {
         try await super.tearDown()
     }
 
-    // @flaky: 100 步随机点击遍历，本质不稳定且耗时不可控，CI 环境显式跳过
+    /// 狂暴随机点击 Monkey 测试。
+    ///
+    /// 在 CI 环境中自动缩减至 20 步，本地开发保持 100 步。
     func testWildMonkeyClickTraversal() throws {
-        let maxIterations = 100
-        print("====== [MONKEY] 开始执行 100 步狂暴随机点击遍历压力测试 ======")
-        
+        let isCI = ProcessInfo.processInfo.environment["CI"] == "true"
+        let maxIterations = isCI ? 20 : 100
+        print("====== [MONKEY] 开始执行 \(maxIterations) 步狂暴随机点击遍历压力测试 (CI: \(isCI)) ======")
+
         for step in 1...maxIterations {
-            // 1. 每步短暂休眠 0.4s，提供充分的 UI 动效渲染缓冲
-            _ = app.wait(for: .unknown, timeout: 0.4)
+            // 每步短暂休眠 0.4s，提供充分的 UI 动效渲染缓冲
+            let pause = XCTestExpectation(description: "step pause")
+            _ = XCTWaiter.wait(for: [pause], timeout: 0.4)
             
             // 2. 动态随机选择要遍历的元素类型：0: 按钮, 1: 列表行 (Cells), 2: 标签栏
             let targetType = Int.random(in: 0...2)
