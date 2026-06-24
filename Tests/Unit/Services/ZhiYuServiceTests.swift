@@ -632,9 +632,8 @@ final class PageLifecycleIntegrationTests: ZhiYuTestCase {
 // MARK: - Plugin Registry Tests (Security & Consistency)
 final class PluginRegistryTests: ZhiYuTestCase {
     
-    @MainActor
     // setUp 已由 ZhiYuTestCase 基类处理（DI 自动注册）
-    
+
     @MainActor
     override func tearDown() async throws {
         ServiceContainer.shared.reset()
