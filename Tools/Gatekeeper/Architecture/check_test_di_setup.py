@@ -100,11 +100,6 @@ def find_di_singletons(setup_block: str) -> list[tuple[str, str]]:
     return findings
 
 
-def _inherits_from_zhiyu_testcase(content: str) -> bool:
-    """检查文件中的测试类是否继承自 ZhiYuTestCase（DI 由基类自动注册）。"""
-    return bool(re.search(r"class\s+\w+Tests?\s*:\s*ZhiYuTestCase\b", content))
-
-
 def phase1_check() -> list[str]:
     """检查测试文件 setUp 中 DI 单例访问是否有对应的注册。"""
     violations = []
@@ -115,11 +110,6 @@ def phase1_check() -> list[str]:
             content = fp.read_text(encoding="utf-8")
         except Exception:
             continue
-
-        # ZhiYuTestCase 子类由基类自动注册 DI，无需手动调用 setupFullMockEnvironment()
-        if _inherits_from_zhiyu_testcase(content):
-            continue
-
         setup_block = extract_setup_block(content)
         if not setup_block:
             continue
