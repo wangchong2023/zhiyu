@@ -13,13 +13,14 @@ import Combine
 @testable import ZhiYu
 
 @MainActor
-final class ChatServiceTests: ZhiYuTestCase {
+final class ChatServiceTests: XCTestCase {
     
     var chatService: ChatService!
     
     @MainActor
     override func setUp() async throws {
         try await super.setUp()
+        setupFullMockEnvironment()
         chatService = ChatService.shared
         chatService.clearHistory()
     }

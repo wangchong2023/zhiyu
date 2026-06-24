@@ -2,7 +2,7 @@ import XCTest
 @testable import ZhiYu
 
 @MainActor
-final class SourceStoreTests: ZhiYuTestCase {
+final class SourceStoreTests: XCTestCase {
 
     override func setUp() async throws {
         try await super.setUp()

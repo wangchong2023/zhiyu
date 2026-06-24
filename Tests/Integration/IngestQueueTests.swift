@@ -15,13 +15,14 @@ import Combine
 /// 边界与异常测试 (Expert QA Item #4)
 /// 模拟极端环境下的 IngestQueue 表现。
 @MainActor
-final class IngestQueueTests: ZhiYuTestCase {
+final class IngestQueueTests: XCTestCase {
     var store: AppStore!
     var llmService: MockLLMService!
     var cancellables = Set<AnyCancellable>()
     
     override func setUp() async throws {
         try await super.setUp()
+        setupFullMockEnvironment()
         store = AppStore()
         llmService = MockLLMService()
         cancellables = []

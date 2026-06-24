@@ -13,7 +13,7 @@ import XCTest
 @testable import ZhiYu
 
 @MainActor
-final class KnowledgeStoreSimpleTests: ZhiYuTestCase {
+final class KnowledgeStoreSimpleTests: XCTestCase {
 
     // MARK: - 初始状态
 
@@ -43,9 +43,12 @@ final class KnowledgeStoreSimpleTests: ZhiYuTestCase {
 
 // MARK: - 知识库与金库数据同步测试
 @MainActor
-final class KnowledgeStoreSyncTests: ZhiYuTestCase {
+final class KnowledgeStoreSyncTests: XCTestCase {
 
-    // setUp 已由 ZhiYuTestCase 基类处理（DI 自动注册）
+    override func setUp() async throws {
+        try await super.setUp()
+        setupFullMockEnvironment()
+    }
 
     /// 验证当 KnowledgeStore 创建新页面时，当前活跃金库的 pageCount 会被同步更新并存回元数据
     func testPageCountSynchronizationWithVaultService() async throws {

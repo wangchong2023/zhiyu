@@ -11,7 +11,7 @@
 import XCTest
 @testable import ZhiYu
 
-final class ImportRecordModelTests: ZhiYuTestCase {
+final class ImportRecordModelTests: XCTestCase {
 
     // MARK: - ImportRecord 初始化
 

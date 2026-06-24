@@ -14,7 +14,7 @@ import XCTest
 #if os(iOS) && !targetEnvironment(macCatalyst)
 import ActivityKit
 
-final class AIProcessingAttributesTests: ZhiYuTestCase {
+final class AIProcessingAttributesTests: XCTestCase {
     
     func testAttributesInitialization() {
         let startTime = Date()

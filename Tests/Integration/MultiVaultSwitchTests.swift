@@ -16,7 +16,7 @@ import Combine
 /// 物理多笔记本高并发热插拔切换集成测试类 (MultiVaultSwitchTests)
 /// 本测试专注于并发与物理竞争场景下的持久化一致性与防死锁表现，全面补齐系统 TC-VLT-06 级核心用例。
 @MainActor
-final class MultiVaultSwitchTests: ZhiYuTestCase {
+final class MultiVaultSwitchTests: XCTestCase {
     
     /// 临时物理测试沙盒隔离目录
     private var tempDirectory: URL!
@@ -54,6 +54,7 @@ final class MultiVaultSwitchTests: ZhiYuTestCase {
         
         // 核心步骤 3：重置 DI 容器，搭建纯净的全局 Mock 环境
         ServiceContainer.shared.reset()
+        setupFullMockEnvironment()
         
         cancellables.removeAll()
     }

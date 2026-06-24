@@ -13,7 +13,7 @@ import XCTest
 @testable import ZhiYu
 
 @MainActor
-final class VaultPageCountTests: ZhiYuTestCase {
+final class VaultPageCountTests: XCTestCase {
 
     private var dbQueue: DatabaseQueue!
     private var repository: SQLiteVaultRepository!

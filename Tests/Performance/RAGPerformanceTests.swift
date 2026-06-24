@@ -12,13 +12,14 @@ import XCTest
 @testable import ZhiYu
 
 @MainActor
-final class RAGPerformanceTests: ZhiYuTestCase {
+final class RAGPerformanceTests: XCTestCase {
     var llmService: LLMService!
     var largeCandidates: [KnowledgePage] = []
     
     @MainActor
     override func setUp() async throws {
         try await super.setUp()
+        setupFullMockEnvironment()
 
         // 由于 RerankService 是一个真实服务单例，获取其实例
         llmService = LLMService.shared

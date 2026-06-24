@@ -16,7 +16,7 @@ private final class TriggerBox: @unchecked Sendable {
 }
 
 @MainActor
-final class AIContentEnricherTests: ZhiYuTestCase {
+final class AIContentEnricherTests: XCTestCase {
     
     override func setUp() async throws {
         try await super.setUp()

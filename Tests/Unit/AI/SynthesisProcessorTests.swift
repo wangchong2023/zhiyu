@@ -12,7 +12,7 @@
 import XCTest
 @testable import ZhiYu
 
-final class SynthesisProcessorTests: ZhiYuTestCase {
+final class SynthesisProcessorTests: XCTestCase {
 
     // MARK: - formatMermaid
 

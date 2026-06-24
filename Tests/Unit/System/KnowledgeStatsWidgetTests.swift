@@ -12,7 +12,7 @@ import XCTest
 import WidgetKit
 @testable import ZhiYu
 
-final class KnowledgeStatsWidgetTests: ZhiYuTestCase {
+final class KnowledgeStatsWidgetTests: XCTestCase {
     
     /// TC-WID-01: 验证小组件时间线实体 Entry 的基本数据字段绑定可靠性
     func testKnowledgeStatsEntryConfiguration() throws {

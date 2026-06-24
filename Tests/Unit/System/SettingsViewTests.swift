@@ -16,12 +16,13 @@ import SwiftUI
 /// 系统设置视图单元测试类
 /// 专职验证 `SettingsView` 的依赖解析，防止由于 SwiftUI 环境（Environment）缺失导致运行时发生致命的 Coredump 崩溃。
 @MainActor
-final class SettingsViewTests: ZhiYuTestCase {
+final class SettingsViewTests: XCTestCase {
     
     /// 在每次测试执行前重置 Mock 环境
     @MainActor
     override func setUp() {
         super.setUp()
+        setupFullMockEnvironment()
     }
     
     /// TC-SET-01: 测试 SettingsView 的正确实例化与 Environment/EnvironmentObject 的依赖解析

@@ -16,7 +16,7 @@ import XCTest
 @testable import ZhiYu
 
 @MainActor
-final class WeChatAuthStrategyTests: ZhiYuTestCase {
+final class WeChatAuthStrategyTests: XCTestCase {
 
     var strategy: WeChatAuthStrategy!
 

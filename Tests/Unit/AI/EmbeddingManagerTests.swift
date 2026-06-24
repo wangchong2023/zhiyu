@@ -62,7 +62,7 @@ final class MockVectorRepository: VectorRepository, @unchecked Sendable {
 }
 
 // MARK: - EmbeddingManager 单元测试
-final class EmbeddingManagerTests: ZhiYuTestCase {
+final class EmbeddingManagerTests: XCTestCase {
     
     private var mockRepository: MockVectorRepository!
     private var manager: EmbeddingManager!

@@ -13,7 +13,7 @@ import XCTest
 @testable import ZhiYu
 
 @MainActor
-final class ImportSynthesisLinkTests: ZhiYuTestCase {
+final class ImportSynthesisLinkTests: XCTestCase {
 
     private var dbQueue: DatabaseQueue!
     private var repo: SQLiteImportRecordRepository!

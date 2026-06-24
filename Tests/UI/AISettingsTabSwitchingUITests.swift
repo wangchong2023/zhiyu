@@ -10,7 +10,7 @@
 import XCTest
 
 @MainActor
-final class AISettingsTabSwitchingUITests: ZhiYuTestCase {
+final class AISettingsTabSwitchingUITests: XCTestCase {
 
     var app: XCUIApplication!
 

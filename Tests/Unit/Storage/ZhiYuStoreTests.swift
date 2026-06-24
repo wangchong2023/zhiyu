@@ -15,12 +15,13 @@ import SwiftUI
 
 // MARK: - 多轮对话会话缓存 (ChatHistoryStore) 单元测试
 @MainActor
-final class ChatHistoryStoreTests: ZhiYuTestCase {
+final class ChatHistoryStoreTests: XCTestCase {
     
     var store: ChatHistoryStore!
     
     override func setUp() async throws {
         try await super.setUp()
+        setupFullMockEnvironment()
         store = ChatHistoryStore()
         store.messages.removeAll()
         UserDefaults.standard.removeObject(forKey: "zhiyu_chat_history")
@@ -86,12 +87,13 @@ final class ChatHistoryStoreTests: ZhiYuTestCase {
 
 // MARK: - 大模型配置与敏感密钥管理 (LLMConfigStore) 单元测试
 @MainActor
-final class LLMConfigStoreTests: ZhiYuTestCase {
+final class LLMConfigStoreTests: XCTestCase {
     
     var configStore: LLMConfigStore!
     
     override func setUp() async throws {
         try await super.setUp()
+        setupFullMockEnvironment()
         // 注入 Mock Security 服务（必须在 LLMConfigStore() 构造前），绕过模拟器限制
         KeychainService.testOverride = MockKeychainService()
         SecureEnclaveCryptoService.testOverride = MockSecureEnclaveCryptoService()

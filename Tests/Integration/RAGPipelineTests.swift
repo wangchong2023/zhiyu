@@ -14,11 +14,12 @@ import XCTest
 /// 系统集成测试：全链路 RAG 管道
 /// 覆盖：导入 -> 向量化 -> 检索 -> AI 总结
 @MainActor
-final class RAGPipelineTests: ZhiYuTestCase {
+final class RAGPipelineTests: XCTestCase {
     var store: AppStore!
     
     override func setUp() async throws {
         try await super.setUp()
+        setupFullMockEnvironment()
         store = AppStore()
     }
 

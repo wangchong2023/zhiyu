@@ -15,7 +15,7 @@ import SwiftUI
 
 // MARK: - 文档物理格式探测自动分类 (DocumentFormat) 单元测试
 @MainActor
-final class DocumentFormatTests: ZhiYuTestCase {
+final class DocumentFormatTests: XCTestCase {
     
     func testDetectMarkdown() {
         let url = URL(fileURLWithPath: "/test.md")
@@ -54,7 +54,7 @@ final class DocumentFormatTests: ZhiYuTestCase {
 }
 
 // MARK: - Markdown AST 文本解析处理器 (MarkdownProcessor) 单元测试
-final class MarkdownProcessorTests: ZhiYuTestCase {
+final class MarkdownProcessorTests: XCTestCase {
     
     var parser: MarkdownProcessor!
     

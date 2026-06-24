@@ -13,7 +13,7 @@ import XCTest
 @testable import ZhiYu
 
 @MainActor
-final class LLMContextBuilderTests: ZhiYuTestCase {
+final class LLMContextBuilderTests: XCTestCase {
     
     private var builder: LLMContextBuilder!
     

@@ -47,7 +47,7 @@ final class MockCloudStorageProvider: CloudStorageProvider, @unchecked Sendable 
 }
 
 @MainActor
-final class CloudKitSyncIntegrationTests: ZhiYuTestCase {
+final class CloudKitSyncIntegrationTests: XCTestCase {
     
     private var mockProvider: MockCloudStorageProvider!
     private var syncService: iCloudSyncService!

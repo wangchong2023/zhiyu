@@ -11,7 +11,7 @@
 import XCTest
 @testable import ZhiYu
 
-final class PromptDefenseTests: ZhiYuTestCase {
+final class PromptDefenseTests: XCTestCase {
 
     // MARK: - 正常输入测试
 

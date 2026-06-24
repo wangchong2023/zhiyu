@@ -16,13 +16,14 @@ import Combine
 
 /// 知识库十万节点性能收敛测试类
 /// 验证系统在大规模数据量（100,000 个 Page，100,000 个 Link）下的写入事务性能与全文搜索/混合检索的响应时间收敛性。
-final class KnowledgeStorePerformanceTests: ZhiYuTestCase {
+final class KnowledgeStorePerformanceTests: XCTestCase {
     
     /// 主线程隔离的测试环境初始化
     @MainActor
     override func setUp() {
         super.setUp()
         // 1. 初始化完整 Mock 环境，挂载全新隔离的内存数据库 (InMemory SQLite)
+        setupFullMockEnvironment()
     }
     
     /// 十万节点 FTS 检索时延收敛性压测

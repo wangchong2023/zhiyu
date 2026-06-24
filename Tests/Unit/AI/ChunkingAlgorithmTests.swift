@@ -12,7 +12,7 @@ import XCTest
 @testable import ZhiYu
 
 /// 语义分块边界测试套件 (ChunkingAlgorithmTests)
-final class ChunkingAlgorithmTests: ZhiYuTestCase {
+final class ChunkingAlgorithmTests: XCTestCase {
 
     private var chunker: TextChunkerProcessor!
 

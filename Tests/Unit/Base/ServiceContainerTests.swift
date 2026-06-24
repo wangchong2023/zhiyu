@@ -58,7 +58,7 @@ private final class CircularServiceB {
 // MARK: - 测试套件
 
 /// 针对 ServiceContainer 依赖注入容器的单元测试
-final class ServiceContainerTests: ZhiYuTestCase {
+final class ServiceContainerTests: XCTestCase {
     
     override func setUp() {
         super.setUp()

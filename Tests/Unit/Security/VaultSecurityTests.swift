@@ -51,7 +51,7 @@ struct MockHapticFeedback: HapticFeedbackProtocol {
 /// 金库安全服务测试
 /// 验证 VaultSecurityService 的锁定/解锁状态切换及生物识别可用性检测。
 @MainActor
-final class VaultSecurityTests: ZhiYuTestCase {
+final class VaultSecurityTests: XCTestCase {
 
     var vault: VaultStorageSecurityService!
     var mockProvider: VaultSecurityMockBiometricAuthProvider!
@@ -59,6 +59,7 @@ final class VaultSecurityTests: ZhiYuTestCase {
     override func setUp() async throws {
         try await super.setUp()
         // 1. 调用全局 Mock 环境注册一整套基础依赖，规避由于依赖不全导致的套娃式 DI 崩溃
+        setupFullMockEnvironment()
         
         // 2. 覆盖注册 VaultSecurityTests 专属的特化 Mock 服务
         ServiceContainer.shared.register(MockHapticFeedback() as any HapticFeedbackProtocol, for: (any HapticFeedbackProtocol).self)

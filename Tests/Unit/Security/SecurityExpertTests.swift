@@ -13,7 +13,7 @@ import XCTest
 
 /// 安全防御与硬件辅助密钥管理单元测试套件
 @MainActor
-final class SecurityExpertTests: ZhiYuTestCase {
+final class SecurityExpertTests: XCTestCase {
     
     // MARK: - 1. Prompt 防御拦截测试
     

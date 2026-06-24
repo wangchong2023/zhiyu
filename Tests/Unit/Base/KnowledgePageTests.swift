@@ -12,7 +12,7 @@
 import XCTest
 @testable import ZhiYu
 
-final class KnowledgePageTests: ZhiYuTestCase {
+final class KnowledgePageTests: XCTestCase {
     
     // MARK: - 隐私属性测试
     

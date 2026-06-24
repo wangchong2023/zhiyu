@@ -12,11 +12,12 @@ import XCTest
 import Combine
 @testable import ZhiYu
 
-final class KnowledgeStoreStressTests: ZhiYuTestCase {
+final class KnowledgeStoreStressTests: XCTestCase {
     
     @MainActor
     override func setUp() {
         super.setUp()
+        setupFullMockEnvironment()
     }
 
     /// 验证高并发刷新下的稳定性

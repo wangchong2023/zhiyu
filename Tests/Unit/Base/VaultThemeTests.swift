@@ -12,7 +12,7 @@
 import XCTest
 @testable import ZhiYu
 
-final class VaultThemeTests: ZhiYuTestCase {
+final class VaultThemeTests: XCTestCase {
 
     /// 测试 VaultTheme 构造参数的解析与默认渐变样式
     func testVaultThemeInitialization() {

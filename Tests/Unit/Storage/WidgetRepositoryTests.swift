@@ -13,7 +13,7 @@ import XCTest
 @testable import ZhiYu
 
 @MainActor
-final class WidgetRepositoryTests: ZhiYuTestCase {
+final class WidgetRepositoryTests: XCTestCase {
 
     // MARK: - VaultRepository pageCount 测试
 

@@ -14,11 +14,12 @@ import XCTest
 /// 核心状态管理器测试 (Expert QA Item #4)
 /// 验证 AppStore 的 CRUD 逻辑、发布订阅一致性及内存状态安全。
 @MainActor
-final class AppStoreStorageTests: ZhiYuTestCase {
+final class AppStoreStorageTests: XCTestCase {
     var store: AppStore!
     
     override func setUp() async throws {
         try await super.setUp()
+        setupFullMockEnvironment()
         store = AppStore()
     }
     

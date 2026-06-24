@@ -12,7 +12,7 @@ import XCTest
 @preconcurrency import GRDB
 @testable import ZhiYu
 
-final class WidgetDatabaseServiceTests: ZhiYuTestCase {
+final class WidgetDatabaseServiceTests: XCTestCase {
 
     var dbQueue: DatabaseQueue!
 

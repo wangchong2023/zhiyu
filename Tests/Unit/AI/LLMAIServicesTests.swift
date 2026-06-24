@@ -28,7 +28,7 @@ final class MockLLMClient: LLMClientProtocol, @unchecked Sendable {
     }
 }
 
-final class LLMAIServicesTests: ZhiYuTestCase {
+final class LLMAIServicesTests: XCTestCase {
     
     var mockClient: MockLLMClient!
     var contextBuilder: LLMContextBuilder!

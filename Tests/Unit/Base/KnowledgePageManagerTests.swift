@@ -2,7 +2,7 @@ import XCTest
 @testable import ZhiYu
 
 /// KnowledgePage processor 协议测试（不依赖 DI）
-final class KnowledgePageProcessorTests: ZhiYuTestCase {
+final class KnowledgePageProcessorTests: XCTestCase {
 
     func testMockProcessor_returnsSamePage() async throws {
         let processor = MockProcessor(id: "test", name: "Test")

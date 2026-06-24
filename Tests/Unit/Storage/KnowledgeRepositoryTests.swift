@@ -12,7 +12,7 @@ import XCTest
 @preconcurrency import GRDB
 @testable import ZhiYu
 
-final class KnowledgeRepositoryTests: ZhiYuTestCase {
+final class KnowledgeRepositoryTests: XCTestCase {
     
     var dbQueue: DatabaseQueue!
     var repository: KnowledgePageRepository!

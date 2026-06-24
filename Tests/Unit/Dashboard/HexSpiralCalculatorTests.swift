@@ -12,7 +12,7 @@
 import XCTest
 @testable import ZhiYu
 
-final class HexSpiralCalculatorTests: ZhiYuTestCase {
+final class HexSpiralCalculatorTests: XCTestCase {
     
     /// 验证螺旋生成的坐标点是否具备唯一性，没有重叠
     func testSpiralCoordinatesUniqueness() {

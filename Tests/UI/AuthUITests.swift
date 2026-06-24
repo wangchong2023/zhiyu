@@ -20,7 +20,7 @@
 import XCTest
 
 @MainActor
-final class AuthUITests: ZhiYuTestCase {
+final class AuthUITests: XCTestCase {
 
     // MARK: - 测试基础设施
 

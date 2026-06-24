@@ -12,7 +12,7 @@
 import XCTest
 @testable import ZhiYu
 
-final class LWWSyncConflictResolverTests: ZhiYuTestCase {
+final class LWWSyncConflictResolverTests: XCTestCase {
 
     private let resolver = LWWSyncConflictResolver()
 

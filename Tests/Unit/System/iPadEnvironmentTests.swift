@@ -27,7 +27,7 @@ private final class MockiPadEnvironment: AppEnvironmentProtocol {
 }
 
 @MainActor
-final class iPadEnvironmentTests: ZhiYuTestCase {
+final class iPadEnvironmentTests: XCTestCase {
     
     func testActualEnvironmentConsistency() async {
         /// 函数头说明: 测试实际 iOSAppEnvironment 实例在当前运行设备环境下的行为，动态校准断言

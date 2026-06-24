@@ -13,7 +13,7 @@ import SwiftUI
 @testable import ZhiYu
 
 @MainActor
-final class iPadRouterTests: ZhiYuTestCase {
+final class iPadRouterTests: XCTestCase {
     
     private var router: Router {
         Router.shared
@@ -22,6 +22,7 @@ final class iPadRouterTests: ZhiYuTestCase {
     override func setUp() async throws {
         try await super.setUp()
         // 注册 KeyStoreProtocol Mock 以支持 Router selectedTab 持久化验证
+        setupFullMockEnvironment()
         // 每个测试用例开始前，强行初始化/复位 Router 状态，实现严格的状态隔离
         router.popToRoot()
         router.sidebarSelection = nil

@@ -13,7 +13,7 @@ import XCTest
 import Combine
 @testable import ZhiYu
 
-final class SystemLoggerTests: ZhiYuTestCase {
+final class SystemLoggerTests: XCTestCase {
     
     private var tempDirectory: URL!
     private var cancellables: Set<AnyCancellable>!

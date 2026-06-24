@@ -12,7 +12,7 @@ import XCTest
 @testable import ZhiYu
 
 @MainActor
-final class DocumentImageExtractorTests: ZhiYuTestCase {
+final class DocumentImageExtractorTests: XCTestCase {
 
     let extractor = ImageExtractor()
 

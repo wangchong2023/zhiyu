@@ -13,12 +13,13 @@ import XCTest
 @testable import ZhiYu
 
 @MainActor
-final class ImportSynthesisE2ETests: ZhiYuTestCase {
+final class ImportSynthesisE2ETests: XCTestCase {
     var store: AppStore!
     private var dbQueue: DatabaseQueue!
 
     override func setUp() async throws {
         try await super.setUp()
+        setupFullMockEnvironment()
         dbQueue = try DatabaseQueue()
         try await DatabaseManager.shared.setupForTesting(with: dbQueue)
         store = AppStore()

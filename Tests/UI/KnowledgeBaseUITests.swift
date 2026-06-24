@@ -20,7 +20,7 @@ import XCTest
 ///  4. `safeTap` / `assertTap` — 软断言与强断言点击的统一入口
 ///  5. `navigateToKnowledgeTab` / `navigateToSettingsTab` — 常用导航快捷方法
 @MainActor
-class KnowledgeBaseUITests: ZhiYuTestCase {
+class KnowledgeBaseUITests: XCTestCase {
 
     /// 被测应用实例
     var app: XCUIApplication!

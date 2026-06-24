@@ -11,7 +11,7 @@
 import XCTest
 @testable import ZhiYu
 
-final class DeviceHardwareGuardTests: ZhiYuTestCase {
+final class DeviceHardwareGuardTests: XCTestCase {
     
     // 物理内存常量规约 (以字节为单位)
     private let sixGbBytes: UInt64 = 6 * 1024 * 1024 * 1024

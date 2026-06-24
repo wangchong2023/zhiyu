@@ -13,7 +13,7 @@ import SwiftUI
 @testable import ZhiYu
 
 @MainActor
-final class RouterTests: ZhiYuTestCase {
+final class RouterTests: XCTestCase {
     
     var router: Router!
     

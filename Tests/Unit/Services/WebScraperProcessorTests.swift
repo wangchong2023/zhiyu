@@ -13,7 +13,7 @@ import XCTest
 @testable import ZhiYu
 
 @MainActor
-final class WebScraperProcessorTests: ZhiYuTestCase {
+final class WebScraperProcessorTests: XCTestCase {
     
     private var scraper: WebScraperProcessor!
     

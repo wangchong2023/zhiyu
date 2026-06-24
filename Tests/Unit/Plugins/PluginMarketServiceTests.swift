@@ -42,7 +42,7 @@ final class MockURLProtocol: URLProtocol {
 }
 
 @MainActor
-final class PluginMarketServiceTests: ZhiYuTestCase {
+final class PluginMarketServiceTests: XCTestCase {
     var service: PluginMarketService!
     
     override func setUp() {

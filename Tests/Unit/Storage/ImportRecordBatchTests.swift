@@ -13,7 +13,7 @@ import XCTest
 @testable import ZhiYu
 
 @MainActor
-final class ImportRecordBatchTests: ZhiYuTestCase {
+final class ImportRecordBatchTests: XCTestCase {
 
     // MARK: - tags 字段
 

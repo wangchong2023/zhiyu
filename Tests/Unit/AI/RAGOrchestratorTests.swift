@@ -12,10 +12,11 @@ import XCTest
 @testable import ZhiYu
 
 @MainActor
-final class RAGOrchestratorTests: ZhiYuTestCase {
+final class RAGOrchestratorTests: XCTestCase {
     
     override func setUp() async throws {
         try await super.setUp()
+        setupFullMockEnvironment()
         TaskCenter.shared.reset()
     }
     

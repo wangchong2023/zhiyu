@@ -13,13 +13,14 @@ import CryptoKit
 @testable import ZhiYu
 
 @MainActor
-final class SecurityManagerTests: ZhiYuTestCase {
+final class SecurityManagerTests: XCTestCase {
     
     private var securityManager: SecurityManager!
     
     @MainActor
     override func setUp() {
         super.setUp()
+        setupFullMockEnvironment()
         securityManager = SecurityManager.shared
     }
     

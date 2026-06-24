@@ -12,7 +12,7 @@
 import XCTest
 @testable import ZhiYu
 
-final class MarkdownParserTests: ZhiYuTestCase {
+final class MarkdownParserTests: XCTestCase {
 
     private let processor = MarkdownProcessor()
 

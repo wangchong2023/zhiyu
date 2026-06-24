@@ -76,7 +76,7 @@ final class MockWatchOfflineQueueManager {
 
 /// 验证 watchOS 数据载荷、离线可靠性队列以及微缩缓存同步逻辑
 @MainActor
-final class WatchSyncTests: ZhiYuTestCase {
+final class WatchSyncTests: XCTestCase {
 
     private var queueManager: MockWatchOfflineQueueManager!
 

@@ -13,7 +13,7 @@ import XCTest
 
 // MARK: - 深度链接与快捷路由单元测试
 @MainActor
-final class DeepLinkTests: ZhiYuTestCase {
+final class DeepLinkTests: XCTestCase {
     
     private var service: DeepLinkService!
     

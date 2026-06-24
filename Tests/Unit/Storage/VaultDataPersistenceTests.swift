@@ -13,7 +13,7 @@ import XCTest
 @testable import ZhiYu
 
 @MainActor
-final class VaultDataPersistenceTests: ZhiYuTestCase {
+final class VaultDataPersistenceTests: XCTestCase {
 
     private var vaultAID: UUID!
     private var vaultBID: UUID!

@@ -12,7 +12,7 @@
 import XCTest
 @testable import ZhiYu
 
-final class PluginRecordTests: ZhiYuTestCase {
+final class PluginRecordTests: XCTestCase {
 
     /// 测试 PluginRecord 使用默认参数进行初始化
     func testPluginRecordDefaultInitialization() {
