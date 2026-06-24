@@ -17,11 +17,14 @@ import Combine
     static let shared = OnboardingService()
     
     private let onboardingKey = AppConstants.Keys.Storage.hasCompletedOnboarding
-    @Inject var keyStore: any KeyStoreProtocol
+    /// 使用可选解析避免测试/Mock 环境下 KeyStore 未注册时触发 fatalError
+    private var keyStore: (any KeyStoreProtocol)? {
+        ServiceContainer.shared.resolveOptional((any KeyStoreProtocol).self)
+    }
     
     @Published var hasCompletedOnboarding: Bool {
         didSet {
-            keyStore.set(hasCompletedOnboarding, forKey: onboardingKey)
+            keyStore?.set(hasCompletedOnboarding, forKey: onboardingKey)
         }
     }
     

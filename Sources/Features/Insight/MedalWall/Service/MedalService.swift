@@ -17,7 +17,10 @@ final class MedalService: ObservableObject {
     static let shared = MedalService()
 
     private var cancellables: Set<AnyCancellable> = []
-    @Inject var keyStore: any KeyStoreProtocol
+    /// 使用可选解析避免测试/Mock 环境下 KeyStore 未注册时触发 fatalError
+    private var keyStore: (any KeyStoreProtocol)? {
+        ServiceContainer.shared.resolveOptional((any KeyStoreProtocol).self)
+    }
 
     struct Medal: Identifiable, Codable, Equatable {
         let id: String
@@ -108,12 +111,12 @@ final class MedalService: ObservableObject {
 
     private func saveEarnedMedals() {
         if let data = try? JSONEncoder().encode(earnedMedalIDs) {
-            keyStore.set(data, forKey: AppConstants.Keys.Storage.earnedMedals)
+            keyStore?.set(data, forKey: AppConstants.Keys.Storage.earnedMedals)
         }
     }
 
     private func loadEarnedMedals() {
-        if let data = keyStore.data(forKey: AppConstants.Keys.Storage.earnedMedals),
+        if let data = keyStore?.data(forKey: AppConstants.Keys.Storage.earnedMedals),
            let decoded = try? JSONDecoder().decode(Set<String>.self, from: data) {
             earnedMedalIDs = decoded
         }
@@ -123,6 +126,6 @@ final class MedalService: ObservableObject {
     func reset() {
         earnedMedalIDs.removeAll()
         newlyEarnedMedal = nil
-        keyStore.removeObject(forKey: AppConstants.Keys.Storage.earnedMedals)
+        keyStore?.removeObject(forKey: AppConstants.Keys.Storage.earnedMedals)
     }
 }
