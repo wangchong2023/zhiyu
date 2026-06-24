@@ -31,11 +31,8 @@ public final class VaultService: VaultServiceProtocol {
         ServiceContainer.shared.optionalResolve((any VaultDatabaseSwitcher).self)
     }
 
-    /// 键值存储抽象，替代 UserDefaults.standard 访问。
-    @ObservationIgnored
-    var keyStore: any KeyStoreProtocol {
-        ServiceContainer.shared.resolve((any KeyStoreProtocol).self)
-    }
+    /// 键值存储抽象，替代 UserDefaults.standard 访问。Factory 风格：标注可选由 @Inject 自动降级。
+    @ObservationIgnored @Inject var keyStore: (any KeyStoreProtocol)?
 
     // MARK: - 状态发布属性
 

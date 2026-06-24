@@ -19,9 +19,8 @@ final class iOSWatchSyncService: NSObject, WatchSyncProtocol, WCSessionDelegate 
     @Published var latestBriefing: String?
     @Published var isBriefingLoading: Bool = false
     
-    private var keyStore: any KeyStoreProtocol {
-        ServiceContainer.shared.resolve((any KeyStoreProtocol).self)
-    }
+    /// Factory 风格：属性类型标注为可选（T?），@Inject 自动使用 resolveOptional
+    @Inject private var keyStore: (any KeyStoreProtocol)?
     
     override init() {
         super.init()
@@ -115,7 +114,7 @@ final class iOSWatchSyncService: NSObject, WatchSyncProtocol, WCSessionDelegate 
     /// /// - Parameter filename: filename
     /// /// - Parameter data: data
     func handleReceivedAudioChunk(transferId: String, index: Int, total: Int, filename: String, data: Data) {
-        var assembly = keyStore.object(forKey: "\(AppConstants.Keys.Storage.iOSAudioAssemblyPrefix)\(transferId)") as? [String: Data] ?? [:]
+        var assembly = keyStore?.object(forKey: "\(AppConstants.Keys.Storage.iOSAudioAssemblyPrefix)\(transferId)") as? [String: Data] ?? [:]
         assembly["\(index)"] = data
         
         if assembly.count == total {
@@ -130,13 +129,13 @@ final class iOSWatchSyncService: NSObject, WatchSyncProtocol, WCSessionDelegate 
             }
             let mergedData = AudioSplitter.merge(chunks: chunks)
             
-            keyStore.removeObject(forKey: "\(AppConstants.Keys.Storage.iOSAudioAssemblyPrefix)\(transferId)")
+            keyStore?.removeObject(forKey: "\(AppConstants.Keys.Storage.iOSAudioAssemblyPrefix)\(transferId)")
             
             self.lastReceivedText = "audio:\(filename):\(mergedData.count)"
             NotificationCenter.default.post(name: .didReceiveWatchAudio, object: mergedData, userInfo: ["filename": filename])
             Logger.shared.info("Audio_transfer_completed_and_merged_successfully: \(filename)")
         } else {
-            keyStore.set(assembly, forKey: "\(AppConstants.Keys.Storage.iOSAudioAssemblyPrefix)\(transferId)")
+            keyStore?.set(assembly, forKey: "\(AppConstants.Keys.Storage.iOSAudioAssemblyPrefix)\(transferId)")
         }
     }
     

@@ -49,18 +49,17 @@ public enum OnboardingMilestone: String, CaseIterable, Sendable {
     // MARK: - KeyStore
 
     private static let prefix = "onboarding.milestone"
-    private static var keyStore: any KeyStoreProtocol {
-        ServiceContainer.shared.resolve((any KeyStoreProtocol).self)
-    }
+    /// Factory 风格：属性类型标注为可选（T?），@Inject 自动使用 resolveOptional
+    @Inject private static var keyStore: (any KeyStoreProtocol)?
 
     var key: String { "\(Self.prefix).\(rawValue)" }
 
     public var hasBeenShown: Bool {
-        Self.keyStore.bool(forKey: key)
+        Self.keyStore?.bool(forKey: key) ?? false
     }
 
     public func markAsShown() {
-        Self.keyStore.set(true, forKey: key)
+        Self.keyStore?.set(true, forKey: key)
     }
 
     // MARK: - Toast

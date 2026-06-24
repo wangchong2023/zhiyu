@@ -185,6 +185,15 @@ final class ServiceContainer: @unchecked Sendable {
         return instance as? T
     }
     
+    /// 类型擦除的服务解析（供 `@Inject` 可选检测使用）
+    func typeErasedResolve(_ type: Any.Type) -> Any? {
+        let key = makeKey(forAny: type)
+        os_unfair_lock_lock(lockPointer)
+        let instance = services[key]
+        os_unfair_lock_unlock(lockPointer)
+        return instance
+    }
+
     /// 生成类型唯一的 Key，移除 existential type 和模块名前缀的干扰
     private func makeKey<T>(for type: T.Type) -> String {
         var typeString = "\(type)"
@@ -211,6 +220,25 @@ final class ServiceContainer: @unchecked Sendable {
         return typeString
     }
 
+    /// 非泛型版本的 Key 生成（供 `typeErasedResolve` 使用）
+    private func makeKey(forAny type: Any.Type) -> String {
+        var typeString = "\(type)"
+        if typeString.hasPrefix("any ") {
+            typeString.removeFirst(4)
+        } else if typeString.hasPrefix("all ") {
+            typeString.removeFirst(4)
+        }
+        if !typeString.contains("<") {
+            if let lastDot = typeString.lastIndex(of: ".") {
+                typeString = String(typeString[typeString.index(after: lastDot)...])
+            }
+        }
+        if let bracketIndex = typeString.firstIndex(of: " ") {
+            typeString = String(typeString[..<bracketIndex])
+        }
+        return typeString
+    }
+
     /// 检查服务是否已注册
     func hasService<T>(for type: T.Type) -> Bool {
         let key = makeKey(for: type)
@@ -230,20 +258,72 @@ final class ServiceContainer: @unchecked Sendable {
     }
 }
 
-/// 依赖注入属性包装器。
+// MARK: - Factory 风格可选检测
+
+/// 内部协议：仅 `Optional` 遵循，供 `@Inject` 在运行时检测属性类型是否为可选。
 ///
-/// 在初始化早期（`AppEnvironment.registerDIModules()` 之前）通过 `@Inject` 访问服务
-/// 会触发明确诊断信息的崩溃，帮助开发者快速定位 DI 时序问题。
+/// Factory 路线的核心机制：通过 Swift 类型系统区分依赖的可选性，
+/// 而非发明第二个属性包装器名称。
+private protocol OptionalDetectableProtocol {
+    static var injectWrappedType: Any.Type { get }
+    /// 将解析出的值包装为 Optional<Wrapped>，用于安全构造返回类型
+    static func injectWrap(_ value: Any) -> Any
+}
+
+extension Optional: OptionalDetectableProtocol {
+    static var injectWrappedType: Any.Type { Wrapped.self }
+    static func injectWrap(_ value: Any) -> Any {
+        // 尝试将值转型为 Wrapped，成功则包装为 .some，失败则返回 .none
+        if let wrapped = value as? Wrapped {
+            return Optional.some(wrapped) as Any
+        }
+        return (nil as Wrapped?) as Any
+    }
+}
+
+/// 依赖注入属性包装器（Factory 风格）。
+///
+/// 根据属性类型自动推断解析策略：
+/// - `@Inject var x: T`   → `resolve(T.self)`（必需，缺失触发 `fatalError`）
+/// - `@Inject var x: T?`  → `resolveOptional(Wrapped.self)`（可选，缺失返回 `nil`）
+///
+/// 调用方通过 Swift 类型系统本身标注依赖的可选性，无需额外的属性包装器名称。
 ///
 /// - SeeAlso: `ServiceContainer.isReady` 用于检查 DI 是否就绪
 @propertyWrapper
 struct Inject<T>: @unchecked Sendable {
+    // swiftlint:disable:next implicitly_unwrapped_optional
     var wrappedValue: T {
-        ServiceContainer.shared.resolve(T.self)
+        // 检测 T 是否为 Optional<Wrapped>
+        if let optionalMetatype = T.self as? OptionalDetectableProtocol.Type {
+            let wrappedType = optionalMetatype.injectWrappedType
+            // 尝试解析被包装的类型，返回 nil（依赖未注册）或具体值
+            let anyResult = ServiceContainer.shared.typeErasedResolve(wrappedType)
+            // 通过协议的 injectWrap 安全构造 Optional<Wrapped>，再转为 T
+            if let result = optionalMetatype.injectWrap(anyResult as Any) as? T {
+                return result
+            }
+            // 依赖未注册或类型不匹配 → 返回 nil
+            return Inject<T>.optionalNoneSentinel
+        }
+        // 非可选类型 → 必需依赖，缺失触发诊断崩溃
+        return ServiceContainer.shared.resolve(T.self)
     }
 
     /// 安全访问：DI 未就绪时返回 nil，用于初始化早期或单测环境
     var safeValue: T? {
         ServiceContainer.shared.resolveOptional(T.self)
+    }
+
+    // MARK: - 内部哨兵
+
+    /// 类型无关的 Optional.none 哨兵。
+    ///
+    /// Optional 的 `.none` case 无关联值，运行时内存布局与 Wrapped 类型无关。
+    /// 利用这一特性，用固定哨兵类型构造 nil，再通过 `unsafeBitCast` 转为调用方的 T。
+    private static var optionalNoneSentinel: T {
+        // 选 Bool 仅因它是最小、最简单的 Swift 类型，无特殊含义
+        let sentinel: Bool? = .none
+        return unsafeBitCast(sentinel, to: T.self)
     }
 }

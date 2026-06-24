@@ -16,8 +16,8 @@ extension VaultService {
     /// 异步选择并等待数据库切换完成（用于批量数据操作等需要确保切换完成的场景）
     public func selectVaultAndWait(_ vault: Vault) async throws {
         self.selectedVaultID = vault.id
-        keyStore.set(vault.id.uuidString, forKey: AppConstants.Keys.Storage.vaultsSelectedID)
-        keyStore.set(vault.englishName, forKey: AppConstants.Keys.Storage.vaultSelectedEnglishName)
+        keyStore?.set(vault.id.uuidString, forKey: AppConstants.Keys.Storage.vaultsSelectedID)
+        keyStore?.set(vault.englishName, forKey: AppConstants.Keys.Storage.vaultSelectedEnglishName)
 
         guard let vaultRepository = vaultRepository,
               let databaseSwitcher = databaseSwitcher else {
@@ -38,8 +38,8 @@ extension VaultService {
     /// 选择并激活目标金库，同时触发底层的专属物理数据库 WAL 切换。
     public func selectVault(_ vault: Vault) {
         self.selectedVaultID = vault.id
-        keyStore.set(vault.id.uuidString, forKey: AppConstants.Keys.Storage.vaultsSelectedID)
-        keyStore.set(vault.englishName, forKey: AppConstants.Keys.Storage.vaultSelectedEnglishName)
+        keyStore?.set(vault.id.uuidString, forKey: AppConstants.Keys.Storage.vaultsSelectedID)
+        keyStore?.set(vault.englishName, forKey: AppConstants.Keys.Storage.vaultSelectedEnglishName)
         Task {
             guard let vaultRepository = vaultRepository else { return }
             try? await vaultRepository.saveSetting(key: AppConstants.Keys.Storage.vaultsSelectedID, value: vault.id.uuidString)
@@ -69,8 +69,8 @@ extension VaultService {
         NotificationCenter.default.post(name: .vaultWillSwitch, object: nil)
 
         self.selectedVaultID = nil
-        keyStore.removeObject(forKey: AppConstants.Keys.Storage.vaultsSelectedID)
-        keyStore.removeObject(forKey: AppConstants.Keys.Storage.vaultSelectedEnglishName)
+        keyStore?.removeObject(forKey: AppConstants.Keys.Storage.vaultsSelectedID)
+        keyStore?.removeObject(forKey: AppConstants.Keys.Storage.vaultSelectedEnglishName)
         databaseSwitcher?.releaseDatabaseConnection()
     }
 
@@ -89,7 +89,7 @@ extension VaultService {
         vaults.append(newVault)
         do {
             try saveVaultToDatabase(newVault)
-            keyStore.set(true, forKey: "\(AppConstants.Keys.Storage.seededVaultPrefix)\(newVault.id.uuidString)")
+            keyStore?.set(true, forKey: "\(AppConstants.Keys.Storage.seededVaultPrefix)\(newVault.id.uuidString)")
         } catch {
             Logger.shared.error(" [VaultService] Failed to write new notebook to database: \(error)", error: error)
         }
@@ -130,8 +130,8 @@ extension VaultService {
         vaults.removeAll { $0.id == id }
         if selectedVaultID == id {
             selectedVaultID = nil
-            keyStore.removeObject(forKey: AppConstants.Keys.Storage.vaultsSelectedID)
-            keyStore.removeObject(forKey: AppConstants.Keys.Storage.vaultSelectedEnglishName)
+            keyStore?.removeObject(forKey: AppConstants.Keys.Storage.vaultsSelectedID)
+            keyStore?.removeObject(forKey: AppConstants.Keys.Storage.vaultSelectedEnglishName)
             databaseSwitcher?.releaseDatabaseConnection()
         }
 

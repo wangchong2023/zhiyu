@@ -50,8 +50,8 @@ struct MacOSSecurityScopedStorage: SecurityScopedStorageProtocol {
     func storeBookmark(for url: URL) {
         do {
             let data = try url.bookmarkData(options: .withSecurityScope, includingResourceValuesForKeys: nil, relativeTo: nil)
-            let keyStore = ServiceContainer.shared.resolve((any KeyStoreProtocol).self)
-            keyStore.set(data, forKey: AppConstants.Keys.Storage.vaultBookmarkPrefix + url.lastPathComponent)
+            let keyStore = ServiceContainer.shared.resolveOptional((any KeyStoreProtocol).self)
+            keyStore?.set(data, forKey: AppConstants.Keys.Storage.vaultBookmarkPrefix + url.lastPathComponent)
         } catch {
             Logger.shared.error("macOS_Error1: Failed to store bookmark for \(url.lastPathComponent)", error: error)
         }

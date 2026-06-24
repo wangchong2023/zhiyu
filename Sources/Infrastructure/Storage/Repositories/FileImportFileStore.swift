@@ -16,6 +16,9 @@ final class FileImportFileStore: ImportFileStore, Sendable {
         // 无需预先创建 recordsDir，全部采用动态延迟计算
     }
 
+    /// Factory 风格：属性类型标注为可选（T?），@Inject 自动使用 resolveOptional
+    @Inject private var keyStore: (any KeyStoreProtocol)?
+
     private func getCategoryDirName(for category: ImportCategory) -> String {
         switch category {
         case .file: return "document"
@@ -33,9 +36,8 @@ final class FileImportFileStore: ImportFileStore, Sendable {
         
         let appSupport = fm.urls(for: .applicationSupportDirectory, in: .userDomainMask).first ?? fm.temporaryDirectory
         
-        let keyStore = ServiceContainer.shared.resolve((any KeyStoreProtocol).self)
-        if let vaultIDString = keyStore.string(forKey: AppConstants.Keys.Storage.vaultsSelectedID),
-           let englishName = keyStore.string(forKey: AppConstants.Keys.Storage.vaultSelectedEnglishName),
+        if let vaultIDString = keyStore?.string(forKey: AppConstants.Keys.Storage.vaultsSelectedID),
+           let englishName = keyStore?.string(forKey: AppConstants.Keys.Storage.vaultSelectedEnglishName),
            !vaultIDString.isEmpty, !englishName.isEmpty {
             
             // 物理落盘到 Vaults/{Vault_UUID}/raw/{笔记本英文名}/{Category}/

@@ -45,10 +45,8 @@ final class CollaborationService: NSObject, ObservableObject, @unchecked Sendabl
     /// 注入的协作提供商实现
     @Inject private var provider: any CollaborationProviderProtocol
     @Inject private var appEnv: any AppEnvironmentProtocol
-    /// 使用可选解析避免测试/Mock 环境下 KeyStore 未注册时触发 fatalError
-    private var keyStore: (any KeyStoreProtocol)? {
-        ServiceContainer.shared.resolveOptional((any KeyStoreProtocol).self)
-    }
+    /// Factory 风格：属性类型标注为可选（T?）， 自动使用 resolveOptional
+     @Inject private var keyStore: (any KeyStoreProtocol)?
 
     /// 数据应用代理
     weak var delegate: CollaborationDelegate?

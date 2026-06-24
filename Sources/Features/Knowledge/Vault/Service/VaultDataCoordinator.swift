@@ -118,11 +118,11 @@ extension VaultService {
 
     /// 自动从持久化偏好中恢复最近一次使用的金库并执行底层 SQLite 物理热重载联接
     func autoRestoreActiveVault() {
-        if let idString = keyStore.string(forKey: AppConstants.Keys.Storage.vaultsSelectedID),
+        if let idString = keyStore?.string(forKey: AppConstants.Keys.Storage.vaultsSelectedID),
            let id = UUID(uuidString: idString),
            let vault = vaults.first(where: { $0.id == id }) {
             self.selectedVaultID = id
-            keyStore.set(vault.englishName, forKey: AppConstants.Keys.Storage.vaultSelectedEnglishName)
+            keyStore?.set(vault.englishName, forKey: AppConstants.Keys.Storage.vaultSelectedEnglishName)
             Task {
                 guard let databaseSwitcher = databaseSwitcher else {
                     Logger.shared.warning(" [VaultService] autoRestoreActiveVault 被跳过，因为 databaseSwitcher 未在 DI 注册")

@@ -45,10 +45,8 @@ public final class KnowledgeStore {
     @ObservationIgnored @Inject private var performanceService: PerformanceService
     @ObservationIgnored @Inject private var settingsStore: SettingsStore
     @ObservationIgnored @Inject private var logger: any LoggerProtocol
-    /// 使用可选解析避免测试/Mock 环境下 KeyStore 未注册时触发 fatalError
-    private var keyStore: (any KeyStoreProtocol)? {
-        ServiceContainer.shared.resolveOptional((any KeyStoreProtocol).self)
-    }
+    /// Factory 风格：属性类型标注为可选（T?）， 自动使用 resolveOptional
+    @ObservationIgnored @Inject private var keyStore: (any KeyStoreProtocol)?
 
     // MARK: - 私有属性
     

@@ -130,25 +130,30 @@ extension AuthService {
         }
     }
 
+    // MARK: - KeyStore
+
+    /// 键值存储抽象（extension 不支持 @Inject，使用 computed property 安全解析）
+    private var keyStore: (any KeyStoreProtocol)? {
+        ServiceContainer.shared.resolveOptional((any KeyStoreProtocol).self)
+    }
+
     // MARK: - 状态持久化
 
     /// 将当前认证状态写入 KeyStore（供 App 启动恢复用）
     internal func saveState() {
-        let keyStore = ServiceContainer.shared.resolve((any KeyStoreProtocol).self)
-        keyStore.set(isAuthenticated, forKey: AppConstants.Keys.Storage.authIsAuthenticated)
-        keyStore.set(isGuest, forKey: AppConstants.Keys.Storage.authIsGuest)
+        keyStore?.set(isAuthenticated, forKey: AppConstants.Keys.Storage.authIsAuthenticated)
+        keyStore?.set(isGuest, forKey: AppConstants.Keys.Storage.authIsGuest)
     }
 
     /// 获取或生成设备唯一标识（用于后端设备绑定）
     /// - Returns: 设备 UUID 字符串
     internal func getDeviceId() -> String {
         let key = "zhiyu_device_id"
-        let keyStore = ServiceContainer.shared.resolve((any KeyStoreProtocol).self)
-        if let savedId = keyStore.string(forKey: key) {
+        if let savedId = keyStore?.string(forKey: key) {
             return savedId
         }
         let newId = UUID().uuidString
-        keyStore.set(newId, forKey: key)
+        keyStore?.set(newId, forKey: key)
         return newId
     }
 

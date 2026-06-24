@@ -25,9 +25,7 @@ class KeychainService: @unchecked Sendable {
 
     /// 键值存储抽象，用于 Keychain entitlements 缺失时的 DEBUG 降级回退。
     /// 使用 resolveOptional 优雅降级：DI 容器未就绪时返回 nil，避免启动/测试崩溃。
-    private var keyStore: (any KeyStoreProtocol)? {
-        ServiceContainer.shared.resolveOptional((any KeyStoreProtocol).self)
-    }
+    @Inject private var keyStore: (any KeyStoreProtocol)?
 
     init() {}
 

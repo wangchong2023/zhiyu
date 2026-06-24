@@ -31,9 +31,7 @@ class SecurityManager: @unchecked Sendable {
 
     /// 键值存储抽象，用于 Keychain 故障时的 DEBUG 降级回退。
     /// 使用 resolveOptional 优雅降级：DI 容器未就绪时返回 nil。
-    private var keyStore: (any KeyStoreProtocol)? {
-        ServiceContainer.shared.resolveOptional((any KeyStoreProtocol).self)
-    }
+    @Inject private var keyStore: (any KeyStoreProtocol)?
 
     // MARK: - 存储键名
     private let saltKey = AppConstants.Keys.Storage.securitySalt
