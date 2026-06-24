@@ -41,7 +41,9 @@ public final class KnowledgeStore {
     @ObservationIgnored @Inject private var knowledgeRepository: any KnowledgeRepository
     @ObservationIgnored @Inject private var pageStore: any AnyPageStoreCapabilities
     @ObservationIgnored @Inject private var pageManager: KnowledgePageManager
-    @ObservationIgnored @Inject private var maintenanceService: MaintenanceService
+    /// Factory 风格：可选依赖，测试环境或 DI 未就绪时为 nil。
+    /// 注册点在 KnowledgeModuleRegistrar，但测试路径可能跳过注册链。
+    @ObservationIgnored @Inject private var maintenanceService: MaintenanceService?
     @ObservationIgnored @Inject private var performanceService: PerformanceService
     @ObservationIgnored @Inject private var settingsStore: SettingsStore
     @ObservationIgnored @Inject private var logger: any LoggerProtocol
@@ -170,7 +172,7 @@ public final class KnowledgeStore {
 
     /// 填充默认内容
     public func seedDefaultContent(vaultName: String? = nil) async {
-        await maintenanceService.seedDefaultContent(pages: pages, vaultName: vaultName)
+        await maintenanceService?.seedDefaultContent(pages: pages, vaultName: vaultName)
         await refresh()
     }
 
@@ -273,12 +275,12 @@ public final class KnowledgeStore {
 
     /// 保存ToDisk
     public func saveToDisk() async {
-        await maintenanceService.saveToDisk(pages: pages)
+        await maintenanceService?.saveToDisk(pages: pages)
     }
 
     /// 加载FromDisk
     public func loadFromDisk() async { 
-        await maintenanceService.loadFromDisk()
+        await maintenanceService?.loadFromDisk()
         await refresh()
     }
 
@@ -313,7 +315,7 @@ public final class KnowledgeStore {
 
     private func clearAllData() {
         Task {
-            await maintenanceService.clearAllDeveloperData()
+            await maintenanceService?.clearAllDeveloperData()
             await refresh()
         }
     }

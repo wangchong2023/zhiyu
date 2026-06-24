@@ -57,14 +57,18 @@ final class AppEnvironment {
         // 1. 准备底层物理存储 (@P0: 确保护航数据库在注册前就绪)
         prepareDatabase()
 
-        // 🧪 Unit Test 环境：跳过完整生产链，已用基本构造函数完成初始化
+        // 2. 执行模块化注册 (L0 - L3) — 生产路径和测试路径均需注册
+        //    Store 初始化时会通过 @Inject 访问服务，DI 必须在此之前或同时就绪
+        registerDIModules()
+
+        // 🧪 Unit Test 环境：注册所有服务但不锁定 DI 容器，允许测试 reset() 后重新注册 Mock
         if isRunningInUnitTests {
-            Logger.shared.info("[AppEnvironment] Lightweight initialization completed for Unit Tests.")
+            Logger.shared.info("[AppEnvironment] DI services registered (test mode, chain NOT locked).")
             return
         }
 
-        // 2. 执行模块化注册 (L0 - L3)
-        registerDIModules()
+        // 🔒 生产路径：锁定 DI 容器，禁止 reset() 清空
+        ServiceContainer.shared.markProductionChainComplete()
 
         // 2.5 DI 就绪后重新解析需要容器注入的属性
         self.llmConfig = ServiceContainer.shared.resolve(LLMConfigManager.self)
@@ -144,9 +148,6 @@ final class AppEnvironment {
 
         // L3 应用模块
         AppModuleRegistrar.register(in: ServiceContainer.shared)
-
-        // 标记生产 DI 链完成 — 禁止测试中 reset() 清空容器
-        ServiceContainer.shared.markProductionChainComplete()
     }
 
     /// 将核心 Store 注册到 DI 容器以供全局注入

@@ -74,7 +74,8 @@ public final class AppStore {
     // ── 核心依赖 (DI) ──
     @ObservationIgnored @Inject var pageStore: any AnyPageStoreCapabilities
     @ObservationIgnored @Inject var pageManager: KnowledgePageManager
-    @ObservationIgnored @Inject var maintenanceService: MaintenanceService
+    /// Factory 风格：可选依赖，测试环境或 DI 未就绪时为 nil
+    @ObservationIgnored @Inject var maintenanceService: MaintenanceService?
     @ObservationIgnored @Inject var logger: any LoggerProtocol
     @ObservationIgnored @Inject var performanceService: PerformanceService
     @ObservationIgnored @Inject var llmService: any LLMServiceProtocol
@@ -249,7 +250,7 @@ public final class AppStore {
     }
 
     /// 清除Logs
-    func clearLogs() async { await maintenanceService.clearLogs() }
+    func clearLogs() async { await maintenanceService?.clearLogs() }
 }
 
 // MARK: - ToolItem + AppRoute (L3 路由映射扩展)

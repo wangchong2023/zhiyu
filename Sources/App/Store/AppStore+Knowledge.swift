@@ -41,7 +41,8 @@ extension AppStore: CollaborationDelegate {
 
     /// 生成初始笔记本
     func generateInitialNotebooks() async -> (total: Int, details: [(name: String, count: Int)]) {
-        let result = await maintenanceService.generateInitialNotebooks()
+        guard let service = maintenanceService else { return (0, []) }
+        let result = await service.generateInitialNotebooks()
         if result.total > 0 {
             await refresh()
             AppEventBus.shared.publish(.graphRelayoutRequested)
@@ -64,7 +65,7 @@ extension AppStore: CollaborationDelegate {
     func clearAllDeveloperData() {
         Task {
             AppEventBus.shared.publish(.clearAllDataRequested)
-            await maintenanceService.clearAllDeveloperData()
+            await maintenanceService?.clearAllDeveloperData()
             await refresh()
         }
     }
