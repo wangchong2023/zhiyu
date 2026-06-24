@@ -447,7 +447,6 @@
 		37A12084C4476A252BBDCE32 /* L10n+Chat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 894214A0A9869DEF7A51D46F /* L10n+Chat.swift */; };
 		37C05958FFEDF61E597F76FF /* L10n+Lint.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8C65E65AA5F887742273586 /* L10n+Lint.swift */; };
 		38470F855A473DD53DCB54E0 /* DesignSystem+SpacingToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57D6EFD678A07BDE43E8B965 /* DesignSystem+SpacingToken.swift */; };
-		386669AF8C464508F9F3B157 /* ZhiYuTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781FCCEDB4D7688BC30E4F29 /* ZhiYuTestCase.swift */; };
 		388F46149860B95472B12FB1 /* AccessibilityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F48C4E48B268496207B4483 /* AccessibilityService.swift */; };
 		38A14843A0DCD00D5DA5788F /* global_schema.sql in Resources */ = {isa = PBXBuildFile; fileRef = 79A620414E80D0AC144E21FE /* global_schema.sql */; };
 		38B2C6B2557F60BA5DD1F2C8 /* BacklinksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F755F616ED53E45CAFE6F34C /* BacklinksView.swift */; };
@@ -2557,7 +2556,6 @@
 		767A1CA2848E225E9E49637F /* CollaborationServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollaborationServiceTests.swift; sourceTree = "<group>"; };
 		774C79242215515481545187 /* ImageExtractorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageExtractorTests.swift; sourceTree = "<group>"; };
 		77F0FE15F9743ACDFFB902EF /* RouterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouterTests.swift; sourceTree = "<group>"; };
-		781FCCEDB4D7688BC30E4F29 /* ZhiYuTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZhiYuTestCase.swift; sourceTree = "<group>"; };
 		783350EF5AFE6259B68D28D5 /* AISynthesisService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AISynthesisService.swift; sourceTree = "<group>"; };
 		785605E33D78C58784B2EB5F /* UserDefaultsKeyStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsKeyStore.swift; sourceTree = "<group>"; };
 		7880DD208AE245809269D822 /* SearchIndexerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchIndexerProtocol.swift; sourceTree = "<group>"; };
@@ -3858,7 +3856,6 @@
 			children = (
 				739AA88212168C8C6969DCEE /* AppStoreTests.swift */,
 				0DEAFF3DE7FECC82DADFAD88 /* TestMocks.swift */,
-				781FCCEDB4D7688BC30E4F29 /* ZhiYuTestCase.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -6638,7 +6635,6 @@
 				45088AC61B74B0D409E0EC7F /* ZhiYuProcessorTests.swift in Sources */,
 				6C92E8C1E8153884AD0B60CD /* ZhiYuServiceTests.swift in Sources */,
 				B69F51415E8C24F3AD5F9FBE /* ZhiYuStoreTests.swift in Sources */,
-				386669AF8C464508F9F3B157 /* ZhiYuTestCase.swift in Sources */,
 				8014AA68F7E5FD43A33941A7 /* ZhiYuTests.swift in Sources */,
 				F63693BB09A7B486166B2310 /* iCloudSyncIntegrationTests.swift in Sources */,
 				26ADBB1ECC3C66618FC9D9BC /* iPadEnvironmentTests.swift in Sources */,
