@@ -72,13 +72,20 @@ internal struct Localized {
     }
     
     /// 用户在应用偏好设置中手动指定的语言模式。
+    /// getter 使用 resolveOptional 优雅降级：单元测试环境未注册 KeyStoreProtocol 时自动回退到 .auto。
     static var languageMode: LanguageMode {
         get {
-            let keyStore = ServiceContainer.shared.resolve((any KeyStoreProtocol).self)
+            guard let keyStore = ServiceContainer.shared.resolveOptional((any KeyStoreProtocol).self) else {
+                return .auto
+            }
             return LanguageMode(rawValue: keyStore.string(forKey: AppConstants.Keys.Storage.languageMode) ?? "auto") ?? .auto
         }
-        set { 
-            let keyStore = ServiceContainer.shared.resolve((any KeyStoreProtocol).self)
+        set {
+            guard let keyStore = ServiceContainer.shared.resolveOptional((any KeyStoreProtocol).self) else {
+                // 单测环境下 KeyStoreProtocol 未注册，无法持久化语言偏好，仅清除缓存
+                clearBundleCache()
+                return
+            }
             keyStore.set(newValue.rawValue, forKey: AppConstants.Keys.Storage.languageMode)
             // 语言变更时，重置内存常驻的 Bundle 缓存
             clearBundleCache()
