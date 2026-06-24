@@ -29,7 +29,7 @@ final class MockLAContext: LAContext, @unchecked Sendable {
 
 /// 验证 macOS 专属服务逻辑的单元测试用例
 @MainActor
-final class MacPlatformTests: ZhiYuTestCase {
+final class MacPlatformTests: XCTestCase {
     
     /// 测试 MacFileArchiver 的压缩归档成功与失败场景
     func testMacFileArchiverZip() async throws {
