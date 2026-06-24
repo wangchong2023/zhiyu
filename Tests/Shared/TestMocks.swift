@@ -399,6 +399,9 @@ extension XCTestCase {
         
         let mockRemoteConfig = MockRemoteConfigService()
         ServiceContainer.shared.register(mockRemoteConfig as any RemoteConfigCapabilities, for: (any RemoteConfigCapabilities).self)
+
+        // 标记测试 DI 已就绪，使 isReady 返回 true，防止误诊 "DI NOT READY"
+        ServiceContainer.shared.markProductionChainComplete()
     }
 }
 

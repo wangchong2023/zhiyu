@@ -322,8 +322,11 @@ final class VaultDataIsolationTests: ZhiYuTestCase {
         try await DatabaseManager.shared.switchDatabase(to: vaultAID, at: dbAURL)
         StorageModuleRegistrar.register(in: ServiceContainer.shared)
         
-        let store = ServiceContainer.shared.resolve((any AnyPageStoreCapabilities).self)
-        let maintenanceService = ServiceContainer.shared.resolve(MaintenanceService.self)
+        guard let store = ServiceContainer.shared.resolveOptional((any AnyPageStoreCapabilities).self),
+              let maintenanceService = ServiceContainer.shared.resolveOptional(MaintenanceService.self) else {
+            XCTFail("DI 未就绪")
+            return
+        }
         
         // 1. 使用已有机制（anyCreatePage）写入测试数据，严禁硬编码 SQL
         _ = try await store.anyCreatePage(
@@ -517,8 +520,11 @@ final class VaultDataIsolationTests: ZhiYuTestCase {
         try await DatabaseManager.shared.switchDatabase(to: vaultAID, at: dbAURL)
         StorageModuleRegistrar.register(in: ServiceContainer.shared)
         
-        let store = ServiceContainer.shared.resolve((any AnyPageStoreCapabilities).self)
-        let maintenanceService = ServiceContainer.shared.resolve(MaintenanceService.self)
+        guard let store = ServiceContainer.shared.resolveOptional((any AnyPageStoreCapabilities).self),
+              let maintenanceService = ServiceContainer.shared.resolveOptional(MaintenanceService.self) else {
+            XCTFail("DI 未就绪")
+            return
+        }
         
         // 1. 清空当前数据库
         await maintenanceService.clearAllDeveloperData()
@@ -566,8 +572,11 @@ final class VaultDataIsolationTests: ZhiYuTestCase {
         try await DatabaseManager.shared.switchDatabase(to: vaultAID, at: dbAURL)
         StorageModuleRegistrar.register(in: ServiceContainer.shared)
         
-        let store = ServiceContainer.shared.resolve((any AnyPageStoreCapabilities).self)
-        let maintenanceService = ServiceContainer.shared.resolve(MaintenanceService.self)
+        guard let store = ServiceContainer.shared.resolveOptional((any AnyPageStoreCapabilities).self),
+              let maintenanceService = ServiceContainer.shared.resolveOptional(MaintenanceService.self) else {
+            XCTFail("DI 未就绪")
+            return
+        }
         
         // 1. 清空当前数据库
         await maintenanceService.clearAllDeveloperData()
