@@ -207,9 +207,12 @@ final class Router {
     }
     
     /// 当前主 Tab (通过 KeyStore 持久化，防止后台切换后状态丢失)
+    /// didSet 使用 resolveOptional：DI 容器未就绪时静默跳过持久化，避免启动崩溃。
     var selectedTab: AppTab = .knowledge {
         didSet {
-            keyStore.set(selectedTab.rawValue, forKey: AppConstants.Keys.Storage.selectedTab)
+            if let ks = ServiceContainer.shared.resolveOptional((any KeyStoreProtocol).self) {
+                ks.set(selectedTab.rawValue, forKey: AppConstants.Keys.Storage.selectedTab)
+            }
             // 切换主 Tab 时自动清空全局的导航路径。
             // 以避免在 iPad 侧边栏/分栏布局下，多个 Tab 共享全局 router.path 导致的导航页重叠干扰问题。
             path = NavigationPath()
@@ -245,9 +248,11 @@ final class Router {
     }
 
     /// 仅用于预览和测试的公开初始化器
+    /// 使用 resolveOptional 优雅降级：DI 容器未就绪时（如 AppEnvironment 初始化早期）回退到默认 .knowledge。
     public init() {
         // 从 KeyStore 恢复上次选中的 Tab
-        let storedRaw = ServiceContainer.shared.resolve((any KeyStoreProtocol).self).string(forKey: AppConstants.Keys.Storage.selectedTab)
+        let storedRaw = ServiceContainer.shared.resolveOptional((any KeyStoreProtocol).self)?
+            .string(forKey: AppConstants.Keys.Storage.selectedTab)
         self.selectedTab = AppTab(rawValue: storedRaw ?? "") ?? .knowledge
     }
     

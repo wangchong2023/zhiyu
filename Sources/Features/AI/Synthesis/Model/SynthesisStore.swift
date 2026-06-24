@@ -128,8 +128,9 @@ public final class SynthesisStore {
     }
 
     /// 加载SynthesisResults
+    /// 使用 resolveOptional 优雅降级：DI 容器未就绪时静默跳过，等待后续显式加载。
     public func loadSynthesisResults() {
-        let keyStore = ServiceContainer.shared.resolve((any KeyStoreProtocol).self)
+        guard let keyStore = ServiceContainer.shared.resolveOptional((any KeyStoreProtocol).self) else { return }
         for type in SynthesisType.allCases {
             let key = AppConstants.Keys.Storage.Legacy.synthesisDocsPrefix + type.rawValue
             if let data = keyStore.data(forKey: key),

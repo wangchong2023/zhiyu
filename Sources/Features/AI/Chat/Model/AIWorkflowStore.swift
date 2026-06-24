@@ -45,7 +45,8 @@ public final class AIWorkflowStore: AIWorkflowCapabilities {
 
     // ── 健康度问题存储 (Lint Issues) ──
     @ObservationIgnored private var _lintIssues: [LintIssue] = {
-        if let data = ServiceContainer.shared.resolve((any KeyStoreProtocol).self).data(forKey: AppConstants.Keys.Storage.lastLintIssues),
+        if let keyStore = ServiceContainer.shared.resolveOptional((any KeyStoreProtocol).self),
+           let data = keyStore.data(forKey: AppConstants.Keys.Storage.lastLintIssues),
            let decoded = try? JSONDecoder().decode([LintIssue].self, from: data) {
             return decoded
         }
