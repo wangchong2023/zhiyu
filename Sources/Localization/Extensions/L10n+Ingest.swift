@@ -129,7 +129,7 @@ extension L10n {
         public static var tips: String { Ingest.tr("ingest.tips") }
         public static var urlImportPlaceholder: String { Ingest.tr("ingest.urlImportPlaceholder") }
         public static var webDesc: String { Ingest.tr("ingest.webDesc") }
-        public static var ok: String { Common.tr("misc.ok") }
+        public static var ok: String { Common.tr("ok") }
         public static var llmRequired: String { Ingest.tr("ingest.llmRequired") }
         public static var actions: String { Ingest.tr("ingest.actions") }
         public static var recentActivity: String { Ingest.tr("ingest.recentActivity") }

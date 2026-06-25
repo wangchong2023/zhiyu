@@ -81,7 +81,7 @@ final class CatalystFloatingMenuManager: NSObject {
         // 监听 app 窗口 frame 变化：用户拖拽/缩放窗口时自动关闭菜单
         let capturedFrame = appWindowFrame
         windowFrameTimer = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: true) { [weak self] _ in
-            MainActor.assumeIsolated {
+            runOnMainSync {
                 guard let self = self else { return }
                 let currentFrame = UIApplication.shared.connectedScenes
                     .compactMap({ $0 as? UIWindowScene }).first?
@@ -519,5 +519,23 @@ struct CustomProfilePopover: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+    }
+}
+
+// MARK: - @MainActor 安全桥接
+
+private func runOnMainSync<T>(_ block: () -> T) -> T {
+    if Thread.isMainThread {
+        return MainActor.assumeIsolated { block() }
+    } else {
+        return DispatchQueue.main.sync(execute: block)
+    }
+}
+
+private func runOnMainSync(_ block: () -> Void) {
+    if Thread.isMainThread {
+        MainActor.assumeIsolated { block() }
+    } else {
+        DispatchQueue.main.sync(execute: block)
     }
 }

@@ -656,6 +656,13 @@ class MissingKeyDetector:
             if table_match:
                 logical_table = table_match.group(1)
                 target_table = self.domain_map.get(logical_table, logical_table)
+            else:
+                # 检测显式模块前缀调用（如 Common.tr("ok") 在 Ingest 扩展中引用 Common 表）
+                # 这是合法的跨表共享，避免重复定义通用 key
+                for mod_name, mod_table in self.domain_map.items():
+                    if f"{mod_name}.tr(" in line or f"{mod_name}.trf(" in line:
+                        target_table = mod_table
+                        break
 
             if key not in all_keys:
                 missing.append((path, key, f"Key used in L10n extension but missing from ALL .xcstrings files", "ERROR"))

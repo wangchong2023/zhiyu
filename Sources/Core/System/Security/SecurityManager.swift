@@ -66,9 +66,9 @@ class SecurityManager: @unchecked Sendable {
             return existing
         }
         
-        #if DEBUG
+        #if DEBUG && !os(watchOS)
         // 2. DEBUG 模式下，尝试从 KeyStore 兜底 (用于模拟器环境)
-        if let fallback = MainActor.assumeIsolated({ keyStore?.string(forKey: key) }) {
+        if let fallback = DispatchQueue.main.sync(execute: { keyStore?.string(forKey: key) }) {
             return fallback
         }
         #endif
@@ -81,8 +81,8 @@ class SecurityManager: @unchecked Sendable {
             try KeychainService.shared.store(key: key, value: newValue)
             return newValue
         } catch {
-            #if DEBUG
-            MainActor.assumeIsolated({ keyStore?.set(newValue, forKey: key) })
+            #if DEBUG && !os(watchOS)
+            DispatchQueue.main.sync { keyStore?.set(newValue, forKey: key) }
             return newValue
             #else
             // 生产环境下安全存储故障是致命的
@@ -251,5 +251,23 @@ enum SecurityError: LocalizedError {
         case .encodingFailed: return "Data encoding failed"
         case .decodingFailed: return "Data decoding failed"
         }
+    }
+}
+
+// MARK: - @MainActor 安全桥接
+
+private func runOnMainSync<T>(_ block: () -> T) -> T {
+    if Thread.isMainThread {
+        return MainActor.assumeIsolated { block() }
+    } else {
+        return DispatchQueue.main.sync(execute: block)
+    }
+}
+
+private func runOnMainSync(_ block: () -> Void) {
+    if Thread.isMainThread {
+        MainActor.assumeIsolated { block() }
+    } else {
+        DispatchQueue.main.sync(execute: block)
     }
 }

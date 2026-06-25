@@ -3724,23 +3724,6 @@
         }
       }
     },
-    "misc.ok": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "OK"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "确定"
-          }
-        }
-      }
-    },
     "error.notReady": {
       "extractionState": "manual",
       "localizations": {

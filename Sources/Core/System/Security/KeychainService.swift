@@ -51,8 +51,8 @@ class KeychainService: @unchecked Sendable {
         let status = SecItemAdd(query as CFDictionary, nil)
         guard status == errSecSuccess else {
             if status == errSecMissingEntitlement {
-                #if DEBUG
-                MainActor.assumeIsolated { keyStore?.set(value, forKey: key) }
+                #if DEBUG && !os(watchOS)
+                DispatchQueue.main.sync { keyStore?.set(value, forKey: key) }
                 return
                 #endif
             }
@@ -86,8 +86,8 @@ class KeychainService: @unchecked Sendable {
             return nil
         default:
             if status == errSecMissingEntitlement {
-                #if DEBUG
-                if let val = MainActor.assumeIsolated({ keyStore?.string(forKey: key) }) {
+                #if DEBUG && !os(watchOS)
+                if let val = DispatchQueue.main.sync(execute: { keyStore?.string(forKey: key) }) {
                     return val
                 }
                 #endif
@@ -105,9 +105,9 @@ class KeychainService: @unchecked Sendable {
             kSecAttrAccount as String: key
         ]
         let status = SecItemDelete(query as CFDictionary)
-        #if DEBUG
+        #if DEBUG && !os(watchOS)
         // 在 DEBUG 模式下，无论 Keychain 删除结果如何，都同步清理 KeyStore 回退缓存
-        MainActor.assumeIsolated { keyStore?.removeObject(forKey: key) }
+        DispatchQueue.main.sync { keyStore?.removeObject(forKey: key) }
         #endif
         guard status == errSecSuccess || status == errSecItemNotFound else {
             if status == errSecMissingEntitlement {
@@ -138,5 +138,26 @@ enum KeychainError: LocalizedError {
         case .unexpectedData:
             return "Keychain returned unexpected data format"
         }
+    }
+}
+
+// MARK: - @MainActor 安全桥接
+
+/// 在任意线程安全地执行 @MainActor 隔离的 keyStore 访问。
+/// - 主线程：直接执行（避免 DispatchQueue.main.sync 死锁）
+/// - 后台线程：同步调度到主队列
+private func runOnMainSync<T>(_ block: () -> T) -> T {
+    if Thread.isMainThread {
+        return MainActor.assumeIsolated { block() }
+    } else {
+        return DispatchQueue.main.sync(execute: block)
+    }
+}
+
+private func runOnMainSync(_ block: () -> Void) {
+    if Thread.isMainThread {
+        MainActor.assumeIsolated { block() }
+    } else {
+        DispatchQueue.main.sync(execute: block)
     }
 }

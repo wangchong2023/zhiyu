@@ -14,19 +14,29 @@ import UIKit
 /// iOS 设备信息服务
 final class iOSDeviceInfoService: DeviceInfoProtocol, @unchecked Sendable {
     var systemVersion: String {
-        MainActor.assumeIsolated { UIDevice.current.systemVersion }
+        runOnMainSync { UIDevice.current.systemVersion }
     }
 
     var deviceModel: String {
-        MainActor.assumeIsolated { UIDevice.current.model }
+        runOnMainSync { UIDevice.current.model }
     }
 
     var deviceName: String {
-        MainActor.assumeIsolated { UIDevice.current.name }
+        runOnMainSync { UIDevice.current.name }
     }
 
     var screenHeight: CGFloat {
-        MainActor.assumeIsolated { UIScreen.main.bounds.height }
+        runOnMainSync { UIScreen.main.bounds.height }
+    }
+}
+
+// MARK: - @MainActor 安全桥接
+
+private func runOnMainSync<T>(_ block: () -> T) -> T {
+    if Thread.isMainThread {
+        return MainActor.assumeIsolated { block() }
+    } else {
+        return DispatchQueue.main.sync(execute: block)
     }
 }
 #endif

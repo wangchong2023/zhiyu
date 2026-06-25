@@ -38,8 +38,8 @@ final class FileImportFileStore: ImportFileStore, @unchecked Sendable {
         
         // KeyStore reads require @MainActor due to KeyStoreProtocol isolation;
         // use assumeIsolated in @unchecked Sendable class where runtime context is known-safe
-        let vaultIDString = MainActor.assumeIsolated({ keyStore?.string(forKey: AppConstants.Keys.Storage.vaultsSelectedID) })
-        let englishName = MainActor.assumeIsolated({ keyStore?.string(forKey: AppConstants.Keys.Storage.vaultSelectedEnglishName) })
+        let vaultIDString = DispatchQueue.main.sync { keyStore?.string(forKey: AppConstants.Keys.Storage.vaultsSelectedID) }
+        let englishName = DispatchQueue.main.sync { keyStore?.string(forKey: AppConstants.Keys.Storage.vaultSelectedEnglishName) }
         
         if let vaultIDString, let englishName, !vaultIDString.isEmpty, !englishName.isEmpty {
             
@@ -124,5 +124,23 @@ final class FileImportFileStore: ImportFileStore, @unchecked Sendable {
             Logger.shared.error("[ImportFileStore] 拷贝外部文件失败: \(error)", error: error)
             return nil
         }
+    }
+}
+
+// MARK: - @MainActor 安全桥接
+
+private func runOnMainSync<T>(_ block: () -> T) -> T {
+    if Thread.isMainThread {
+        return MainActor.assumeIsolated { block() }
+    } else {
+        return DispatchQueue.main.sync(execute: block)
+    }
+}
+
+private func runOnMainSync(_ block: () -> Void) {
+    if Thread.isMainThread {
+        MainActor.assumeIsolated { block() }
+    } else {
+        DispatchQueue.main.sync(execute: block)
     }
 }

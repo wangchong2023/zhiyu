@@ -142,7 +142,7 @@ extension Color {
         #if os(watchOS)
         return .blue // watchOS 暂不支持复杂的 ThemeManager 逻辑
         #else
-        return MainActor.assumeIsolated { ThemeManager.shared.accentColor }
+        return DispatchQueue.main.sync { ThemeManager.shared.accentColor }
         #endif
     }
     
@@ -295,5 +295,15 @@ public struct UIColorTheme: Sendable {
     public var green: UIColor { UIColor(Color.theme.green) }
     /// 录音/错误/删除（红色）
     public var red: UIColor { UIColor(Color.theme.red) }
+}
+
+// MARK: - @MainActor 安全桥接
+
+private func runOnMainSync<T>(_ block: () -> T) -> T {
+    if Thread.isMainThread {
+        return MainActor.assumeIsolated { block() }
+    } else {
+        return DispatchQueue.main.sync(execute: block)
+    }
 }
 #endif
