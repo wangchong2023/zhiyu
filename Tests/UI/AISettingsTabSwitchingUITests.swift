@@ -42,10 +42,9 @@ final class AISettingsTabSwitchingUITests: XCTestCase {
 
         try? await Task.sleep(nanoseconds: 1_000_000_000)
 
-        // 2. 在弹出菜单中点击"AI 大模型"或"人工智能"入口
-        let aiMenuPredicate = NSPredicate(format: "label CONTAINS 'AI' OR label CONTAINS '人工智能' OR label CONTAINS '大模型'")
-        let aiMenuButton = app.buttons.matching(aiMenuPredicate).element(boundBy: 0)
-        XCTAssertTrue(aiMenuButton.waitForExistence(timeout: 3), "AI 大模型菜单入口应当存在")
+        // 2. 在弹出菜单中点击 AI 大模型入口 — 使用 accessibility ID 避免 L10n 匹配失败
+        let aiMenuButton = app.buttons["aiSettingsMenuButton"]
+        XCTAssertTrue(aiMenuButton.waitForExistence(timeout: 5), "AI 大模型菜单入口应当存在")
         aiMenuButton.tap()
 
         try? await Task.sleep(nanoseconds: 1_500_000_000)

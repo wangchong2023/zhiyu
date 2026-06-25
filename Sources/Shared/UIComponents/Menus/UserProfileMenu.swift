@@ -461,6 +461,7 @@ struct CustomProfilePopover: View {
                         onAction?(.aiSettings)
                         showMenuPopover = false
                     }
+                    .accessibilityIdentifier("aiSettingsMenuButton")
                     
                     menuRow(icon: "puzzlepiece.extension.fill", color: .orange, title: L10n.Plugin.title) {
                         onAction?(.plugins)
