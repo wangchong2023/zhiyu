@@ -17,7 +17,7 @@ enum AppPasteboard {
     static var string: String? {
         get { service.string }
         set { 
-            var s = service
+            let s = service
             s.string = newValue 
         }
     }

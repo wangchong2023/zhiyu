@@ -45,9 +45,6 @@ struct OverseasLoginCardView: View {
             
             // 协议勾选
             agreementSection
-            
-            // 更多登录方式
-            thirdPartySection
         }
         .padding(Spacing.wide)
         .appContainer(cornerRadius: Spacing.largeRadius)
@@ -106,81 +103,6 @@ struct OverseasLoginCardView: View {
             }
         }
         .padding(.horizontal, Spacing.small)
-    }
-    
-    // MARK: - 第三方登录
-    
-    private var thirdPartySection: some View {
-        VStack(spacing: Spacing.large) {
-            HStack {
-                Rectangle().fill(Color.appBorder.opacity(DesignSystem.Opacity.shadow)).frame(height: DesignSystem.borderWidth)
-                Text(L10n.Auth.moreLoginMethods)
-                    .font(.caption)
-                    .foregroundStyle(.appSecondary)
-                    .lineLimit(1)
-                    .fixedSize(horizontal: true, vertical: false)
-                    .padding(.horizontal, Spacing.small)
-                Rectangle().fill(Color.appBorder.opacity(DesignSystem.Opacity.shadow)).frame(height: DesignSystem.borderWidth)
-            }
-            
-            HStack(spacing: Spacing.large) {
-                #if DEBUG
-                let forceShowAll = true
-                #else
-                let forceShowAll = authService.isMockMode
-                #endif
-                
-                ThirdPartyIconButton(id: "auth.thirdparty.apple", icon: "apple.logo", isSystem: true, color: .primary) {
-                    handleThirdPartyLogin(using: AppleAuthStrategy())
-                }
-                ThirdPartyIconButton(id: "auth.thirdparty.google", icon: "GoogleLogo", isSystem: false, color: .blue) {
-                    #if DEBUG
-                    handleThirdPartyLogin(using: GoogleAuthStrategy())
-                    #else
-                    if authService.isMockMode {
-                        handleThirdPartyLogin(using: GoogleAuthStrategy())
-                    } else {
-                        ToastManager.shared.show(type: .info, message: L10n.Auth.googleDeveloping)
-                    }
-                    #endif
-                }
-                ThirdPartyIconButton(id: "auth.thirdparty.github", icon: "GithubLogo", isSystem: false, color: .primary) {
-                    #if DEBUG
-                    handleThirdPartyLogin(using: GitHubAuthStrategy())
-                    #else
-                    if authService.isMockMode {
-                        handleThirdPartyLogin(using: GitHubAuthStrategy())
-                    } else {
-                        ToastManager.shared.show(type: .info, message: L10n.Auth.githubDeveloping)
-                    }
-                    #endif
-                }
-            }
-        }
-    }
-    
-    /// 处理第三方账号授权登录逻辑
-    private func handleThirdPartyLogin(using strategy: any AuthStrategy) {
-        if !isAgreementChecked {
-            ToastManager.shared.show(type: .error, message: L10n.Auth.agreementRequired)
-            HapticFeedback.shared.trigger(.error)
-            return
-        }
-        
-        Task {
-            isLoading = true
-            
-            let success = await authService.login(using: strategy)
-            
-            if !success {
-                ToastManager.shared.show(type: .error, message: L10n.Auth.authFailed)
-                HapticFeedback.shared.trigger(.error)
-            } else {
-                HapticFeedback.shared.trigger(.success)
-            }
-            
-            isLoading = false
-        }
     }
     
     // MARK: - 协议 Sheet

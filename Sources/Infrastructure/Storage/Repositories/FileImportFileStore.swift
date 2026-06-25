@@ -10,7 +10,7 @@
 
 import Foundation
 
-final class FileImportFileStore: ImportFileStore, Sendable {
+final class FileImportFileStore: ImportFileStore, @unchecked Sendable {
 
     init() {
         // 无需预先创建 recordsDir，全部采用动态延迟计算
@@ -36,9 +36,12 @@ final class FileImportFileStore: ImportFileStore, Sendable {
         
         let appSupport = fm.urls(for: .applicationSupportDirectory, in: .userDomainMask).first ?? fm.temporaryDirectory
         
-        if let vaultIDString = keyStore?.string(forKey: AppConstants.Keys.Storage.vaultsSelectedID),
-           let englishName = keyStore?.string(forKey: AppConstants.Keys.Storage.vaultSelectedEnglishName),
-           !vaultIDString.isEmpty, !englishName.isEmpty {
+        // KeyStore reads require @MainActor due to KeyStoreProtocol isolation;
+        // use assumeIsolated in @unchecked Sendable class where runtime context is known-safe
+        let vaultIDString = MainActor.assumeIsolated({ keyStore?.string(forKey: AppConstants.Keys.Storage.vaultsSelectedID) })
+        let englishName = MainActor.assumeIsolated({ keyStore?.string(forKey: AppConstants.Keys.Storage.vaultSelectedEnglishName) })
+        
+        if let vaultIDString, let englishName, !vaultIDString.isEmpty, !englishName.isEmpty {
             
             // 物理落盘到 Vaults/{Vault_UUID}/raw/{笔记本英文名}/{Category}/
             let vaultsDir = appSupport

@@ -129,12 +129,14 @@ struct SourceDetailBodyView: View {
                     isPlaying.toggle()
                     if isPlaying {
                         timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in
-                            if playProgress < 1.0 {
-                                playProgress += 0.01
-                            } else {
-                                playProgress = 0.0
-                                isPlaying = false
-                                timer?.invalidate()
+                            Task { @MainActor in
+                                if playProgress < 1.0 {
+                                    playProgress += 0.01
+                                } else {
+                                    playProgress = 0.0
+                                    isPlaying = false
+                                    timer?.invalidate()
+                                }
                             }
                         }
                     } else {

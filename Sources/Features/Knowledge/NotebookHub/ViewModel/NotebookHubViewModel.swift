@@ -126,13 +126,15 @@ public final class NotebookHubViewModel {
     /// 选择Notebook
     /// - Parameter notebook: notebook
     public func selectNotebook(_ notebook: Vault) {
-        withAnimation(DesignSystem.Animation.Config.prominentSpring) {
-            // 1. 路由加固：重置导航状态，使用户进入后看到 SidebarView 菜单
+        Task { @MainActor in
+            // Phase 1: 重置路由状态，让 SwiftUI 在当前周期中安全处理
             Router.shared.sidebarSelection = nil
             Router.shared.selectedTab = .knowledge
             Router.shared.path = NavigationPath()
-            
-            // 2. 设置当前的笔记本 ID，触发外层 ContentView 的视图切换逻辑
+            // 让出主线程：确保 NavigationStack 被完全销毁、手势系统稳定后，
+            // 再触发 NavigationSplitView 创建，避免 GestureRecognizer 冲突崩溃
+            await Task.yield()
+            // Phase 2: 触发视图层级切换 (NotebookHubView → mainContent)
             vaultService.selectVault(notebook)
         }
     }

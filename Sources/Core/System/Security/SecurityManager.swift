@@ -68,7 +68,7 @@ class SecurityManager: @unchecked Sendable {
         
         #if DEBUG
         // 2. DEBUG 模式下，尝试从 KeyStore 兜底 (用于模拟器环境)
-        if let fallback = keyStore?.string(forKey: key) {
+        if let fallback = MainActor.assumeIsolated({ keyStore?.string(forKey: key) }) {
             return fallback
         }
         #endif
@@ -82,7 +82,7 @@ class SecurityManager: @unchecked Sendable {
             return newValue
         } catch {
             #if DEBUG
-            keyStore?.set(newValue, forKey: key)
+            MainActor.assumeIsolated({ keyStore?.set(newValue, forKey: key) })
             return newValue
             #else
             // 生产环境下安全存储故障是致命的
@@ -135,6 +135,7 @@ class SecurityManager: @unchecked Sendable {
 
     // MARK: - 完整性校验 (HMAC)
 
+    @MainActor
     private func getSalt() async -> String {
         return getOrGenerateKey(
             forKey: saltKey,
@@ -172,6 +173,7 @@ class SecurityManager: @unchecked Sendable {
     
     /// 保存Signature
     /// - Parameter signature: signature
+    @MainActor
     func saveSignature(_ signature: String, forFilePath filePath: String) async {
         let currentSalt = await getSalt()
         do {
@@ -199,6 +201,7 @@ class SecurityManager: @unchecked Sendable {
     
     /// 验证Integrity
     /// - Returns: 是否成功
+    @MainActor
     func verifyIntegrity(for fileURL: URL) async -> Bool {
         let filePath = fileURL.path
         

@@ -80,20 +80,26 @@ struct HighlightedText: View {
         var attributed = AttributedString(text)
         let lowerText = text.lowercased()
         let lowerHighlight = highlight.lowercased()
-        
+
         var searchIndex = lowerText.startIndex
         while searchIndex < lowerText.endIndex,
               let range = lowerText[searchIndex...].range(of: lowerHighlight) {
             let startOffset = lowerText.distance(from: lowerText.startIndex, to: range.lowerBound)
             let endOffset = lowerText.distance(from: lowerText.startIndex, to: range.upperBound)
-            
+
             let chars = attributed.characters
             if let startAttrIndex = chars.index(chars.startIndex, offsetBy: startOffset, limitedBy: chars.endIndex),
                let endAttrIndex = chars.index(chars.startIndex, offsetBy: endOffset, limitedBy: chars.endIndex) {
                 let attrRange = startAttrIndex..<endAttrIndex
-                attributed[attrRange].foregroundColor = .appAccent
-                attributed[attrRange].backgroundColor = Color.appAccent.opacity(DesignSystem.dimmedOpacity)
-                attributed[attrRange].inlinePresentationIntent = .stronglyEmphasized
+                // Swift 6 严格并发: 不能直接 `attributed[range].foregroundColor = ...`,
+                // 因为编译器会构造 `\.foregroundColor` key path,而
+                // `AttributeScopes.SwiftUIAttributes.ForegroundColorAttribute` 非 Sendable。
+                // 改用 AttributeContainer 显式构造并 merge,完全绕过 key path。
+                var container = AttributeContainer()
+                container.foregroundColor = .appAccent
+                container.backgroundColor = Color.appAccent.opacity(DesignSystem.dimmedOpacity)
+                container.inlinePresentationIntent = .stronglyEmphasized
+                attributed[attrRange].mergeAttributes(container)
             }
             searchIndex = range.upperBound
         }
@@ -296,7 +302,7 @@ struct RawStorageListView: View {
         }
         .navigationTitle(L10n.Dashboard.stats.rawStorageTitle)
         .navigationBarTitleDisplayMode(.inline)
-        .onChange(of: searchText) { newValue in
+        .onChange(of: searchText) { newValue, _ in
             if !newValue.isEmpty {
                 // 自动展开包含匹配项的父级分类目录
                 let matches = store.pages.filter { $0.pageType == .raw }

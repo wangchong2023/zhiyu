@@ -61,6 +61,9 @@ final class AppEnvironment {
         //    Store 初始化时会通过 @Inject 访问服务，DI 必须在此之前或同时就绪
         registerDIModules()
 
+        // 2.1 DI 就绪后立即加载本地化语言偏好缓存（避免后续跨 actor 访问 keyStore）
+        Localized.loadCachedLanguageMode()
+
         // 🧪 Unit Test 环境：注册所有服务但不锁定 DI 容器，允许测试 reset() 后重新注册 Mock
         if isRunningInUnitTests {
             Logger.shared.info("[AppEnvironment] DI services registered (test mode, chain NOT locked).")

@@ -37,7 +37,7 @@ actor KnowledgeInsightService {
         let isTesting = ProcessInfo.processInfo.arguments.contains("--uitesting") || ProcessInfo.processInfo.environment["UITesting"] == "true"
 
         // 1. 尝试从本地加载有效缓存
-        if let cached = loadValidCache(pages: pages, forceRefresh: forceRefresh, isTesting: isTesting) {
+        if let cached = await loadValidCache(pages: pages, forceRefresh: forceRefresh, isTesting: isTesting) {
             return cached
         }
 
@@ -52,7 +52,7 @@ actor KnowledgeInsightService {
                 insight: L10n.Dashboard.insight.mock.insight,
                 suggestedConnection: L10n.Dashboard.insight.mock.suggestedConnection
             )
-            saveCachedDailyRecap(recap)
+            await saveCachedDailyRecap(recap)
             return recap
         }
 
@@ -77,7 +77,7 @@ actor KnowledgeInsightService {
 
             // 4. 提取并解析 LLM 的回复
             let recap = parseDailyRecapResponse(response, target: target)
-            saveCachedDailyRecap(recap)
+            await saveCachedDailyRecap(recap)
             return recap
         } catch {
             throw error
@@ -85,8 +85,8 @@ actor KnowledgeInsightService {
     }
 
     /// 载入满足测试用例状态或数据完整度的今日见解缓存
-    private func loadValidCache(pages: [KnowledgePage], forceRefresh: Bool, isTesting: Bool) -> DailyRecap? {
-        guard !forceRefresh, let cached = loadCachedDailyRecap() else { return nil }
+    private func loadValidCache(pages: [KnowledgePage], forceRefresh: Bool, isTesting: Bool) async -> DailyRecap? {
+        guard !forceRefresh, let cached = await loadCachedDailyRecap() else { return nil }
         if !isTesting || pages.contains(where: { $0.id == cached.targetPageID }) {
             return cached
         }
@@ -143,21 +143,23 @@ actor KnowledgeInsightService {
         return "\(AppConstants.Keys.Storage.dailyRecapPrefix)\(formatter.string(from: Date()))_\(lang)"
     }
 
-    private func loadCachedDailyRecap() -> DailyRecap? {
+    private func loadCachedDailyRecap() async -> DailyRecap? {
         let key = cacheKey()
-        guard let keyStore = ServiceContainer.shared.resolveOptional((any KeyStoreProtocol).self),
-              let data = keyStore.data(forKey: key),
-              let recap = try? JSONDecoder().decode(DailyRecap.self, from: data) else {
+        guard let keyStore = ServiceContainer.shared.resolveOptional((any KeyStoreProtocol).self) else {
+            return nil
+        }
+        let data = await MainActor.run { keyStore.data(forKey: key) }
+        guard let data, let recap = try? JSONDecoder().decode(DailyRecap.self, from: data) else {
             return nil
         }
         return recap
     }
 
-    private func saveCachedDailyRecap(_ recap: DailyRecap) {
+    private func saveCachedDailyRecap(_ recap: DailyRecap) async {
         let key = cacheKey()
         guard let keyStore = ServiceContainer.shared.resolveOptional((any KeyStoreProtocol).self) else { return }
         if let data = try? JSONEncoder().encode(recap) {
-            keyStore.set(data, forKey: key)
+            await MainActor.run { keyStore.set(data, forKey: key) }
         }
     }
 

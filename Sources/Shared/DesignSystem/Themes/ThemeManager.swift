@@ -20,7 +20,7 @@ class ThemeManager: ObservableObject {
     /// Factory 风格：属性类型标注为可选（T?），@Inject 自动使用 resolveOptional
     @Inject nonisolated private var keyStore: (any KeyStoreProtocol)?
 
-    nonisolated var accentColorRaw: String {
+    var accentColorRaw: String {
         get {
             keyStore?.string(forKey: AppConstants.Keys.Storage.accentColor) ?? "blue"
         }
@@ -70,7 +70,7 @@ class ThemeManager: ObservableObject {
 
     /// Live color: reads from UserDefaults on every access (no cache).
     /// @AppStorage already handles observation via Combine.
-    nonisolated var accentColor: Color {
+    var accentColor: Color {
         ThemeManager.colorForName(accentColorRaw)
     }
 

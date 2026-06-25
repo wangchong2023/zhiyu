@@ -11,10 +11,18 @@
 import XCTest
 @testable import ZhiYu
 
+@MainActor
 final class OnboardingMilestoneTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
+        // 确保 KeyStoreProtocol 在 DI 中注册，否则 markAsShown() / hasBeenShown 操作无实际存储
+        if ServiceContainer.shared.resolveOptional((any KeyStoreProtocol).self) == nil {
+            ServiceContainer.shared.register(
+                UserDefaultsKeyStore.shared as any KeyStoreProtocol,
+                for: (any KeyStoreProtocol).self
+            )
+        }
         OnboardingMilestone.allCases.forEach {
             UserDefaults.standard.removeObject(forKey: "onboarding.milestone.\($0.rawValue)")
         }

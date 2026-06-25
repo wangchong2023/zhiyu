@@ -64,7 +64,7 @@ public final class MaintenanceService {
                 
                 // 根据笔记本名称注入相应的数据源，彻底解决出厂预置数据归属混乱的问题
                 let count: Int
-                if vault.name == L10n.Vault.researchName || vault.name == "项目调研" || vault.name == "Project Research" || vault.name == L10n.InitialNotebook.Log.projectResearch {
+                if vault.name == L10n.Vault.researchName || vault.name == L10n.Vault.researchNameZh || vault.name == L10n.Vault.researchNameEn || vault.name == L10n.InitialNotebook.Log.projectResearch {
                     count = try await InitialNotebookGenerator.generateResearchNotebook(in: pageStore)
                 } else {
                     count = try await InitialNotebookGenerator.generate(in: pageStore)
@@ -89,12 +89,12 @@ public final class MaintenanceService {
         let isTesting = ProcessInfo.processInfo.arguments.contains("--uitesting") || ProcessInfo.processInfo.environment["UITesting"] == "true"
         
         do {
-            if vaultName == L10n.Vault.defaultName || (isTesting && (vaultName == nil || vaultName?.contains("\u{77e5}\u{8bc6}") == true || vaultName?.contains("Vault") == true)) {
-                // “知识管理” - 使用标准的 AI 概念与大量 API 日志
+            if vaultName == L10n.Vault.defaultName || vaultName == L10n.Vault.defaultNameZh || vaultName == L10n.Vault.defaultNameEn || (isTesting && (vaultName == nil || vaultName?.contains("Vault") == true)) {
+                // 默认知识管理笔记本 — 注入 AI 概念与 API 日志演示数据
                 _ = try await InitialNotebookGenerator.generate(in: pageStore)
                 logger.addLog(action: .create, target: L10n.InitialNotebook.Log.defaultDemoData, details: "Seeded_default_content", module: "Maintenance")
-            } else if vaultName == L10n.Vault.researchName || vaultName == "\u{9879}\u{76ee}\u{8c03}\u{7814}" || vaultName == L10n.InitialNotebook.Log.projectResearch || (isTesting && vaultName?.contains("\u{8c03}\u{7814}") == true) {
-                // “项目调研” - 使用全新均衡的调研数据
+            } else if vaultName == L10n.Vault.researchName || vaultName == L10n.Vault.researchNameZh || vaultName == L10n.Vault.researchNameEn || vaultName == L10n.InitialNotebook.Log.projectResearch || (isTesting && vaultName?.contains("Research") == true) {
+                // 项目调研笔记本 — 注入行业分析演示数据
                 _ = try await InitialNotebookGenerator.generateResearchNotebook(in: pageStore)
                 logger.addLog(action: .create, target: L10n.InitialNotebook.Log.researchDemoData, details: "Seeded_research_content", module: "Maintenance")
             } else if isTesting {

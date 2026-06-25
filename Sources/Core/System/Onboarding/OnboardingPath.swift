@@ -49,17 +49,22 @@ public enum OnboardingMilestone: String, CaseIterable, Sendable {
     // MARK: - KeyStore
 
     private static let prefix = "onboarding.milestone"
-    /// Factory 风格：属性类型标注为可选（T?），@Inject 自动使用 resolveOptional
-    @Inject private static var keyStore: (any KeyStoreProtocol)?
+    // 注: 不再使用 @Inject 静态注入,因为 static var 在 Swift 6 严格并发下属于
+    // "nonisolated global shared mutable state"。改在每个 @MainActor 方法内
+    // 通过 ServiceContainer.shared.resolveOptional 按需解析,与 Localized.swift 保持一致。
 
     var key: String { "\(Self.prefix).\(rawValue)" }
 
+    @MainActor
     public var hasBeenShown: Bool {
-        Self.keyStore?.bool(forKey: key) ?? false
+        let store = ServiceContainer.shared.resolveOptional((any KeyStoreProtocol).self)
+        return store?.bool(forKey: key) ?? false
     }
 
+    @MainActor
     public func markAsShown() {
-        Self.keyStore?.set(true, forKey: key)
+        let store = ServiceContainer.shared.resolveOptional((any KeyStoreProtocol).self)
+        store?.set(true, forKey: key)
     }
 
     // MARK: - Toast

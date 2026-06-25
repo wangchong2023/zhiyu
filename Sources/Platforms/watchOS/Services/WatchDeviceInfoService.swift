@@ -18,7 +18,7 @@ final class WatchDeviceInfoService: DeviceInfoProtocol, @unchecked Sendable {
     }
 
     var deviceModel: String {
-        WKInterfaceDevice.current().model ?? "Apple Watch"
+        WKInterfaceDevice.current().model
     }
 
     var deviceName: String {
@@ -29,4 +29,4 @@ final class WatchDeviceInfoService: DeviceInfoProtocol, @unchecked Sendable {
         WKInterfaceDevice.current().screenBounds.height
     }
 }
-#endif
+#endif // os(watchOS)

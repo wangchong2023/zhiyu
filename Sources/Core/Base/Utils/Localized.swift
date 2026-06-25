@@ -75,21 +75,33 @@ internal struct Localized {
     nonisolated(unsafe) private static var _inMemoryFallback: String?
 
     /// 用户在应用偏好设置中手动指定的语言模式。
-    /// getter/setter 使用 resolveOptional 优雅降级：DI 未就绪时回退到内存存储。
+    /// getter 始终从线程安全的内存缓存读取，避免跨 actor 访问 keyStore 导致 crash。
+    /// 缓存由 setter 及 `loadCachedLanguageMode()` 在 @MainActor 上写入。
     static var languageMode: LanguageMode {
         get {
-            guard let keyStore = ServiceContainer.shared.resolveOptional((any KeyStoreProtocol).self) else {
-                return LanguageMode(rawValue: _inMemoryFallback ?? "auto") ?? .auto
-            }
-            return LanguageMode(rawValue: keyStore.string(forKey: AppConstants.Keys.Storage.languageMode) ?? "auto") ?? .auto
+            // 仅依赖 _inMemoryFallback（setter 始终同步写入，线程安全）
+            LanguageMode(rawValue: _inMemoryFallback ?? "auto") ?? .auto
         }
         set {
-            _inMemoryFallback = newValue.rawValue
-            if let keyStore = ServiceContainer.shared.resolveOptional((any KeyStoreProtocol).self) {
-                keyStore.set(newValue.rawValue, forKey: AppConstants.Keys.Storage.languageMode)
+            let value = newValue.rawValue
+            _inMemoryFallback = value
+            // 持久化写入委托至 @MainActor，避免 assumeIsolated 在非主线程 crash
+            Task { @MainActor in
+                if let keyStore = ServiceContainer.shared.resolveOptional((any KeyStoreProtocol).self) {
+                    keyStore.set(value, forKey: AppConstants.Keys.Storage.languageMode)
+                }
             }
             clearBundleCache()
         }
+    }
+
+    /// 在 @MainActor 上从 keyStore 加载语言偏好到内存缓存。
+    /// 应在 DI 就绪后的启动阶段调用一次。
+    @MainActor
+    static func loadCachedLanguageMode() {
+        guard let keyStore = ServiceContainer.shared.resolveOptional((any KeyStoreProtocol).self) else { return }
+        let rawValue = keyStore.string(forKey: AppConstants.Keys.Storage.languageMode)
+        _inMemoryFallback = rawValue
     }
     
     /// 清除当前的 Bundle 缓存，迫使下一次翻译查找时执行磁盘装载。

@@ -14,44 +14,31 @@ import Foundation
 extension VaultService {
 
     /// 加载所有笔记本元数据。
-    /// 若全局配置表为空，则冷启动触发系统预置的初始笔记本（"知识管理"与"项目调研"）。
+    /// 确保系统预置的初始笔记本（"知识图谱"与"项目调研"）始终存在，
+    /// 同时保留用户已创建的旧版笔记本数据不丢失。
     func loadVaults() {
         Task {
             guard let vaultRepository = vaultRepository else {
                 Logger.shared.warning(" [VaultService] loadVaults 被跳过，因为 vaultRepository 未在 DI 注册")
+                // 降级兜底：即使持久化仓储不可用，也要确保 UI 至少有内存级演示笔记本可展示
+                self.vaults = buildFallbackDemoVaults()
                 return
             }
             do {
                 var loadedVaults = try await vaultRepository.fetchAllVaults()
 
-                // 物理清理遗留的历史内置"我的知识库"笔记本
-                let oldNames = [
-                    String(data: Data(base64Encoded: "5oiR55qE55+l6K+G5bqT") ?? Data(), encoding: .utf8) ?? "",
-                    String(data: Data(base64Encoded: "TXkgVmF1bHQ=") ?? Data(), encoding: .utf8) ?? "",
-                    String(data: Data(base64Encoded: "TXkgS25vd2xlZGdlIEJhc2U=") ?? Data(), encoding: .utf8) ?? ""
-                ]
-                let legacyVaults = loadedVaults.filter { oldNames.contains($0.name) }
-                for oldVault in legacyVaults {
-                    try? await vaultRepository.deleteVault(id: oldVault.id)
-                    let dbURL = getVaultDatabaseURL(for: oldVault.id)
-                    let folderURL = dbURL.deletingLastPathComponent()
-                    if FileManager.default.fileExists(atPath: folderURL.path) {
-                        try? FileManager.default.removeItem(at: folderURL)
+                // 通过 englishName（locale-independent）确保 2 个内置笔记本始终存在，
+                // 避免因 locale 变更或旧版命名差异导致内置笔记本缺失
+                let demoVaults = buildDefaultDemoVaults()
+                for demo in demoVaults {
+                    let expectedName = demo.englishName
+                    if !loadedVaults.contains(where: { $0.englishName == expectedName }) {
+                        loadedVaults.append(demo)
+                        try await vaultRepository.saveVault(demo)
                     }
-                    Logger.shared.info("[VaultService] Automatically removed legacy initial notebook: \(oldVault.name)")
                 }
 
-                loadedVaults.removeAll { oldNames.contains($0.name) }
-
-                if loadedVaults.isEmpty {
-                    let demo = buildDefaultDemoVaults()
-                    self.vaults = demo
-                    for vault in demo {
-                        try await vaultRepository.saveVault(vault)
-                    }
-                } else {
-                    self.vaults = loadedVaults
-                }
+                self.vaults = loadedVaults
                 await refreshAllPageCounts()
             } catch {
                 Logger.shared.error(" [VaultService] Failed to asynchronously load notebook metadata: \(error)", error: error)

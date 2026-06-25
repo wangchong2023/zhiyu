@@ -52,7 +52,7 @@ class KeychainService: @unchecked Sendable {
         guard status == errSecSuccess else {
             if status == errSecMissingEntitlement {
                 #if DEBUG
-                keyStore?.set(value, forKey: key)
+                MainActor.assumeIsolated { keyStore?.set(value, forKey: key) }
                 return
                 #endif
             }
@@ -87,7 +87,7 @@ class KeychainService: @unchecked Sendable {
         default:
             if status == errSecMissingEntitlement {
                 #if DEBUG
-                if let val = keyStore?.string(forKey: key) {
+                if let val = MainActor.assumeIsolated({ keyStore?.string(forKey: key) }) {
                     return val
                 }
                 #endif
@@ -107,7 +107,7 @@ class KeychainService: @unchecked Sendable {
         let status = SecItemDelete(query as CFDictionary)
         #if DEBUG
         // 在 DEBUG 模式下，无论 Keychain 删除结果如何，都同步清理 KeyStore 回退缓存
-        keyStore?.removeObject(forKey: key)
+        MainActor.assumeIsolated { keyStore?.removeObject(forKey: key) }
         #endif
         guard status == errSecSuccess || status == errSecItemNotFound else {
             if status == errSecMissingEntitlement {
