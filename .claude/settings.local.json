@@ -369,7 +369,11 @@
       "Bash(kill 72461)",
       "Bash(ps -p 72461 -o pid,stat,command)",
       "mcp__codegraph__codegraph_search",
-      "Bash(xcodebuild -project ZhiYu.xcodeproj -scheme ZhiYu -showdestinations)"
+      "Bash(xcodebuild -project ZhiYu.xcodeproj -scheme ZhiYu -showdestinations)",
+      "Bash(perl -i -pe 'chomp if eof' Tests/Unit/Base/MainActorBridgeTests.swift)",
+      "Bash(swiftlint --fix --path Tests/Unit/Base/MainActorBridgeTests.swift Sources/Core/Base/Utils/MainActorBridge.swift)",
+      "Bash(swiftlint --strict --path Tests/Unit/Base/MainActorBridgeTests.swift Sources/Core/Base/Utils/MainActorBridge.swift)",
+      "Bash(grep -v \"Linting\\\\|compile\\\\|Compile\\\\|^--$\")"
     ]
   }
 }

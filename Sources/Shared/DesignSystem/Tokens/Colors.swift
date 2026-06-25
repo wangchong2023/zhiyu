@@ -297,13 +297,4 @@ public struct UIColorTheme: Sendable {
     public var red: UIColor { UIColor(Color.theme.red) }
 }
 
-// MARK: - @MainActor 安全桥接
-
-private func runOnMainSync<T>(_ block: () -> T) -> T {
-    if Thread.isMainThread {
-        return MainActor.assumeIsolated { block() }
-    } else {
-        return DispatchQueue.main.sync(execute: block)
-    }
-}
 #endif

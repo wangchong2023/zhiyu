@@ -126,21 +126,3 @@ final class FileImportFileStore: ImportFileStore, @unchecked Sendable {
         }
     }
 }
-
-// MARK: - @MainActor 安全桥接
-
-private func runOnMainSync<T>(_ block: () -> T) -> T {
-    if Thread.isMainThread {
-        return MainActor.assumeIsolated { block() }
-    } else {
-        return DispatchQueue.main.sync(execute: block)
-    }
-}
-
-private func runOnMainSync(_ block: () -> Void) {
-    if Thread.isMainThread {
-        MainActor.assumeIsolated { block() }
-    } else {
-        DispatchQueue.main.sync(execute: block)
-    }
-}

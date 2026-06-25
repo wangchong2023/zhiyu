@@ -140,24 +140,3 @@ enum KeychainError: LocalizedError {
         }
     }
 }
-
-// MARK: - @MainActor 安全桥接
-
-/// 在任意线程安全地执行 @MainActor 隔离的 keyStore 访问。
-/// - 主线程：直接执行（避免 DispatchQueue.main.sync 死锁）
-/// - 后台线程：同步调度到主队列
-private func runOnMainSync<T>(_ block: () -> T) -> T {
-    if Thread.isMainThread {
-        return MainActor.assumeIsolated { block() }
-    } else {
-        return DispatchQueue.main.sync(execute: block)
-    }
-}
-
-private func runOnMainSync(_ block: () -> Void) {
-    if Thread.isMainThread {
-        MainActor.assumeIsolated { block() }
-    } else {
-        DispatchQueue.main.sync(execute: block)
-    }
-}

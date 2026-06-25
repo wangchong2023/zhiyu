@@ -30,13 +30,4 @@ final class iOSDeviceInfoService: DeviceInfoProtocol, @unchecked Sendable {
     }
 }
 
-// MARK: - @MainActor 安全桥接
-
-private func runOnMainSync<T>(_ block: () -> T) -> T {
-    if Thread.isMainThread {
-        return MainActor.assumeIsolated { block() }
-    } else {
-        return DispatchQueue.main.sync(execute: block)
-    }
-}
 #endif
