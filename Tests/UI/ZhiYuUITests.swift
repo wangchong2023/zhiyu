@@ -239,13 +239,10 @@ final class ZhiYuUITests: KnowledgeBaseUITests {
         let vaultBadge = findFirstExisting(app.buttons.matching(badgePredicate).firstMatch, app.buttons.containing(badgePredicate).firstMatch)
         guard vaultBadge.waitForExistence(timeout: 3) else { return }
         vaultBadge.tap()
-        let backLabels = ["所有笔记本", "返回工作台", "All Notebooks"]
-        for label in backLabels {
-            let btn = app.buttons[label]
-            if btn.waitForExistence(timeout: 3) {
-                btn.tap()
-                return
-            }
+        let backBtn = app.buttons["vaultBackToHubButton"]
+        if backBtn.waitForExistence(timeout: 5) {
+            backBtn.tap()
+            return
         }
     }
 
