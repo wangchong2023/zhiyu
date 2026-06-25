@@ -456,9 +456,9 @@ ZStack {
 ### B. 参考文档
 
 - [Apple Human Interface Guidelines](https://developer.apple.com/design/human-interface-guidelines/)
-- [Docs/Design/VISUAL_SYSTEM.md](Docs/Design/VISUAL_SYSTEM.md)
-- [Docs/Design/UI_COMPONENTS.md](Docs/Design/UI_COMPONENTS.md)
-- [AGENTS.md](AGENTS.md)
+- [Docs/Design/VISUAL_SYSTEM.md](../../Docs/Design/VISUAL_SYSTEM.md)
+- [Docs/Design/UI_COMPONENTS.md](../../Docs/Design/UI_COMPONENTS.md)
+- [AGENTS.md](../../AGENTS.md)
 
 ### C. 审计时间线
 
