@@ -19,7 +19,7 @@ import Foundation
 /// - 后台线程：通过 DispatchQueue.main.sync 同步调度
 /// - Parameter block: 需要在主 Actor 上执行的代码块
 /// - Returns: 代码块的返回值
-public func runOnMainSync<T>(_ block: () -> T) -> T {
+public func runOnMainSync<T>(_ block: @MainActor () -> T) -> T {
     if Thread.isMainThread {
         return MainActor.assumeIsolated { block() }
     } else {
@@ -33,7 +33,7 @@ public func runOnMainSync<T>(_ block: () -> T) -> T {
 /// - 主线程：通过 MainActor.assumeIsolated 直接执行
 /// - 后台线程：通过 DispatchQueue.main.sync 同步调度
 /// - Parameter block: 需要在主 Actor 上执行的代码块
-public func runOnMainSync(_ block: () -> Void) {
+public func runOnMainSync(_ block: @MainActor () -> Void) {
     if Thread.isMainThread {
         MainActor.assumeIsolated { block() }
     } else {

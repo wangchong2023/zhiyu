@@ -38,8 +38,8 @@ final class FileImportFileStore: ImportFileStore, @unchecked Sendable {
         
         // KeyStore reads require @MainActor due to KeyStoreProtocol isolation;
         // use assumeIsolated in @unchecked Sendable class where runtime context is known-safe
-        let vaultIDString = DispatchQueue.main.sync { keyStore?.string(forKey: AppConstants.Keys.Storage.vaultsSelectedID) }
-        let englishName = DispatchQueue.main.sync { keyStore?.string(forKey: AppConstants.Keys.Storage.vaultSelectedEnglishName) }
+        let vaultIDString = runOnMainSync({ keyStore?.string(forKey: AppConstants.Keys.Storage.vaultsSelectedID) })
+        let englishName = runOnMainSync({ keyStore?.string(forKey: AppConstants.Keys.Storage.vaultSelectedEnglishName) })
         
         if let vaultIDString, let englishName, !vaultIDString.isEmpty, !englishName.isEmpty {
             

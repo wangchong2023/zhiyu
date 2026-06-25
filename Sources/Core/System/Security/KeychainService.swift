@@ -52,7 +52,7 @@ class KeychainService: @unchecked Sendable {
         guard status == errSecSuccess else {
             if status == errSecMissingEntitlement {
                 #if DEBUG && !os(watchOS)
-                DispatchQueue.main.sync { keyStore?.set(value, forKey: key) }
+                runOnMainSync { keyStore?.set(value, forKey: key) }
                 return
                 #endif
             }
@@ -87,7 +87,7 @@ class KeychainService: @unchecked Sendable {
         default:
             if status == errSecMissingEntitlement {
                 #if DEBUG && !os(watchOS)
-                if let val = DispatchQueue.main.sync(execute: { keyStore?.string(forKey: key) }) {
+                if let val = runOnMainSync({ keyStore?.string(forKey: key) }) {
                     return val
                 }
                 #endif
@@ -107,7 +107,7 @@ class KeychainService: @unchecked Sendable {
         let status = SecItemDelete(query as CFDictionary)
         #if DEBUG && !os(watchOS)
         // 在 DEBUG 模式下，无论 Keychain 删除结果如何，都同步清理 KeyStore 回退缓存
-        DispatchQueue.main.sync { keyStore?.removeObject(forKey: key) }
+        runOnMainSync { keyStore?.removeObject(forKey: key) }
         #endif
         guard status == errSecSuccess || status == errSecItemNotFound else {
             if status == errSecMissingEntitlement {

@@ -180,14 +180,7 @@ final class JavaScriptPlugin: InterceptionPlugin {
 
     private func makeLoadDataBlock(pluginCtx: PluginContext) -> @convention(block) (String) -> String? {
         { key in
-            if Thread.isMainThread {
-                return pluginCtx.loadData(key: key)
-            }
-            var result: String?
-            DispatchQueue.main.sync {
-                result = pluginCtx.loadData(key: key)
-            }
-            return result
+            return runOnMainSync { pluginCtx.loadData(key: key) }
         }
     }
 

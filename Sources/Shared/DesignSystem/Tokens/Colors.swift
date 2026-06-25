@@ -142,7 +142,7 @@ extension Color {
         #if os(watchOS)
         return .blue // watchOS 暂不支持复杂的 ThemeManager 逻辑
         #else
-        return DispatchQueue.main.sync { ThemeManager.shared.accentColor }
+        return runOnMainSync { ThemeManager.shared.accentColor }
         #endif
     }
     

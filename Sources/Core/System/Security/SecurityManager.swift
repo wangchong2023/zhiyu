@@ -68,7 +68,7 @@ class SecurityManager: @unchecked Sendable {
         
         #if DEBUG && !os(watchOS)
         // 2. DEBUG 模式下，尝试从 KeyStore 兜底 (用于模拟器环境)
-        if let fallback = DispatchQueue.main.sync(execute: { keyStore?.string(forKey: key) }) {
+        if let fallback = runOnMainSync({ keyStore?.string(forKey: key) }) {
             return fallback
         }
         #endif
@@ -82,7 +82,7 @@ class SecurityManager: @unchecked Sendable {
             return newValue
         } catch {
             #if DEBUG && !os(watchOS)
-            DispatchQueue.main.sync { keyStore?.set(newValue, forKey: key) }
+            runOnMainSync { keyStore?.set(newValue, forKey: key) }
             return newValue
             #else
             // 生产环境下安全存储故障是致命的
