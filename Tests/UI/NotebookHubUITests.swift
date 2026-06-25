@@ -190,18 +190,31 @@ final class NotebookHubUITests: KnowledgeBaseUITests {
 
     // MARK: - Helpers
 
-    /// 通过 VaultBadge 菜单退出当前笔记本，返回 NotebookHub 工作台。
+    /// 通过 VaultBadge 菜单或 FloatingContextCapsule 退出当前笔记本，返回 NotebookHub 工作台。
     private func returnToNotebookHub() {
-        // 优先通过 VaultBadge 菜单退出
+        // 方案 1: 通过 VaultBadge 菜单退出（优先，最直接）
         let vaultBadge = app.buttons["vaultBadgeButton"]
-        if vaultBadge.waitForExistence(timeout: 3) {
+        if vaultBadge.waitForExistence(timeout: 5) {
             vaultBadge.tap()
-            // 使用 accessibilityIdentifier 精确定位，避免 L10n 值变更导致匹配失败
             let backBtn = app.buttons["vaultBackToHubButton"]
-            if backBtn.waitForExistence(timeout: 2) {
+            if backBtn.waitForExistence(timeout: 5) {
                 backBtn.tap()
-                _ = app.scrollViews["NotebookHubView"].waitForExistence(timeout: 5)
-                return
+                if app.scrollViews["NotebookHubView"].waitForExistence(timeout: 8) {
+                    return
+                }
+            }
+        }
+
+        // 方案 2: 通过 FloatingContextCapsule（紧凑设备或自定义工具栏）
+        let capsuleBtn = app.buttons["FloatingContextCapsule"]
+        if capsuleBtn.waitForExistence(timeout: 3) {
+            capsuleBtn.tap()
+            let backBtn = app.buttons["vaultBackToHubButton"]
+            if backBtn.waitForExistence(timeout: 5) {
+                backBtn.tap()
+                if app.scrollViews["NotebookHubView"].waitForExistence(timeout: 8) {
+                    return
+                }
             }
         }
 
@@ -210,6 +223,6 @@ final class NotebookHubUITests: KnowledgeBaseUITests {
         if sidebarHubEntry.exists {
             sidebarHubEntry.tap()
         }
-        _ = app.scrollViews["NotebookHubView"].waitForExistence(timeout: 3)
+        _ = app.scrollViews["NotebookHubView"].waitForExistence(timeout: 5)
     }
 }

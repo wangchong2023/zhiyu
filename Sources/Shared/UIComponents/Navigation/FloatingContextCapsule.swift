@@ -43,6 +43,7 @@ struct FloatingContextCapsule: View {
             }
         }
         .padding(.horizontal, DesignSystem.small)
+        .accessibilityIdentifier("FloatingContextCapsule")
         .background(
             ZStack {
                 // 方案 D：极高透明度的深色玻璃
@@ -96,6 +97,7 @@ struct FloatingContextCapsule: View {
             }) {
                 Label(L10n.Vault.backToHub, systemImage: DesignSystem.Icons.backToHub)
             }
+            .accessibilityIdentifier("vaultBackToHubButton")
         } label: {
             HStack(spacing: DesignSystem.small) {
                 Text(vault.name)
