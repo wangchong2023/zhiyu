@@ -23,20 +23,41 @@ import XCTest
 @MainActor
 final class NotebookHubUITests: KnowledgeBaseUITests {
 
+    // MARK: - Setup
+
+    /// 覆写基类 setUp：跳过自动进入 vault 的逻辑。
+    /// NotebookHub 测试需要从 NotebookHub 工作台开始，而非已进入某个 vault 的主界面。
+    override func setUp() async throws {
+        // 执行基类的核心安全逻辑（防止在 Unit Test Target 中运行、launch app）
+        if ProcessInfo.processInfo.processName == "ZhiYu" {
+            throw XCTSkip("Skipping UI test in Unit Test target to prevent XCUIApplication init crash.")
+        }
+
+        continueAfterFailure = true
+        app = XCUIApplication()
+        app.launchArguments = ["--uitesting", "--reset-state", "-ResetUserDefaults", "-UITest_MockData"]
+        app.launchEnvironment = ["UITesting": "true"]
+        app.launch()
+
+        // 关键差异：不自动进入 vault。
+        // 基类 setUp 在检测到无 TabBar 时会自动点击卡片进入 vault，
+        // 但 NotebookHub 测试需要在工作台界面上验证卡片数量和交互。
+        // 如果 app 启动后意外进入了 vault（比如 KeyStore 残留状态），
+        // 则通过 returnToNotebookHub() 退出到工作台。
+        if app.tabBars.firstMatch.exists {
+            returnToNotebookHub()
+        }
+    }
+
     // MARK: - 内置笔记本存在性
 
     /// 验证 NotebookHub 至少显示 2 个内置笔记本（"知识图谱" + "项目调研"）。
     /// 这覆盖了 VaultDataCoordinator.loadVaults() 通过 englishName 补全内置笔记本的逻辑。
     func testNotebookHubShowsAtLeastTwoDefaultNotebooks() async throws {
-        // 如果已进入主界面，通过 VaultBadge（UI 测试模式下为直通 Button）退出到 NotebookHub
-        if app.tabBars.firstMatch.exists {
-            returnToNotebookHub()
-        }
-
-        // 等待 NotebookHub 出现
-        let hubView = app.scrollViews["NotebookHubView"]
-        XCTAssertTrue(hubView.waitForExistence(timeout: 5),
-                      "NotebookHubView 应在 5 秒内显示")
+        // 等待 NotebookHub 出现 — 多级查询策略兼容 SwiftUI ScrollView 在
+        // 不同 iOS 版本下底层实现差异（UIScrollView vs UICollectionView）
+        let hubFound = waitForNotebookHubView(timeout: 5)
+        XCTAssertTrue(hubFound, "NotebookHubView 应在 5 秒内显示")
 
         // 统计笔记本卡片数量
         let cards = app.buttons.matching(identifier: "NotebookCard_Item")
@@ -56,8 +77,7 @@ final class NotebookHubUITests: KnowledgeBaseUITests {
             returnToNotebookHub()
         }
 
-        let hubView = app.scrollViews["NotebookHubView"]
-        guard hubView.waitForExistence(timeout: 5) else {
+        guard waitForNotebookHubView(timeout: 5) else {
             throw XCTSkip("NotebookHubView 未显示，跳过测试")
         }
 
@@ -97,8 +117,7 @@ final class NotebookHubUITests: KnowledgeBaseUITests {
             returnToNotebookHub()
         }
 
-        let hubView = app.scrollViews["NotebookHubView"]
-        guard hubView.waitForExistence(timeout: 5) else {
+        guard waitForNotebookHubView(timeout: 5) else {
             throw XCTSkip("NotebookHubView 未显示")
         }
 
@@ -114,7 +133,7 @@ final class NotebookHubUITests: KnowledgeBaseUITests {
 
         // 返回到 NotebookHub
         returnToNotebookHub()
-        guard hubView.waitForExistence(timeout: 5) else {
+        guard waitForNotebookHubView(timeout: 5) else {
             throw XCTSkip("返回 NotebookHub 失败")
         }
 
@@ -141,8 +160,7 @@ final class NotebookHubUITests: KnowledgeBaseUITests {
             returnToNotebookHub()
         }
 
-        let hubView = app.scrollViews["NotebookHubView"]
-        guard hubView.waitForExistence(timeout: 5) else {
+        guard waitForNotebookHubView(timeout: 5) else {
             throw XCTSkip("NotebookHubView 未显示")
         }
 
@@ -189,29 +207,73 @@ final class NotebookHubUITests: KnowledgeBaseUITests {
 
     // MARK: - Helpers
 
-    /// 通过 VaultBadge 菜单或 FloatingContextCapsule 退出当前笔记本，返回 NotebookHub 工作台。
+    /// 等待 NotebookHub 视图出现。
+    ///
+    /// 多级查询策略兼容 SwiftUI ScrollView 在不同 iOS 版本下的底层实现差异：
+    /// - iOS 16-17: ScrollView → `UIScrollView` → `XCUIElementTypeScrollView`
+    /// - iOS 18+: ScrollView 可能使用 `UICollectionView` 内部实现
+    ///
+    /// 查询优先级：scrollViews → otherElements → NotebookCard → 空状态按钮
+    private func waitForNotebookHubView(timeout: TimeInterval = 5) -> Bool {
+        // 策略 1: 标准 ScrollView 查询（iOS 16-17）
+        if app.scrollViews["NotebookHubView"].waitForExistence(timeout: 2) {
+            return true
+        }
+        // 策略 2: otherElements 查询（iOS 18+ SwiftUI 可能不使用 UIScrollView）
+        if app.otherElements["NotebookHubView"].waitForExistence(timeout: 2) {
+            return true
+        }
+        // 策略 3: 通过 NotebookCard 卡片的出现间接确认 NotebookHub 已展示
+        if app.buttons.matching(identifier: "NotebookCard_Item").firstMatch.waitForExistence(timeout: timeout) {
+            return true
+        }
+        // 策略 4: 通过空状态引导按钮确认（数据库完全空白时）
+        if app.buttons["empty_state_action_button"].waitForExistence(timeout: 1) {
+            return true
+        }
+        return false
+    }
+
+    /// 通过 VaultBadge 或 FloatingContextCapsule 退出当前笔记本，返回 NotebookHub 工作台。
+    ///
+    /// 重要：UI 测试模式（`--uitesting`）下，`VaultBadge` 渲染为直通 Button
+    /// （而非 Menu），点击即直接调用 `exitVault()`。因此不存在 `vaultBackToHubButton`
+    /// 子菜单项。本方法已针对两种模式适配。
     private func returnToNotebookHub() {
-        // 方案 1: 通过 VaultBadge 菜单退出（优先，最直接）
+        let isUITesting = ProcessInfo.processInfo.arguments.contains("--uitesting")
+
+        // 方案 1: 通过 VaultBadge 退出
         let vaultBadge = app.buttons["vaultBadgeButton"]
         if vaultBadge.waitForExistence(timeout: 5) {
             vaultBadge.tap()
-            let backBtn = app.buttons["vaultBackToHubButton"]
-            if backBtn.waitForExistence(timeout: 5) {
-                backBtn.tap()
-                if app.scrollViews["NotebookHubView"].waitForExistence(timeout: 8) {
+
+            if isUITesting {
+                // UI 测试模式：VaultBadge 为直通 Button，点击即退出。
+                // 直接等待 NotebookHub 卡片出现即可。
+                if waitForNotebookHubView(timeout: 8) {
                     return
+                }
+            } else {
+                // 生产模式：VaultBadge 为 Menu，需点击其中的退出按钮。
+                let backBtn = app.buttons["vaultBackToHubButton"]
+                if backBtn.waitForExistence(timeout: 5) {
+                    backBtn.tap()
+                    if waitForNotebookHubView(timeout: 8) {
+                        return
+                    }
                 }
             }
         }
 
         // 方案 2: 通过 FloatingContextCapsule（紧凑设备或自定义工具栏）
-        let capsuleBtn = app.buttons["FloatingContextCapsule"]
-        if capsuleBtn.waitForExistence(timeout: 3) {
-            capsuleBtn.tap()
+        // FloatingContextCapsule 是 HStack 容器（非 Button），需用 otherElements 查询
+        let capsuleElement = app.otherElements["FloatingContextCapsule"]
+        if capsuleElement.waitForExistence(timeout: 3) {
+            capsuleElement.tap()
             let backBtn = app.buttons["vaultBackToHubButton"]
             if backBtn.waitForExistence(timeout: 5) {
                 backBtn.tap()
-                if app.scrollViews["NotebookHubView"].waitForExistence(timeout: 8) {
+                if waitForNotebookHubView(timeout: 8) {
                     return
                 }
             }
@@ -222,6 +284,6 @@ final class NotebookHubUITests: KnowledgeBaseUITests {
         if sidebarHubEntry.exists {
             sidebarHubEntry.tap()
         }
-        _ = app.scrollViews["NotebookHubView"].waitForExistence(timeout: 5)
+        _ = waitForNotebookHubView(timeout: 5)
     }
 }
