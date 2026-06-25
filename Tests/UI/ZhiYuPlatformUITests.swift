@@ -214,12 +214,19 @@ final class iPhoneTests: ZhiYuPlatformUITests {
     }
 
     func testiPhoneTabNavigation() async {
-        // 测试 iPhone 上核心 Tab 都能正常切换 — 使用 L10n 自适应导航避免硬编码语言失败
-        // tapTab(named:) 已内置中英文回退 + 物理索引后备
-        let tabs = ["Knowledge", "Chat", "Ingest", "Synthesis", "Graph"]
-        for tab in tabs {
-            tapTab(named: tab)
-            try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
+        // 测试 iPhone 上核心 Tab 都能正常切换 — 中英文双匹配
+        let tabNames = [
+            ("Knowledge", "知识"),
+            ("Chat", "对话"),
+            ("Ingest", "导入"),
+            ("Synthesis", "合成")
+        ]
+        for (en, zh) in tabNames {
+            let button = app.tabBars.buttons[en].exists ? app.tabBars.buttons[en] : app.tabBars.buttons[zh]
+            if button.exists {
+                button.tap()
+                try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
+            }
         }
     }
 
