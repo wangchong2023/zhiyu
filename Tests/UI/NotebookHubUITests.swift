@@ -196,16 +196,13 @@ final class NotebookHubUITests: KnowledgeBaseUITests {
         let vaultBadge = app.buttons["vaultBadgeButton"]
         if vaultBadge.waitForExistence(timeout: 3) {
             vaultBadge.tap()
-            // "返回笔记本中心" 菜单项 — 中英文自适应匹配
-            let backBtnZH = app.buttons["返回笔记本中心"]
-            let backBtnEN = app.buttons["Back to Notebooks"]
-            if backBtnZH.waitForExistence(timeout: 1) {
-                backBtnZH.tap()
-            } else if backBtnEN.waitForExistence(timeout: 1) {
-                backBtnEN.tap()
+            // 使用 accessibilityIdentifier 精确定位，避免 L10n 值变更导致匹配失败
+            let backBtn = app.buttons["vaultBackToHubButton"]
+            if backBtn.waitForExistence(timeout: 2) {
+                backBtn.tap()
+                _ = app.scrollViews["NotebookHubView"].waitForExistence(timeout: 5)
+                return
             }
-            _ = app.scrollViews["NotebookHubView"].waitForExistence(timeout: 5)
-            return
         }
 
         // 回退方案：通过 Sidebar 中的 NotebookHub 入口

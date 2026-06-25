@@ -42,6 +42,7 @@ struct VaultBadge: View {
             }) {
                 Label(L10n.Vault.backToHub, systemImage: DesignSystem.Icons.backToHub)
             }
+            .accessibilityIdentifier("vaultBackToHubButton")
         } label: {
             badgeLabel(currentVault: currentVault)
         }
