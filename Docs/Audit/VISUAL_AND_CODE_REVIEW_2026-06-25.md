@@ -409,8 +409,8 @@ public struct InfoCard: View {
 - [Apple Human Interface Guidelines](https://developer.apple.com/design/human-interface-guidelines/)
 - [WCAG 2.1 Level AA](https://www.w3.org/WAI/WCAG21/quickref/?versions=2.1#contrast-minimum)
 - [SF Pro 字体规范](https://developer.apple.com/design/human-interface-guidelines/typography)
-- [项目本地化规范](Docs/Requirements/LOCALIZATION.md)
-- [视觉系统设计文档](Docs/Design/VISUAL_SYSTEM.md)
+- [项目本地化规范](../Requirements/LOCALIZATION.md)
+- [视觉系统设计文档](../Design/VISUAL_SYSTEM.md)
 
 ---
 
