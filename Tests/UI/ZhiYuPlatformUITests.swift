@@ -214,15 +214,12 @@ final class iPhoneTests: ZhiYuPlatformUITests {
     }
 
     func testiPhoneTabNavigation() async {
-        // 测试 iPhone 上 5 个 Tab 都能正常切换
-        let tabs = ["Knowledge", "Graph", "Search", "Ingest", "Settings"]
-
+        // 测试 iPhone 上核心 Tab 都能正常切换 — 使用 L10n 自适应导航避免硬编码语言失败
+        // tapTab(named:) 已内置中英文回退 + 物理索引后备
+        let tabs = ["Knowledge", "Chat", "Ingest", "Synthesis", "Graph"]
         for tab in tabs {
-            let button = app.tabBars.buttons[tab]
-            if button.exists {
-                button.tap()
-                try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
-            }
+            tapTab(named: tab)
+            try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
         }
     }
 
@@ -406,12 +403,15 @@ final class iPadTests: ZhiYuPlatformUITests {
     }
 
     func testiPadSidebarToggle() async {
-        // 测试侧边栏展开/折叠（如果支持）
+        // 测试侧边栏展开/折叠 — 仅在侧边栏切换按钮存在时执行
+        // iOS 18+ sidebarAdaptable 可能不暴露独立 toggle 按钮，此时跳过不视为失败
         let sidebarToggle = app.buttons["sidebar-toggle"]
-        if sidebarToggle.exists {
+        let hasToggle = sidebarToggle.waitForExistence(timeout: 3)
+        if hasToggle {
             safeTap(sidebarToggle)
             try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
         }
+        // 无 toggle 按钮不 fail — iOS 18+ 可能无此控件
     }
 
     func testiPadKeyboardShortcuts() async {
