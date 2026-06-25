@@ -23,20 +23,15 @@ import XCTest
 @MainActor
 final class NotebookHubUITests: KnowledgeBaseUITests {
 
-    /// 跳过基类的自动进入 vault 逻辑，直接停在 NotebookHub 工作台
-    override func setUp() async throws {
-        app = XCUIApplication()
-        app.launchArguments = ["--uitesting"]
-        app.launchEnvironment = ["UITesting": "true"]
-        app.launch()
-        continueAfterFailure = true
-    }
-
     // MARK: - 内置笔记本存在性
 
     /// 验证 NotebookHub 至少显示 2 个内置笔记本（"知识图谱" + "项目调研"）。
     /// 这覆盖了 VaultDataCoordinator.loadVaults() 通过 englishName 补全内置笔记本的逻辑。
     func testNotebookHubShowsAtLeastTwoDefaultNotebooks() async throws {
+        // 如果已进入主界面，通过 VaultBadge（UI 测试模式下为直通 Button）退出到 NotebookHub
+        if app.tabBars.firstMatch.exists {
+            returnToNotebookHub()
+        }
 
         // 等待 NotebookHub 出现
         let hubView = app.scrollViews["NotebookHubView"]

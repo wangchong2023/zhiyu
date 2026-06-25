@@ -18,6 +18,11 @@ struct VaultBadge: View {
     @Environment(VaultService.self) var vaultService
     @Inject var platformEnv: any AppEnvironmentProtocol // 使用 DI 注入平台环境能力集
     @EnvironmentObject var themeManager: ThemeManager
+
+    /// UI 测试模式下使用直通 Button 替代 Menu（XCUITest 对 SwiftUI Menu 交互不可靠）
+    private var isUITesting: Bool {
+        ProcessInfo.processInfo.arguments.contains("--uitesting")
+    }
     
     var body: some View {
         if let currentVault = vaultService.currentVault {
@@ -34,22 +39,37 @@ struct VaultBadge: View {
         badgeLabel(currentVault: currentVault)
         #else
         // 具有指针/触控能力的设备使用 Menu
-        Menu {
-            Button(action: {
+        // UI 测试模式：附加一个透明直通按钮绕过 SwiftUI Menu（XCUITest 对 Menu 交互不可靠）
+        if isUITesting {
+            Button {
                 withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
                     vaultService.exitVault()
                 }
-            }) {
-                Label(L10n.Vault.backToHub, systemImage: DesignSystem.Icons.backToHub)
+            } label: {
+                badgeLabel(currentVault: currentVault)
             }
-            .accessibilityIdentifier("vaultBackToHubButton")
-        } label: {
-            badgeLabel(currentVault: currentVault)
+            .buttonStyle(.plain)
+            .tint(.primary)
+            .accessibilityLabel("\(L10n.Vault.label): \(currentVault.name)")
+            .accessibilityIdentifier("vaultBadgeButton")
+        } else {
+            Menu {
+                Button(action: {
+                    withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                        vaultService.exitVault()
+                    }
+                }) {
+                    Label(L10n.Vault.backToHub, systemImage: DesignSystem.Icons.backToHub)
+                }
+                .accessibilityIdentifier("vaultBackToHubButton")
+            } label: {
+                badgeLabel(currentVault: currentVault)
+            }
+            .buttonStyle(.plain)
+            .tint(.primary)
+            .accessibilityLabel("\(L10n.Vault.label): \(currentVault.name)")
+            .accessibilityIdentifier("vaultBadgeButton")
         }
-        .buttonStyle(.plain)
-        .tint(.primary)
-        .accessibilityLabel("\(L10n.Vault.label): \(currentVault.name)")
-        .accessibilityIdentifier("vaultBadgeButton")
         #endif
     }
     
