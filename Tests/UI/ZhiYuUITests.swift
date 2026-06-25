@@ -284,11 +284,14 @@ final class ZhiYuUITests: KnowledgeBaseUITests {
     }
 
     private func resolveKnowledgeTab() -> XCUIElement {
-        let candidates = ["Knowledge", "知识", "知识库", "Knowledge"].compactMap { name in
+        // 等待 TabBar 出现，防止 vault 切换动画未完成
+        _ = app.tabBars.firstMatch.waitForExistence(timeout: 5)
+        // L10n 自适应候选：en="ZhiYu", zh-Hans="知识库", 兼容旧版 "Knowledge"/"知识"
+        let candidates = ["ZhiYu", "知识库", "Knowledge", "知识"]
+        for name in candidates {
             let btn = app.tabBars.buttons[name]
-            return btn.exists ? btn : nil
+            if btn.exists { return btn }
         }
-        if let tab = candidates.first { return tab }
         return app.tabBars.buttons.firstMatch
     }
 
