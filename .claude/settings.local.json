@@ -373,7 +373,12 @@
       "Bash(perl -i -pe 'chomp if eof' Tests/Unit/Base/MainActorBridgeTests.swift)",
       "Bash(swiftlint --fix --path Tests/Unit/Base/MainActorBridgeTests.swift Sources/Core/Base/Utils/MainActorBridge.swift)",
       "Bash(swiftlint --strict --path Tests/Unit/Base/MainActorBridgeTests.swift Sources/Core/Base/Utils/MainActorBridge.swift)",
-      "Bash(grep -v \"Linting\\\\|compile\\\\|Compile\\\\|^--$\")"
+      "Bash(grep -v \"Linting\\\\|compile\\\\|Compile\\\\|^--$\")",
+      "Bash(xargs kill)",
+      "Bash(WOODPECKER_TOKEN=\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0eXBlIjoidXNlciIsInVzZXItaWQiOiIxIn0.5yAkqCiJqH2-nwOPVLFDUUzB6CFOJNCix1c8-Kh5yeo\" WOODPECKER_SERVER=\"http://localhost:8000\" woodpecker-cli pipeline show 1 63)",
+      "Bash(WOODPECKER_TOKEN=\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0eXBlIjoidXNlciIsInVzZXItaWQiOiIxIn0.5yAkqCiJqH2-nwOPVLFDUUzB6CFOJNCix1c8-Kh5yeo\" WOODPECKER_SERVER=\"http://localhost:8000\" woodpecker-cli pipeline logs 1 63)",
+      "Bash(WOODPECKER_TOKEN=\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0eXBlIjoidXNlciIsInVzZXItaWQiOiIxIn0.5yAkqCiJqH2-nwOPVLFDUUzB6CFOJNCix1c8-Kh5yeo\" WOODPECKER_SERVER=\"http://localhost:8000\" woodpecker-cli pipeline log 1 63)",
+      "Bash(WOODPECKER_TOKEN=\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0eXBlIjoidXNlciIsInVzZXItaWQiOiIxIn0.5yAkqCiJqH2-nwOPVLFDUUzB6CFOJNCix1c8-Kh5yeo\" WOODPECKER_SERVER=\"http://localhost:8000\" woodpecker-cli pipeline *)"
     ]
   }
 }

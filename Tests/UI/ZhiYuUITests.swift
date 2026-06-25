@@ -284,9 +284,12 @@ final class ZhiYuUITests: KnowledgeBaseUITests {
     }
 
     private func resolveKnowledgeTab() -> XCUIElement {
-        let candidates = [app.tabBars.buttons["Knowledge"], app.tabBars.buttons["books.vertical.fill"], app.tabBars.buttons["知识库"]]
-        for tab in candidates where tab.exists { return tab }
-        return candidates.first ?? app.tabBars.buttons.firstMatch
+        let candidates = ["Knowledge", "知识", "知识库", "Knowledge"].compactMap { name in
+            let btn = app.tabBars.buttons[name]
+            return btn.exists ? btn : nil
+        }
+        if let tab = candidates.first { return tab }
+        return app.tabBars.buttons.firstMatch
     }
 
     private func verifySeededDocuments() {
