@@ -13,7 +13,7 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "智宇"
           }
         }
@@ -31,7 +31,7 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "智宇"
           }
         }
@@ -67,7 +67,7 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "智宇需要使用 Face ID 来保护您的知识库和隐私空间安全。"
           }
         }
