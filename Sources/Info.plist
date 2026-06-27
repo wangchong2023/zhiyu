@@ -2,8 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>BUILD_FLAVOR</key>
+	<string>dev</string>
 	<key>BUILD_TIMESTAMP</key>
-	<string>2026-06-27T11:03:11Z</string>
+	<string>2026-06-27T11:15:11Z</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
@@ -37,9 +39,9 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>840</string>
+	<string>844</string>
 	<key>GIT_SHORT_HASH</key>
-	<string>94469583</string>
+	<string>2fd25fc3</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSMinimumSystemVersion</key>

@@ -32,10 +32,17 @@ BUILD=$(git rev-list --count HEAD)
 # ── 3. 短哈希：精确回溯 commit ──
 HASH=$(git rev-parse --short HEAD)
 
-# ── 4. 构建时间：ISO 8601 格式（北京时间）──
+# ── 4. 构建时间：ISO 8601 格式 ──
 BUILD_TIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
-# ── 4. 写入 Info.plist ──
+# ── 4.5 构建风味：HEAD 是否有 tag 决定 dev/release ──
+if git describe --tags --exact-match HEAD &>/dev/null; then
+    FLAVOR="release"
+else
+    FLAVOR="dev"
+fi
+
+# ── 5. 写入 Info.plist ──
 /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $VERSION" "$PLIST"
 /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $BUILD" "$PLIST"
 
@@ -53,11 +60,19 @@ else
     /usr/libexec/PlistBuddy -c "Add :BUILD_TIMESTAMP string $BUILD_TIME" "$PLIST"
 fi
 
+# 自定义键 BUILD_FLAVOR（dev / release）
+if /usr/libexec/PlistBuddy -c "Print :BUILD_FLAVOR" "$PLIST" &>/dev/null; then
+    /usr/libexec/PlistBuddy -c "Set :BUILD_FLAVOR $FLAVOR" "$PLIST"
+else
+    /usr/libexec/PlistBuddy -c "Add :BUILD_FLAVOR string $FLAVOR" "$PLIST"
+fi
+
 # ── 5. 将动态构建信息同步注入 Swift 源码常量（防抵赖：每次构建可追溯）──
 if [ -f "$VERSION_SWIFT" ]; then
     sed -i '' "s/static let gitShortHash = \"[^\"]*\"/static let gitShortHash = \"$HASH\"/" "$VERSION_SWIFT"
     sed -i '' "s/static let buildTimestamp = \"[^\"]*\"/static let buildTimestamp = \"$BUILD_TIME\"/" "$VERSION_SWIFT"
-    echo "[inject_version] Swift 源码常量已同步: gitShortHash=$HASH  buildTimestamp=$BUILD_TIME"
+    sed -i '' "s/static let buildFlavor = \"[^\"]*\"/static let buildFlavor = \"$FLAVOR\"/" "$VERSION_SWIFT"
+    echo "[inject_version] Swift 源码常量已同步: gitShortHash=$HASH  buildTimestamp=$BUILD_TIME  buildFlavor=$FLAVOR"
 fi
 
 echo "[inject_version] CFBundleShortVersionString=$VERSION  CFBundleVersion=$BUILD  GIT_SHORT_HASH=$HASH  BUILD_TIMESTAMP=$BUILD_TIME"

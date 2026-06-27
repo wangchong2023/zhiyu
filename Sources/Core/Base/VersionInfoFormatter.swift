@@ -18,7 +18,7 @@ enum VersionInfoFormatter {
 
     /// 从 infoDictionary 组装版本展示字符串
     /// - Parameter info: `Bundle.main.infoDictionary`，测试时可注入任意字典
-    /// - Returns: 格式 `"1.2.3 (342 · abc1234)"`，缺失字段使用 fallback
+    /// - Returns: 格式 `"1.2.3 (342 · abc1234)"` 或 `"1.2.3-dev (342 · abc1234)"`，缺失字段使用 fallback
     static func versionDisplayString(from info: [String: Any]?) -> String {
         guard let info else {
             return "0.0.0 (? · unknown)"
@@ -26,7 +26,9 @@ enum VersionInfoFormatter {
         let version = info["CFBundleShortVersionString"] as? String ?? "0.0.0"
         let build = info["CFBundleVersion"] as? String ?? "?"
         let hash = info["GIT_SHORT_HASH"] as? String ?? "unknown"
-        return "\(version) (\(build) · \(hash))"
+        let flavor = info["BUILD_FLAVOR"] as? String ?? ""
+        let suffix = (flavor == "dev") ? "-dev" : ""
+        return "\(version)\(suffix) (\(build) · \(hash))"
     }
 
     // MARK: - 构建时间展示
