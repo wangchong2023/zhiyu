@@ -3454,6 +3454,23 @@
         }
       }
     },
+    "settings.about.build": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Build"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "构建"
+          }
+        }
+      }
+    },
     "settings.about.buildTime": {
       "extractionState": "manual",
       "localizations": {

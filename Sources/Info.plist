@@ -5,7 +5,7 @@
 	<key>BUILD_FLAVOR</key>
 	<string>dev</string>
 	<key>BUILD_TIMESTAMP</key>
-	<string>2026-06-27T11:15:11Z</string>
+	<string>2026-06-27T11:31:51Z</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
@@ -39,9 +39,9 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>844</string>
+	<string>845</string>
 	<key>GIT_SHORT_HASH</key>
-	<string>2fd25fc3</string>
+	<string>42cea190</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSMinimumSystemVersion</key>

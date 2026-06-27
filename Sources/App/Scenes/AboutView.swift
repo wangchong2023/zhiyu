@@ -51,6 +51,8 @@ struct AboutView: View {
                     Divider().padding(.leading, Spacing.standardPadding)
                     infoRow(title: L10n.Settings.About.version, value: versionDisplayString)
                     Divider().padding(.leading, Spacing.standardPadding)
+                    infoRow(title: L10n.Settings.About.build, value: buildDetailString)
+                    Divider().padding(.leading, Spacing.standardPadding)
                     infoRow(title: L10n.Settings.About.buildTime, value: buildTimestampString)
                 }
                 .background(Color.appCard.opacity(DesignSystem.Opacity.soft))
@@ -80,10 +82,14 @@ struct AboutView: View {
         }
     }
     
-    /// 从 Bundle 读取 CI 注入的版本信息
-    /// 展示格式: "1.2.3 (342 · abc1234)"  + 构建时间行
+    /// 版本号（SemVer），从 Info.plist 的 CFBundleShortVersionString 读取
     private var versionDisplayString: String {
-        VersionInfoFormatter.versionDisplayString(from: Bundle.main.infoDictionary)
+        VersionInfoFormatter.semVerString(from: Bundle.main.infoDictionary)
+    }
+
+    /// 构建详情：构建号 + 短哈希
+    private var buildDetailString: String {
+        VersionInfoFormatter.buildDetailString(from: Bundle.main.infoDictionary)
     }
 
     /// 构建时间，从 Info.plist 的 BUILD_TIMESTAMP 读取

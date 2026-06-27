@@ -380,11 +380,9 @@ extension AppConstants {
         /// 语义化版本号（SemVer），发布时需与 git tag 同步更新
         public static let semVer = "1.0.0"
         /// Git 短提交哈希（构建时自动注入）
-        public static let gitShortHash = "2fd25fc3"
+        public static let gitShortHash = "42cea190"
         /// 构建时间戳 ISO 8601（构建时自动注入）
-        public static let buildTimestamp = "2026-06-27T11:15:11Z"
-        /// 构建风味：dev（日常开发）或 release（HEAD 有 git tag）
-        public static let buildFlavor = "dev"
+        public static let buildTimestamp = "2026-06-27T11:31:51Z"
     }
 }
 
