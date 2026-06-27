@@ -21,6 +21,7 @@ import subprocess
 import sys
 import json
 import shutil
+from typing import Optional
 from pathlib import Path
 
 # ── 常量 ──
@@ -37,7 +38,7 @@ LOCAL_MIN_TOKENS = 80         # 较大的最小块大小（减少误报）
 CI_THRESHOLD = 1              # 1% 容忍度（CI 严格红线）
 
 
-def _find_jscpd() -> str | None:
+def _find_jscpd() -> Optional[str]:
     """查找 jscpd 可执行文件路径。
 
     依次尝试:
