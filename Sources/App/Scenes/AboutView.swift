@@ -50,6 +50,8 @@ struct AboutView: View {
                     infoRow(title: L10n.Settings.About.website, value: AppConstants.URLs.officialWebsite)
                     Divider().padding(.leading, Spacing.standardPadding)
                     infoRow(title: L10n.Settings.About.version, value: versionDisplayString)
+                    Divider().padding(.leading, Spacing.standardPadding)
+                    infoRow(title: L10n.Settings.About.buildTime, value: buildTimestampString)
                 }
                 .background(Color.appCard.opacity(DesignSystem.Opacity.soft))
                 .clipShape(RoundedRectangle(cornerRadius: Spacing.cardRadius))
@@ -78,13 +80,31 @@ struct AboutView: View {
         }
     }
     
-    /// 从 Bundle 读取 CI 注入的版本信息，展示为 "1.2.3 (342 · abc1234)" 格式
+    /// 从 Bundle 读取 CI 注入的版本信息
+    /// 展示格式: "1.2.3 (342 · abc1234)"  + 构建时间行
     private var versionDisplayString: String {
         let info = Bundle.main.infoDictionary
         let version = info?["CFBundleShortVersionString"] as? String ?? "0.0.0"
         let build = info?["CFBundleVersion"] as? String ?? "?"
         let hash = info?["GIT_SHORT_HASH"] as? String ?? "unknown"
         return "\(version) (\(build) · \(hash))"
+    }
+
+    /// 构建时间，从 Info.plist 的 BUILD_TIMESTAMP 读取
+    private var buildTimestampString: String {
+        let info = Bundle.main.infoDictionary
+        let raw = info?["BUILD_TIMESTAMP"] as? String
+        guard let raw else { return "" }
+
+        // ISO 8601 → 本地化短格式: 2026-06-27T15:30:00Z → 2026-06-27 15:30
+        let isoFormatter = ISO8601DateFormatter()
+        isoFormatter.formatOptions = [.withInternetDateTime]
+        guard let date = isoFormatter.date(from: raw) else { return raw }
+
+        let displayFormatter = DateFormatter()
+        displayFormatter.dateFormat = "yyyy-MM-dd HH:mm"
+        displayFormatter.timeZone = TimeZone.current
+        return displayFormatter.string(from: date)
     }
 
     private func infoRow(title: String, value: String) -> some View {

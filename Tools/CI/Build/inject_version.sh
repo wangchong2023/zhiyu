@@ -27,6 +27,9 @@ BUILD=$(git rev-list --count HEAD)
 # ── 3. 短哈希：精确回溯 commit ──
 HASH=$(git rev-parse --short HEAD)
 
+# ── 4. 构建时间：ISO 8601 格式（北京时间）──
+BUILD_TIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
 # ── 4. 写入 Info.plist ──
 /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $VERSION" "$PLIST"
 /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $BUILD" "$PLIST"
@@ -38,4 +41,11 @@ else
     /usr/libexec/PlistBuddy -c "Add :GIT_SHORT_HASH string $HASH" "$PLIST"
 fi
 
-echo "[inject_version] CFBundleShortVersionString=$VERSION  CFBundleVersion=$BUILD  GIT_SHORT_HASH=$HASH"
+# 自定义键 BUILD_TIMESTAMP（ISO 8601 构建时间）
+if /usr/libexec/PlistBuddy -c "Print :BUILD_TIMESTAMP" "$PLIST" &>/dev/null; then
+    /usr/libexec/PlistBuddy -c "Set :BUILD_TIMESTAMP $BUILD_TIME" "$PLIST"
+else
+    /usr/libexec/PlistBuddy -c "Add :BUILD_TIMESTAMP string $BUILD_TIME" "$PLIST"
+fi
+
+echo "[inject_version] CFBundleShortVersionString=$VERSION  CFBundleVersion=$BUILD  GIT_SHORT_HASH=$HASH  BUILD_TIMESTAMP=$BUILD_TIME"

@@ -15,7 +15,7 @@ DerivedData/
 *.p_t
 
 # Build results
-build/
+/build/
 
 # Swift Package Manager
 .build/
