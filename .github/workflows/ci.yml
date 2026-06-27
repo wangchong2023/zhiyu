@@ -133,6 +133,9 @@ jobs:
           name: xcode-project
           path: ZhiYu.xcodeproj/
 
+      - name: Inject Version
+        run: bash Tools/CI/Build/inject_version.sh Sources/Info.plist
+
       - name: Install Test Toolchain
         run: |
           brew install xcbeautify xcodegen
@@ -188,6 +191,9 @@ jobs:
           name: xcode-project
           path: ZhiYu.xcodeproj/
 
+      - name: Inject Version
+        run: bash Tools/CI/Build/inject_version.sh Sources/Info.plist
+
       - name: Run UI Tests
         run: |
           chmod +x Tools/CI/Test/run_ui_tests.sh
@@ -223,6 +229,9 @@ jobs:
         with:
           name: xcode-project
           path: ZhiYu.xcodeproj/
+
+      - name: Inject Version
+        run: bash Tools/CI/Build/inject_version.sh Sources/Info.plist
 
       - name: Restore SPM Cache
         uses: actions/cache/restore@v4
@@ -265,6 +274,9 @@ jobs:
         with:
           name: xcode-project
           path: ZhiYu.xcodeproj/
+
+      - name: Inject Version
+        run: bash Tools/CI/Build/inject_version.sh Sources/Info.plist
 
       - name: Restore SPM Cache
         uses: actions/cache/restore@v4
