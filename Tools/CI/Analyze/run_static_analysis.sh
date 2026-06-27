@@ -61,13 +61,18 @@ run_parallel_task "Magic Numbers & Strings" "magic_numbers" "python3 Tools/Gatek
 run_parallel_task "Layer Markers" "layer_markers" "bash Tools/Gatekeeper/Architecture/check_layer_markers.sh" & pid6=$!
 run_parallel_task "Unsafe String.Index Scan" "unsafe_string_index" "python3 Tools/Gatekeeper/Sanity/check_unsafe_string_index.py" & pid7=$!
 run_parallel_task "Docs & Config Integrity" "docs_and_configs" "python3 Tools/Gatekeeper/Sanity/check_docs_and_configs.py" & pid8=$!
-run_parallel_task "SPM Integrity" "spm_integrity" "bash Tools/CI/Analyze/verify_spm_integrity.sh" & pid9=$!
-run_parallel_task "Tools Quality Gatekeeper" "tools_quality" "$PYTHON3 Tools/Gatekeeper/Sanity/check_scripts_quality.py" & pid10=$!
-run_parallel_task "Swift Quality Guard" "swift_quality" "$PYTHON3 Tools/Gatekeeper/Sanity/check_swift_quality.py" & pid11=$!
-run_parallel_task "Cyclomatic Complexity" "complexity" "python3 Tools/Gatekeeper/Compliance/check_complexity.py" & pid12=$!
-run_parallel_task "Duplicate Code (jscpd)" "duplicate_code" "python3 Tools/Gatekeeper/Sanity/check_duplicate_code.py" & pid13=$!
+run_parallel_task "SPM Dependencies Audit" "spm_audit" "python3 Tools/CI/Analyze/audit_spm_dependencies.py" & pid9=$!
+run_parallel_task "SPM Integrity" "spm_integrity" "bash Tools/CI/Analyze/verify_spm_integrity.sh" & pid10=$!
+run_parallel_task "Tools Quality Gatekeeper" "tools_quality" "$PYTHON3 Tools/Gatekeeper/Sanity/check_scripts_quality.py" & pid11=$!
+run_parallel_task "Swift Quality Guard" "swift_quality" "$PYTHON3 Tools/Gatekeeper/Sanity/check_swift_quality.py" & pid12=$!
+run_parallel_task "Cyclomatic Complexity" "complexity" "python3 Tools/Gatekeeper/Compliance/check_complexity.py" & pid13=$!
+run_parallel_task "Localization Compliance" "localization" "python3 Tools/Gatekeeper/Compliance/check_localization.py" & pid14=$!
+run_parallel_task "SwiftLint" "swiftlint" "swiftlint --strict --reporter github-actions-logging 2>/dev/null || swiftlint --strict" & pid15=$!
+run_parallel_task "Hardcoded Secrets" "hardcoded_secrets" "python3 Tools/Gatekeeper/Release/check_hardcoded_secrets.py" & pid16=$!
+run_parallel_task "Duplicate Code (jscpd)" "duplicate_code" "python3 Tools/Gatekeeper/Sanity/check_duplicate_code.py" & pid17=$!
+run_parallel_task "Commit Signature" "signature" "bash Tools/CI/Analyze/verify_commit_signature.sh" & pid18=$!
 
-run_parallel_task "SBOM Generation & Syft Scan" "sbom_generation" "(python3 Tools/CI/Analyze/generate_sbom.py && (syft . --exclude ./build --exclude ./env -o cyclonedx-json=build/syft.cdx.json 2>/dev/null || echo Syft skipped) && python3 Tools/CI/Analyze/merge_sbom.py)" & pid14=$!
+run_parallel_task "SBOM Generation & Syft Scan" "sbom_generation" "(python3 Tools/CI/Analyze/generate_sbom.py && (syft . --exclude ./build --exclude ./env -o cyclonedx-json=build/syft.cdx.json 2>/dev/null || echo Syft skipped) && python3 Tools/CI/Analyze/merge_sbom.py)" & pid19=$!
 
 # 等待所有后台任务，并收拢退出状态
 wait $pid1 || EXIT_CODE=1
@@ -84,6 +89,11 @@ wait $pid11 || EXIT_CODE=1
 wait $pid12 || EXIT_CODE=1
 wait $pid13 || EXIT_CODE=1
 wait $pid14 || EXIT_CODE=1
+wait $pid15 || EXIT_CODE=1
+wait $pid16 || EXIT_CODE=1
+wait $pid17 || EXIT_CODE=1
+wait $pid18 || EXIT_CODE=1
+wait $pid19 || EXIT_CODE=1
 
 echo ""
 if [ $EXIT_CODE -ne 0 ]; then
