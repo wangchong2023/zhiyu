@@ -99,14 +99,14 @@ jobs:
           python3 Tools/CI/Analyze/merge_sbom.py
 
       - name: Upload SBOM Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: sbom
           path: build/sbom.spdx.json
           retention-days: 90
 
       - name: Upload Xcode Project
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: xcode-project
           path: ZhiYu.xcodeproj/
@@ -152,7 +152,7 @@ jobs:
 
       - name: Upload Test Artifacts
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: test-results-unit
           path: |
@@ -162,7 +162,7 @@ jobs:
 
       - name: Upload Coverage Report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: coverage-report
           path: build/coverage_report.txt
@@ -195,7 +195,7 @@ jobs:
 
       - name: Upload UI Test Artifacts
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: test-results-ui
           path: |
@@ -237,7 +237,7 @@ jobs:
 
       - name: Upload Test Artifacts
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: test-results-ipad
           path: |
@@ -279,7 +279,7 @@ jobs:
 
       - name: Upload Test Artifacts
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: test-results-mac-catalyst
           path: |
