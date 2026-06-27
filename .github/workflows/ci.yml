@@ -320,6 +320,9 @@ jobs:
           name: xcode-project
           path: ZhiYu.xcodeproj/
 
+      - name: Inject Version
+        run: bash Tools/CI/Build/inject_version.sh Sources/Info.plist
+
       - name: Compile ${{ matrix.platform.name }}
         run: |
           xcodebuild build \

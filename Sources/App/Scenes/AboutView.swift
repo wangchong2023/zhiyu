@@ -49,7 +49,7 @@ struct AboutView: View {
                     Divider().padding(.leading, Spacing.standardPadding)
                     infoRow(title: L10n.Settings.About.website, value: AppConstants.URLs.officialWebsite)
                     Divider().padding(.leading, Spacing.standardPadding)
-                    infoRow(title: L10n.Settings.About.version, value: "1.0.0 (20260512)")
+                    infoRow(title: L10n.Settings.About.version, value: versionDisplayString)
                 }
                 .background(Color.appCard.opacity(DesignSystem.Opacity.soft))
                 .clipShape(RoundedRectangle(cornerRadius: Spacing.cardRadius))
@@ -78,6 +78,15 @@ struct AboutView: View {
         }
     }
     
+    /// 从 Bundle 读取 CI 注入的版本信息，展示为 "1.2.3 (342 · abc1234)" 格式
+    private var versionDisplayString: String {
+        let info = Bundle.main.infoDictionary
+        let version = info?["CFBundleShortVersionString"] as? String ?? "0.0.0"
+        let build = info?["CFBundleVersion"] as? String ?? "?"
+        let hash = info?["GIT_SHORT_HASH"] as? String ?? "unknown"
+        return "\(version) (\(build) · \(hash))"
+    }
+
     private func infoRow(title: String, value: String) -> some View {
         HStack {
             Text(title)

@@ -25,6 +25,8 @@ options:
 settings:
   base:
     SWIFT_VERSION: "5.9"
+    MARKETING_VERSION: "0.0.0-dev"       # CI 会在构建前通过 inject_version.sh 覆盖
+    CURRENT_PROJECT_VERSION: "0"          # CI 会在构建前通过 inject_version.sh 覆盖
     TARGETED_DEVICE_FAMILY: "1,2,4"
     INFOPLIST_FILE: Sources/Info.plist
     DEVELOPMENT_TEAM: "XSC749SK6J"

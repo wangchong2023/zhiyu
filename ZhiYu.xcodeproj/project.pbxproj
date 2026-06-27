@@ -5889,6 +5889,7 @@
 			buildConfigurationList = 3CAD462734E8BF8470D17B53 /* Build configuration list for PBXNativeTarget "ZhiYuWatch" */;
 			buildPhases = (
 				3A26498A3945120BA60D763D /* [Gatekeeper] SwiftLint Quality Audit */,
+				B7BED3B34A1D9C74E0246A3E /* [Gatekeeper] Duplicate Code Detection (jscpd) */,
 				EA1B37A047D6A4A9288944A3 /* Sources */,
 				AB2B5FECDF7840D69B5DBB41 /* Resources */,
 				25FE1560EB48C69ADB1DCCD7 /* Frameworks */,
@@ -5922,6 +5923,7 @@
 				5A14795F3FF364E52B7253E1 /* [Gatekeeper] Tools Scripts Quality Audit */,
 				DCCE0DE01ABCB7FCD769834D /* [Gatekeeper] Cross-Platform Layout Audit */,
 				4A4C3B08610FFCC50795CA33 /* [Gatekeeper] DI Inject Safety Audit */,
+				DCD10A5D58EBEF109216131E /* [Gatekeeper] Duplicate Code Detection (jscpd) */,
 				E063B9A33663ED664F0692A4 /* Sources */,
 				B0DD082C1B2AF7EA4E17CFCD /* Resources */,
 				0AFAF95542CAF86BC9C615A3 /* Frameworks */,
@@ -5948,6 +5950,7 @@
 			buildConfigurationList = 1581BA8168C5C02F9DF3FC9C /* Build configuration list for PBXNativeTarget "ZhiYuMac" */;
 			buildPhases = (
 				EC187BA9D31CB968CCF1EDE5 /* [Gatekeeper] SwiftLint Quality Audit */,
+				04862B5A0B06F0E5386A09D1 /* [Gatekeeper] Duplicate Code Detection (jscpd) */,
 				86291D6B599F1CBF26E285DE /* Sources */,
 				9D4C3BB7686487432DE9BCE6 /* Resources */,
 				DAA3A90F62D6362E3C59B549 /* Frameworks */,
@@ -6262,6 +6265,25 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		04862B5A0B06F0E5386A09D1 /* [Gatekeeper] Duplicate Code Detection (jscpd) */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "[Gatekeeper] Duplicate Code Detection (jscpd)";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "python3 Tools/Gatekeeper/Sanity/check_duplicate_code.py --local";
+		};
 		25126DFFB22D9341C94FCC43 /* [Gatekeeper] App Store Readiness Check */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
@@ -6452,6 +6474,25 @@
 			shellPath = /bin/sh;
 			shellScript = "python3 Tools/Gatekeeper/Architecture/check_architecture_dependency.py";
 		};
+		B7BED3B34A1D9C74E0246A3E /* [Gatekeeper] Duplicate Code Detection (jscpd) */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "[Gatekeeper] Duplicate Code Detection (jscpd)";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "python3 Tools/Gatekeeper/Sanity/check_duplicate_code.py --local";
+		};
 		DCCE0DE01ABCB7FCD769834D /* [Gatekeeper] Cross-Platform Layout Audit */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
@@ -6470,6 +6511,25 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "python3 Tools/Gatekeeper/Sanity/check_layout.py";
+		};
+		DCD10A5D58EBEF109216131E /* [Gatekeeper] Duplicate Code Detection (jscpd) */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "[Gatekeeper] Duplicate Code Detection (jscpd)";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "python3 Tools/Gatekeeper/Sanity/check_duplicate_code.py --local";
 		};
 		E01D6AFE11C2508020949DE2 /* [Gatekeeper] Hardcoded Secrets Audit */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -8739,6 +8799,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 0;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = XSC749SK6J;
 				EAGER_COMPILATION_ENABLED = NO;
@@ -8763,6 +8824,7 @@
 				INFOPLIST_FILE = Sources/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = "0.0.0-dev";
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -8958,6 +9020,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 0;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = XSC749SK6J;
 				EAGER_COMPILATION_ENABLED = NO;
@@ -8976,6 +9039,7 @@
 				INFOPLIST_FILE = Sources/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = "0.0.0-dev";
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
