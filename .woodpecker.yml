@@ -49,7 +49,7 @@ steps:
     commands:
       - bash Tools/CI/Build/build_platform.sh ZhiYuWatch 'generic/platform=watchOS Simulator' watchos
 
-  test:
+  test-and-verify-coverage:
     depends_on: [build-watchos]
     image: bash
     commands:
