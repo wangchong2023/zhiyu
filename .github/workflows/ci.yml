@@ -30,7 +30,7 @@ on:
 jobs:
   # ── Stage 1: 代码质量快速检查 ───────────────────────────────────────
   lint-and-audit:
-    name: Lint & Audit
+    name: Audit Code Quality
     runs-on: macos-15
 
     steps:
@@ -52,31 +52,31 @@ jobs:
       - name: Audit SPM Dependencies
         run: python3 Tools/CI/Analyze/audit_spm_dependencies.py
 
-      - name: Run SwiftLint Strict Analysis
+      - name: Lint Swift Sources
         run: swiftlint lint --strict --reporter github-actions-logging
 
-      - name: Scan for Hardcoded Secrets
+      - name: Scan Hardcoded Secrets
         run: python3 Tools/Gatekeeper/Release/check_hardcoded_secrets.py
 
-      - name: Check Localization Compliance
+      - name: Validate Localization
         run: python3 Tools/Gatekeeper/Compliance/check_localization.py
 
-      - name: Check Architecture Dependencies (L0-L3)
+      - name: Validate Layer Dependencies
         run: python3 Tools/Gatekeeper/Architecture/check_architecture_dependency.py
 
-      - name: Check Domain Purity
+      - name: Validate Domain Purity
         run: python3 Tools/Gatekeeper/Architecture/check_domain_purity.py
 
-      - name: Audit Magic Numbers & Strings
+      - name: Scan Magic Numbers
         run: python3 Tools/Gatekeeper/Compliance/check_magic_numbers.py
 
-      - name: Check Root Hygiene (Temp Files + Structure)
+      - name: Scan Root Hygiene
         run: python3 Tools/Gatekeeper/Sanity/check_root_hygiene.py
 
-      - name: Check Duplicate Code (jscpd)
+      - name: Scan Duplicate Code
         run: python3 Tools/Gatekeeper/Sanity/check_duplicate_code.py
 
-      - name: Check Test DI Setup
+      - name: Validate Test DI Setup
         run: python3 Tools/Gatekeeper/Architecture/check_test_di_setup.py
 
       - name: Verify Commit Signature
@@ -105,7 +105,7 @@ jobs:
           path: build/sbom.spdx.json
           retention-days: 90
 
-      - name: Upload Xcode Project Artifact
+      - name: Upload Xcode Project
         uses: actions/upload-artifact@v4
         with:
           name: xcode-project
@@ -114,7 +114,7 @@ jobs:
 
   # ── Stage 2: 构建 + 单元测试 + 覆盖率 ────────────────────────────────
   test:
-    name: Build & Unit Test
+    name: Test & Verify Coverage
     needs: lint-and-audit
     runs-on: macos-15
 
@@ -127,7 +127,7 @@ jobs:
         with:
           xcode-version: 'latest-stable'
 
-      - name: Download Xcode Project Artifact
+      - name: Download Xcode Project
         uses: actions/download-artifact@v4
         with:
           name: xcode-project
@@ -137,20 +137,20 @@ jobs:
         run: |
           brew install xcbeautify xcodegen
 
-      - name: List Available Simulators (Debug)
+      - name: List Available Simulators
         run: |
           echo "=== 可用 iPhone 模拟器列表 ==="
           xcrun simctl list devices available | grep iPhone || echo "(none)"
 
-      - name: Run Unit Tests with Coverage
+      - name: Run Unit Tests
         run: |
           chmod +x Tools/CI/Test/run_unit_tests.sh
           ./Tools/CI/Test/run_unit_tests.sh
 
-      - name: Enforce Code Coverage Threshold
+      - name: Enforce Coverage Threshold
         run: python3 Tools/CI/Test/check_coverage.py
 
-      - name: Upload Test Results (on failure)
+      - name: Upload Test Artifacts
         if: failure()
         uses: actions/upload-artifact@v4
         with:
@@ -169,7 +169,7 @@ jobs:
 
   # ── Stage 3: UI 测试（独立阶段）──────────────────────────────────────
   ui-test:
-    name: UI Tests
+    name: Validate UI (iPhone)
     needs: lint-and-audit
     runs-on: macos-15
 
@@ -182,18 +182,18 @@ jobs:
         with:
           xcode-version: 'latest-stable'
 
-      - name: Download Xcode Project Artifact
+      - name: Download Xcode Project
         uses: actions/download-artifact@v4
         with:
           name: xcode-project
           path: ZhiYu.xcodeproj/
 
-      - name: Run UI Tests (Parallel)
+      - name: Run UI Tests
         run: |
           chmod +x Tools/CI/Test/run_ui_tests.sh
           ./Tools/CI/Test/run_ui_tests.sh
 
-      - name: Upload UI Test Results (on failure)
+      - name: Upload UI Test Artifacts
         if: failure()
         uses: actions/upload-artifact@v4
         with:
@@ -202,9 +202,9 @@ jobs:
             build/ui_test_output.log
             build/DerivedData/Logs/Test/*.xcresult
 
-  # ── Stage 3b: iPad UI 测试（并行 to Stage 3）───────────────────────────
+  # ── Stage 3b: iPad UI 验证 ──────────────────────────────────
   ipad-ui-test:
-    name: UI Tests (iPad)
+    name: Validate UI (iPad)
     needs: lint-and-audit
     runs-on: macos-15
     continue-on-error: true
@@ -218,7 +218,7 @@ jobs:
         with:
           xcode-version: 'latest-stable'
 
-      - name: Download Xcode Project Artifact
+      - name: Download Xcode Project
         uses: actions/download-artifact@v4
         with:
           name: xcode-project
@@ -235,7 +235,7 @@ jobs:
         run: bash Tools/CI/Test/run_ipad_ui_tests.sh
         timeout-minutes: 20
 
-      - name: Upload Test Artifacts (on failure)
+      - name: Upload Test Artifacts
         if: failure()
         uses: actions/upload-artifact@v4
         with:
@@ -244,9 +244,9 @@ jobs:
             build/ipad_ui_test.log
             build/DerivedData/Logs/Test/*.xcresult
 
-  # ── Stage 3c: Mac Catalyst UI 测试（并行 to Stage 3）────────────────────
+  # ── Stage 3c: Mac Catalyst UI 验证 ──────────────────────────
   mac-catalyst-ui-test:
-    name: UI Tests (Mac Catalyst)
+    name: Validate UI (Mac)
     needs: lint-and-audit
     runs-on: macos-15
     continue-on-error: true
@@ -260,7 +260,7 @@ jobs:
         with:
           xcode-version: 'latest-stable'
 
-      - name: Download Xcode Project Artifact
+      - name: Download Xcode Project
         uses: actions/download-artifact@v4
         with:
           name: xcode-project
@@ -277,7 +277,7 @@ jobs:
         run: bash Tools/CI/Test/run_mac_catalyst_ui_tests.sh
         timeout-minutes: 20
 
-      - name: Upload Test Artifacts (on failure)
+      - name: Upload Test Artifacts
         if: failure()
         uses: actions/upload-artifact@v4
         with:
@@ -286,9 +286,9 @@ jobs:
             build/mac_catalyst_ui_test.log
             build/DerivedData/Logs/Test/*.xcresult
 
-  # ── Stage 4: 多平台编译验证（矩阵并行）───────────────────────────────
+  # ── Stage 4: 多平台编译验证 ──────────────────────────────────
   multi-platform:
-    name: Build ${{ matrix.platform }}
+    name: Compile ${{ matrix.platform.name }}
     needs: lint-and-audit
     runs-on: macos-15
     strategy:
@@ -314,13 +314,13 @@ jobs:
         with:
           xcode-version: 'latest-stable'
 
-      - name: Download Xcode Project Artifact
+      - name: Download Xcode Project
         uses: actions/download-artifact@v4
         with:
           name: xcode-project
           path: ZhiYu.xcodeproj/
 
-      - name: Build ${{ matrix.platform.name }}
+      - name: Compile ${{ matrix.platform.name }}
         run: |
           xcodebuild build \
             -project ZhiYu.xcodeproj \
