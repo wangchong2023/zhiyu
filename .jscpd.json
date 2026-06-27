@@ -23,7 +23,9 @@
     "scratch/**",
     ".claude/**",
     "fastlane/**",
-    "Tools/Hooks/**"
+    "Tools/Hooks/**",
+    "AGENTS.md",
+    "Docs/superpowers/**"
   ],
   "format": ["swift", "python", "sh", "yaml", "markdown", "json"],
   "minLines": 5,
