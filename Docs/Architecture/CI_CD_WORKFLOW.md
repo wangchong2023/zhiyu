@@ -58,29 +58,23 @@
 
 ## 2. 主 CI 流水线 (`.woodpecker.yml`)
 
-每次 push 到 `main` 分支通过 Gitea Webhook 自动触发，**9 步执行**（步骤间通过 `depends_on` 声明依赖，可并行处自动并行）：
+每次 push 到 `main` 分支通过 Gitea Webhook 自动触发，**7 步执行**（步骤间通过 `depends_on` 声明依赖，可并行处自动并行）：
 
 | # | 步骤 | depends_on | 说明 |
 |---|------|------------|------|
 | 1 | `clone-repo` | — | 用 `$CI_NETRC_*` 凭据写 `~/.netrc`，`git fetch origin $CI_COMMIT_SHA` 精确拉取提交 |
-| 2 | `static-analysis` | clone-repo | 并发执行 **12 项**静态分析（见 `Tools/CI/run_static_analysis.sh`）：架构依赖、领域纯净度、DI 测试设置、根目录卫生、魔鬼数字、分层标记、Unsafe String.Index、文档与配置完整性、SPM 完整性、Tools 脚本质量、Swift 注释与函数长度、SBOM 生成 |
-| 3 | `swiftlint` | clone-repo | `swiftlint --strict`（圈复杂度/函数长度/编码规范硬性熔断） |
-| 4 | `signature-check` | clone-repo | GPG 提交签名校验（`failure: ignore`，失败不阻断） |
-| 5 | `secret-scan` | clone-repo | 硬编码密钥/Token/IP 扫描 |
-| 6 | `prepare` | clone-repo | `xcodegen generate` 生成 `.xcodeproj`（见 `Tools/CI/prepare_build_environment.sh`） |
-| 7 | `build-ios` / `build-macos` / `build-watchos` | prepare | 三平台并行编译（`build_platform.sh`，互不阻塞） |
-| 8 | `test` | build-ios, build-macos, build-watchos | `xcodebuild test` + 覆盖率红线校验（见 `Tools/CI/run_tests_and_coverage.sh`） |
+| 2 | `static-analysis` | clone-repo | 并发执行 **19 项**静态分析（见 `Tools/CI/run_static_analysis.sh`）：架构依赖、领域纯净度、DI 测试设置、根目录卫生、魔鬼数字、分层标记、Unsafe String.Index、文档与配置完整性、SPM 依赖审计、SPM 完整性、Tools 脚本质量、Swift 注释与函数长度、圈复杂度、本地化合规、SwiftLint、硬编码密钥、重复代码（jscpd）、提交签名校验、SBOM 生成 |
+| 3 | `prepare-dependencies` | clone-repo | `xcodegen generate` + SPM 依赖解析 |
+| 4 | `build-ios` | prepare-dependencies | `build_platform.sh ZhiYu iOS` |
+| 5 | `build-macos` | build-ios | `build_platform.sh ZhiYuMac macOS` |
+| 6 | `build-watchos` | build-macos | `build_platform.sh ZhiYuWatch watchOS` |
+| 7 | `test-and-verify-coverage` | build-watchos | `xcodebuild test` + 覆盖率红线校验（`run_tests_and_coverage.sh`） |
 
 **依赖拓扑：**
 
 ```
-clone-repo ──┬─→ static-analysis (12 项并发)
-             ├─→ swiftlint
-             ├─→ signature-check (ignore)
-             ├─→ secret-scan
-             └─→ prepare ──┬─→ build-ios ──┐
-                           ├─→ build-macos ─┼─→ test (覆盖率 85% 红线)
-                           └─→ build-watchos┘
+clone-repo ──┬─→ static-analysis (19 项并行)
+             └─→ prepare-dependencies ──→ build-ios ──→ build-macos ──→ build-watchos ──→ test-and-verify-coverage
 ```
 
 > **运行环境前置**：`swiftlint`、`swift`、`xcodebuild` 依赖 iOS Agent（macOS launchd 原生进程）预装；`radon`（Python 圈复杂度工具）在 `static-analysis` step 内 `pip3 install`。
@@ -120,7 +114,7 @@ clone-repo ──┬─→ static-analysis (12 项并发)
 **分层原则：**
 - **Layer 1 (Pre-commit)**: 最快，只阻断密钥泄露，其余仅报告
 - **Layer 2 (Build Phase)**: 每次本地构建运行，覆盖代码质量 + 魔鬼数字 + 架构分层 + SwiftLint `--strict`（与 CI 同口径，杜绝本地绕过）
-- **Layer 3 (Woodpecker)**: 自托管 CI，`run_static_analysis.sh` 并发 12 项 + 三平台编译 + 测试覆盖率
+- **Layer 3 (Woodpecker)**: 自托管 CI，`run_static_analysis.sh` 并发 19 项 + 三平台编译 + 测试覆盖率
 - **Layer 4 (GitHub Actions)**: 独立验证 + 产物上传 + 多平台矩阵 + SPM 漏洞审计
 
 ---
@@ -217,7 +211,7 @@ Tools/
 │   ├── check_docs_and_configs.py        # 文档完整性 + 死链 + 配置一致性
 │   └── check_coverage.py                # 覆盖率红线 (Domain 层, 85%)
 ├── CI/                                  # CI 流水线脚本
-│   ├── run_static_analysis.sh           # 并发调度 12 项静态分析
+│   ├── run_static_analysis.sh           # 并发调度 19 项静态分析
 │   ├── prepare_build_environment.sh     # xcodegen generate 等构建前准备
 │   ├── build_platform.sh                # 单平台 xcodebuild 构建封装
 │   ├── build_multi_platform.sh          # 多平台矩阵构建封装
