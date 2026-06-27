@@ -123,9 +123,9 @@ final class ComponentSnapshots: XCTestCase {
         let store = AppStore()
         let aiStore = AIWorkflowStore()
         let router = Router.shared
-        let authService = AppEnvironment.shared.authService
-        let themeManager = AppEnvironment.shared.themeManager
-        let onboardingService = AppEnvironment.shared.onboardingService
+        let authService = AuthService.shared
+        let themeManager = ThemeManager.shared
+        let onboardingService = OnboardingService.shared
 
         let view = SnapshotContainer { namespace in
             PageDetailView(page: page, heroNamespace: namespace)
