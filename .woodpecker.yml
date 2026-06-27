@@ -23,7 +23,7 @@ steps:
       - echo "===> 运行全部 19 项静态分析（并行执行）"
       - bash Tools/CI/Analyze/run_static_analysis.sh
 
-  prepare-build:
+  build-prepare:
     depends_on: [clone-repo]
     image: bash
     commands:
@@ -33,7 +33,7 @@ steps:
       - bash Tools/CI/Build/inject_version.sh Sources/Info.plist
 
   build-ios:
-    depends_on: [prepare-build]
+    depends_on: [build-prepare]
     image: bash
     commands:
       - bash Tools/CI/Build/build_platform.sh ZhiYu 'generic/platform=iOS Simulator' ios
