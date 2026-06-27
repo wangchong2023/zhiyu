@@ -18,7 +18,7 @@ TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
 if [ -n "$TAG" ]; then
     VERSION="${TAG#v}"          # v1.2.3 → 1.2.3
 else
-    VERSION="0.0.0-dev"         # 无 tag 时 fallback
+    VERSION="0.0.0"             # 无 tag 时 fallback（纯数字，通过 App Store 合规检查）
 fi
 
 # ── 2. 构建号：提交总数（跨 CI 系统一致）──
