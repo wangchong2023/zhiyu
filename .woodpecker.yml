@@ -20,7 +20,7 @@ steps:
     commands:
       - echo "===> 安装静态分析 Python 依赖"
       - pip3 install --quiet radon 2>/dev/null || true
-      - echo "===> Static Analysis (12 checks)"
+      - echo "===> Static Analysis（含重复代码检测等 14 项并行检查）"
       - bash Tools/CI/Analyze/run_static_analysis.sh
 
   swiftlint:
@@ -43,13 +43,6 @@ steps:
     commands:
       - echo "===> Hardcoded Secrets"
       - python3 Tools/Gatekeeper/Release/check_hardcoded_secrets.py
-
-  duplicate-detection:
-    depends_on: [clone-repo]
-    image: bash
-    commands:
-      - echo "===> Duplicate Code Detection (jscpd)"
-      - python3 Tools/Gatekeeper/Sanity/check_duplicate_code.py
 
   prepare:
     depends_on: [clone-repo]
