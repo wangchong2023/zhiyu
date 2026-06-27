@@ -76,9 +76,25 @@ fi
 # 确保 build 目录存在
 mkdir -p build
 
+# ── 4.5 打印构建版本信息 ──────────────────────────────────────
+print_version_info() {
+    local PLIST="Sources/Info.plist"
+    if [ -f "$PLIST" ]; then
+        local ver build hash ts
+        ver=$(/usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" "$PLIST" 2>/dev/null || echo "N/A")
+        build=$(/usr/libexec/PlistBuddy -c "Print :CFBundleVersion" "$PLIST" 2>/dev/null || echo "N/A")
+        hash=$(/usr/libexec/PlistBuddy -c "Print :GIT_SHORT_HASH" "$PLIST" 2>/dev/null || echo "N/A")
+        ts=$(/usr/libexec/PlistBuddy -c "Print :BUILD_TIMESTAMP" "$PLIST" 2>/dev/null || echo "N/A")
+        echo "📦 版本: ${ver} (build ${build}) | commit: ${hash} | 构建时间: ${ts}"
+    else
+        echo "📦 版本: Info.plist 不可用"
+    fi
+}
+
 # ── 5. 执行测试逻辑 ──────────────────────────────────────────
+print_version_info
 echo "===> 开始运行单元测试..."
-echo "模式: $([ "${CI_MODE}" = "true" ] && echo "CI 自动化模式" || echo "本地开发模式")"
+echo "模式: $([ "${CI_MODE}" = "true" ] && echo "CI 自动化模式" || echo "本地开发模式")""
 
 set +e
 if [ "${CI_MODE}" = "true" ]; then
@@ -97,6 +113,7 @@ fi
 set -e
 
 # ── 6. 结果判定 ──────────────────────────────────────────────
+print_version_info
 if [ ${TEST_EXIT_CODE} -eq 0 ]; then
     echo "✓ 所有单元测试通过！"
     exit 0

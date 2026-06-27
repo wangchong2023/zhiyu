@@ -6,6 +6,16 @@
 # ==============================================================================
 set -euo pipefail
 
+# ── 打印构建版本信息 ──
+PLIST="Sources/Info.plist"
+if [ -f "$PLIST" ]; then
+    ver=$(/usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" "$PLIST" 2>/dev/null || echo "N/A")
+    build=$(/usr/libexec/PlistBuddy -c "Print :CFBundleVersion" "$PLIST" 2>/dev/null || echo "N/A")
+    hash=$(/usr/libexec/PlistBuddy -c "Print :GIT_SHORT_HASH" "$PLIST" 2>/dev/null || echo "N/A")
+    ts=$(/usr/libexec/PlistBuddy -c "Print :BUILD_TIMESTAMP" "$PLIST" 2>/dev/null || echo "N/A")
+    echo "📦 版本: ${ver} (build ${build}) | commit: ${hash} | 构建时间: ${ts}"
+fi
+
 # 1. 统计测试用例总数
 echo "===> Count Test Cases"
 TEST_COUNT=0
@@ -29,3 +39,12 @@ echo "===> Performance Regression Check"
 python3 Tools/CI/Perf/check_perf_regression.py
 
 echo "✅ 跑测、覆盖率门禁及性能回归校验全部通过！"
+
+# ── 打印构建版本信息 ──
+if [ -f "$PLIST" ]; then
+    ver=$(/usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" "$PLIST" 2>/dev/null || echo "N/A")
+    build=$(/usr/libexec/PlistBuddy -c "Print :CFBundleVersion" "$PLIST" 2>/dev/null || echo "N/A")
+    hash=$(/usr/libexec/PlistBuddy -c "Print :GIT_SHORT_HASH" "$PLIST" 2>/dev/null || echo "N/A")
+    ts=$(/usr/libexec/PlistBuddy -c "Print :BUILD_TIMESTAMP" "$PLIST" 2>/dev/null || echo "N/A")
+    echo "📦 版本: ${ver} (build ${build}) | commit: ${hash} | 构建时间: ${ts}"
+fi

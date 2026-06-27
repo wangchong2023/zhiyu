@@ -19,6 +19,16 @@ LOG_FILE="${BUILD_DIR}/${LABEL}_build.log"
 
 mkdir -p "$BUILD_DIR" "$SPM_CACHE"
 
+# ── 打印构建版本信息 ──
+PLIST="$(dirname "$0")/../../../Sources/Info.plist"
+if [ -f "$PLIST" ]; then
+    ver=$(/usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" "$PLIST" 2>/dev/null || echo "N/A")
+    bld=$(/usr/libexec/PlistBuddy -c "Print :CFBundleVersion" "$PLIST" 2>/dev/null || echo "N/A")
+    hash=$(/usr/libexec/PlistBuddy -c "Print :GIT_SHORT_HASH" "$PLIST" 2>/dev/null || echo "N/A")
+    ts=$(/usr/libexec/PlistBuddy -c "Print :BUILD_TIMESTAMP" "$PLIST" 2>/dev/null || echo "N/A")
+    echo "📦 版本: ${ver} (build ${bld}) | commit: ${hash} | 构建时间: ${ts}"
+fi
+
 echo "===> Build ${LABEL}"
 echo "     日志: ${LOG_FILE}"
 
@@ -42,3 +52,12 @@ if [ $EXIT_CODE -ne 0 ]; then
 fi
 
 echo "  ✅ ${LABEL} Build Passed"
+
+# ── 打印构建版本信息 ──
+if [ -f "$PLIST" ]; then
+    ver=$(/usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" "$PLIST" 2>/dev/null || echo "N/A")
+    bld=$(/usr/libexec/PlistBuddy -c "Print :CFBundleVersion" "$PLIST" 2>/dev/null || echo "N/A")
+    hash=$(/usr/libexec/PlistBuddy -c "Print :GIT_SHORT_HASH" "$PLIST" 2>/dev/null || echo "N/A")
+    ts=$(/usr/libexec/PlistBuddy -c "Print :BUILD_TIMESTAMP" "$PLIST" 2>/dev/null || echo "N/A")
+    echo "📦 版本: ${ver} (build ${bld}) | commit: ${hash} | 构建时间: ${ts}"
+fi
