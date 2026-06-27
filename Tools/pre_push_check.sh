@@ -267,6 +267,11 @@ run_check "工具脚本质量审计" \
     "python3 Tools/Gatekeeper/Sanity/check_scripts_quality.py" \
     || exit 1
 
+# 1.14 重复代码检测（本地宽松模式）
+run_check "重复代码检测（jscpd --local 宽松模式）" \
+    "python3 Tools/Gatekeeper/Sanity/check_duplicate_code.py --local" \
+    || exit 1
+
 echo ""
 echo -e "  ${GREEN}Phase 1 完成${NC} — 所有静态检查通过"
 

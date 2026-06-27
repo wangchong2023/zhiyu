@@ -73,6 +73,9 @@ jobs:
       - name: Check Root Hygiene (Temp Files + Structure)
         run: python3 Tools/Gatekeeper/Sanity/check_root_hygiene.py
 
+      - name: Check Duplicate Code (jscpd)
+        run: python3 Tools/Gatekeeper/Sanity/check_duplicate_code.py
+
       - name: Check Test DI Setup
         run: python3 Tools/Gatekeeper/Architecture/check_test_di_setup.py
 

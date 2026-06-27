@@ -44,6 +44,13 @@ steps:
       - echo "===> Hardcoded Secrets"
       - python3 Tools/Gatekeeper/Release/check_hardcoded_secrets.py
 
+  duplicate-detection:
+    depends_on: [clone-repo]
+    image: bash
+    commands:
+      - echo "===> Duplicate Code Detection (jscpd)"
+      - python3 Tools/Gatekeeper/Sanity/check_duplicate_code.py
+
   prepare:
     depends_on: [clone-repo]
     image: bash

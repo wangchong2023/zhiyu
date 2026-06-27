@@ -65,8 +65,9 @@ run_parallel_task "SPM Integrity" "spm_integrity" "bash Tools/CI/Analyze/verify_
 run_parallel_task "Tools Quality Gatekeeper" "tools_quality" "$PYTHON3 Tools/Gatekeeper/Sanity/check_scripts_quality.py" & pid10=$!
 run_parallel_task "Swift Quality Guard" "swift_quality" "$PYTHON3 Tools/Gatekeeper/Sanity/check_swift_quality.py" & pid11=$!
 run_parallel_task "Cyclomatic Complexity" "complexity" "python3 Tools/Gatekeeper/Compliance/check_complexity.py" & pid12=$!
+run_parallel_task "Duplicate Code (jscpd)" "duplicate_code" "python3 Tools/Gatekeeper/Sanity/check_duplicate_code.py" & pid13=$!
 
-run_parallel_task "SBOM Generation & Syft Scan" "sbom_generation" "(python3 Tools/CI/Analyze/generate_sbom.py && (syft . --exclude ./build --exclude ./env -o cyclonedx-json=build/syft.cdx.json 2>/dev/null || echo Syft skipped) && python3 Tools/CI/Analyze/merge_sbom.py)" & pid13=$!
+run_parallel_task "SBOM Generation & Syft Scan" "sbom_generation" "(python3 Tools/CI/Analyze/generate_sbom.py && (syft . --exclude ./build --exclude ./env -o cyclonedx-json=build/syft.cdx.json 2>/dev/null || echo Syft skipped) && python3 Tools/CI/Analyze/merge_sbom.py)" & pid14=$!
 
 # 等待所有后台任务，并收拢退出状态
 wait $pid1 || EXIT_CODE=1
@@ -82,6 +83,7 @@ wait $pid10 || EXIT_CODE=1
 wait $pid11 || EXIT_CODE=1
 wait $pid12 || EXIT_CODE=1
 wait $pid13 || EXIT_CODE=1
+wait $pid14 || EXIT_CODE=1
 
 echo ""
 if [ $EXIT_CODE -ne 0 ]; then

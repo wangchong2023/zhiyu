@@ -1,0 +1,33 @@
+{
+  "threshold": 1,
+  "reporters": ["console", "json"],
+  "output": "build/jscpd",
+  "ignore": [
+    "build/**",
+    ".build/**",
+    "DerivedData/**",
+    "env/**",
+    "Carthage/**",
+    "Pods/**",
+    ".git/**",
+    "**/__pycache__/**",
+    "**/*.generated.swift",
+    "Sources/Localization/Extensions/**",
+    "**/*.pbxproj",
+    "**/*.xcassets/**",
+    "**/*.entitlements",
+    "**/Info.plist",
+    "**/Package.resolved",
+    "**/*.xcworkspace/**",
+    "zhiyu-releases/**",
+    "scratch/**",
+    ".claude/**",
+    "fastlane/**",
+    "Tools/Hooks/**"
+  ],
+  "format": ["swift", "python", "sh", "yaml", "markdown", "json"],
+  "minLines": 5,
+  "maxSize": "100KB",
+  "minTokens": 50,
+  "mode": "strict"
+}
