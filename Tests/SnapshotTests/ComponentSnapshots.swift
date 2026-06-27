@@ -249,6 +249,17 @@ final class ComponentSnapshots: XCTestCase {
         assertSnapshot(of: view, as: .image(precision: 0.95, layout: .fixed(width: DesignSystem.Metrics.customSize375, height: DesignSystem.Metrics.customSize50)))
     }
 
+    /// 测试关于页面 (AboutView) 的视觉一致性，验证版本号从 Info.plist 正确渲染
+    func testAboutView() {
+        setupMockEnvironment()
+
+        let view = AboutView()
+            .frame(width: DesignSystem.Metrics.customSize375, height: DesignSystem.Metrics.customSize812)
+            .background(Color.appBackground)
+
+        assertSnapshot(of: view, as: .image(precision: 0.95, layout: .device(config: .iPhone13Pro)))
+    }
+
     // MARK: - RAG 质量评估视图快照
 
     /// 测试 RAGEvaluationView 加载状态的视觉一致性
