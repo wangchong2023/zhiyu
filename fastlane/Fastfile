@@ -1,6 +1,34 @@
 default_platform(:ios)
 
+VERSION_FILE = "Sources/Core/Base/Constants/AppConstants.swift"
+INFO_PLIST  = "Sources/Info.plist"
+
 platform :ios do
+
+  # ── 版本号管理 ────────────────────────────────────────────────
+
+  desc "更新开发版本号: fastlane bump_version version:1.1.0"
+  lane :bump_version do |options|
+    version = options[:version]
+    UI.user_error!("需要指定 version: 参数，例如 fastlane bump_version version:1.1.0") unless version
+
+    unless version.match?(/^\d+\.\d+(\.\d+)?$/)
+      UI.user_error!("版本号格式错误: '#{version}'，必须为纯数字点分格式（如 1.0 或 1.0.0）")
+    end
+
+    sh("sed -i '' 's/static let semVer = \"[^\"]*\"/static let semVer = \"#{version}\"/' #{VERSION_FILE}")
+    UI.success("semVer 已更新为 #{version}")
+    UI.message("提交: git add #{VERSION_FILE} && git commit -m 'chore: bump version to #{version}'")
+  end
+
+  desc "同步版本信息到 Info.plist 与 Swift 动态常量: fastlane sync_version"
+  lane :sync_version do
+    sh("bash Tools/CI/Build/inject_version.sh #{INFO_PLIST}")
+    UI.success("版本信息已同步到 Info.plist 和 AppConstants.swift（hash / 时间戳）")
+  end
+
+  # ── 发布构建 ──────────────────────────────────────────────────
+
   desc "Canary 构建 → TestFlight Internal 上传"
   lane :canary do
     sh("xcodegen generate")
