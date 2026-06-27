@@ -102,6 +102,16 @@ run_check "工具脚本质量审计" \
     "python3 Tools/Gatekeeper/Sanity/check_scripts_quality.py" \
     || exit 1
 
+# 1.6 Woodpecker 流水线格式校验（woodpecker-cli 可用时执行）
+if command -v woodpecker-cli &>/dev/null; then
+    run_check "Woodpecker 流水线格式校验" \
+        "woodpecker-cli lint .woodpecker.yml" \
+        || exit 1
+else
+    echo -e "  ${CYAN}▸${NC} Woodpecker 流水线格式校验..."
+    echo -e "     ${SKIP} woodpecker-cli 不可用，跳过"; SKIPPED=$((SKIPPED + 1)); TOTAL=$((TOTAL + 1))
+fi
+
 # quick 模式在此结束
 if [ "$MODE" = "quick" ]; then
     summary && echo -e "${GREEN}${BOLD}✅ 快速门禁通过！${NC}" && exit 0
