@@ -23,22 +23,17 @@ steps:
       - echo "===> 运行全部 19 项静态分析（并行执行）"
       - bash Tools/CI/Analyze/run_static_analysis.sh
 
-  prepare-dependencies:
+  prepare-build:
     depends_on: [clone-repo]
     image: bash
     commands:
       - xcodegen generate
       - mkdir -p build /tmp/zhiyu-spm-cache
       - xcodebuild -resolvePackageDependencies -project ZhiYu.xcodeproj -scheme ZhiYu -clonedSourcePackagesDirPath /tmp/zhiyu-spm-cache
-
-  inject-version:
-    depends_on: [prepare-dependencies]
-    image: bash
-    commands:
       - bash Tools/CI/Build/inject_version.sh Sources/Info.plist
 
   build-ios:
-    depends_on: [inject-version]
+    depends_on: [prepare-build]
     image: bash
     commands:
       - bash Tools/CI/Build/build_platform.sh ZhiYu 'generic/platform=iOS Simulator' ios
