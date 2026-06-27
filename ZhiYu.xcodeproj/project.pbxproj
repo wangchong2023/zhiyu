@@ -837,6 +837,7 @@
 		68548AD1F5FE23D9CB293F26 /* AppErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8806478BEB3457510590BF71 /* AppErrorView.swift */; };
 		687C0BC5BA6ED5B1F8D37FA4 /* DesignSystem+Timeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0BAE97AC67CA8A7518F85B6 /* DesignSystem+Timeline.swift */; };
 		689BDD0F45F3DDF686BDE730 /* GraphClusteringService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8120DBE9802B8CD2028355AC /* GraphClusteringService.swift */; };
+		68C182A8300B1842967CFEC6 /* testAboutView.1.png in Resources */ = {isa = PBXBuildFile; fileRef = D75D94BD8248B49C03506353 /* testAboutView.1.png */; };
 		68C18AEB9B6B390799EAE648 /* GraphView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43137C38CA2FACE8B10AE48A /* GraphView.swift */; };
 		68C71672FB79764D06C9E72B /* OCRServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A09D69DA5DE6D74F0D2FD4A /* OCRServiceProtocol.swift */; };
 		68D1DD8A7DE23C5BDC5D6CD0 /* GraphCanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514608DCE194C35F243A59CD /* GraphCanvasView.swift */; };
@@ -2885,6 +2886,7 @@
 		D62770C897679694CEA210B9 /* OAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuthService.swift; sourceTree = "<group>"; };
 		D6DF1F248C26D199F903782D /* iOSBackgroundTaskProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSBackgroundTaskProvider.swift; sourceTree = "<group>"; };
 		D74C74F977184237AF6792ED /* WatchPlatformTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchPlatformTests.swift; sourceTree = "<group>"; };
+		D75D94BD8248B49C03506353 /* testAboutView.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = testAboutView.1.png; sourceTree = "<group>"; };
 		D8100844FD871419777AEE11 /* iOSSpotlightIndexer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSSpotlightIndexer.swift; sourceTree = "<group>"; };
 		D84175488FDEAC7541758F67 /* ModelColorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelColorView.swift; sourceTree = "<group>"; };
 		D8BB0013548BD19C7261BB01 /* ZhiYuUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = ZhiYuUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3354,6 +3356,7 @@
 		1F52A1A07E755F3C69EE35B1 /* ComponentSnapshots */ = {
 			isa = PBXGroup;
 			children = (
+				D75D94BD8248B49C03506353 /* testAboutView.1.png */,
 				1DE32090B01EA27407778988 /* testAdaptiveSidebarView.1.png */,
 				ACFAA6FC7C715FD78070B907 /* testAdaptiveSidebarView.2.png */,
 				058DF6AD09237AF576C50F85 /* testAIPulseIndicator.1.png */,
@@ -6111,6 +6114,7 @@
 				EFFEAC9415242556EAD8B01C /* inject_version_integration_test.sh in Resources */,
 				5EB3CEE497AF29106E3CA7D3 /* inject_version_test.sh in Resources */,
 				D5E4612C606DD3216BB9CED2 /* testAIPulseIndicator.1.png in Resources */,
+				68C182A8300B1842967CFEC6 /* testAboutView.1.png in Resources */,
 				7C4BB9C3EA117C6AF44A3563 /* testAdaptiveSidebarView.1.png in Resources */,
 				6092471F521EE9A75108C054 /* testAdaptiveSidebarView.2.png in Resources */,
 				7BE6D636496970C1FCE0FFC2 /* testBreadcrumbView.1.png in Resources */,
