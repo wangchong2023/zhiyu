@@ -46,7 +46,7 @@ struct AppTabToolbarModifier<Trailing: View>: ViewModifier {
                 #endif
                 
                 ToolbarItem(placement: .topBarTrailing) {
-                    HStack(spacing: 2) {
+                    HStack(spacing: Spacing.atomic) {
                         if Trailing.self != EmptyView.self {
                             trailingItems
                         }
@@ -100,7 +100,12 @@ struct AppSubPageToolbarModifier<Trailing: View>: ViewModifier {
                 #endif
                 
                 ToolbarItem(placement: .topBarTrailing) {
-                    trailingItems
+                    HStack(spacing: Spacing.atomic) {
+                        if Trailing.self != EmptyView.self {
+                            trailingItems
+                        }
+                        UserProfileMenu()
+                    }
                 }
             }
     }

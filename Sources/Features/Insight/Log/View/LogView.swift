@@ -45,15 +45,11 @@ struct LogViewContent: View {
         .adaptiveListStyle()
         .scrollContentBackground(.hidden)
         .background(themeManager.pageBackground())
-        .navigationTitle(L10n.Settings.operationLog)
-.appNavigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .primaryAction) {
-                Button(role: .destructive) {
-                    showConfirmation = true
-                } label: {
-                    Label(L10n.Common.Misc.clear, systemImage: DesignSystem.Icons.trashSlash)
-                }
+        .appSubPageToolbar(title: L10n.Settings.operationLog) {
+            Button(role: .destructive) {
+                showConfirmation = true
+            } label: {
+                Label(L10n.Common.Misc.clear, systemImage: DesignSystem.Icons.trashSlash)
             }
         }
         .confirmationDialog(

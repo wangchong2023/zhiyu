@@ -190,8 +190,7 @@ struct TaskCenterView: View {
                 #endif
             }
         }
-        .navigationTitle(L10n.AI.Task.centerTitle)
-        .appNavigationBarTitleDisplayMode(.inline)
+        .appSubPageToolbar(title: L10n.AI.Task.centerTitle)
         .scrollContentBackground(.hidden)
         .background(PageBackgroundView(accentColor: .appAccent))
         .onAppear {

@@ -251,7 +251,6 @@ struct WeeklyReportView: View {
             .padding(DesignSystem.loosePadding)
         }
         .background(PageBackgroundView(accentColor: .purple))
-        .navigationTitle(L10n.Common.Sidebar.weeklyInsight)
-.appNavigationBarTitleDisplayMode(.inline)
+        .appSubPageToolbar(title: L10n.Common.Sidebar.weeklyInsight)
     }
 }

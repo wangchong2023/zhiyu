@@ -16,11 +16,12 @@ struct AuthPhonePanel: View {
     @Binding var showPrivacySheet: Bool
     @Binding var showTermsSheet: Bool
     var handleAuth: () -> Void
+    @Environment(AuthService.self) var authService
 
     var body: some View {
         VStack(spacing: Spacing.large) {
             // 手机号掩码显示
-            Text("180****6625")
+            Text(authService.currentUser?.phone?.maskedPhoneNumber ?? "180****6625")
                 .font(.system(size: DesignSystem.titleFontSize * 1.2, weight: .bold, design: .rounded))
                 .foregroundStyle(.appText)
                 .padding(.top, Spacing.medium)

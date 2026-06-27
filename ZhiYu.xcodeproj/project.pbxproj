@@ -214,6 +214,7 @@
 		19909586CBE2118C58DCC075 /* DesignSystem+Graph.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92B96108E888AF2F409492AD /* DesignSystem+Graph.swift */; };
 		19E543B78F7AA33626D41DB0 /* marked.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 600F9630B189F8BAC640CD0E /* marked.min.js */; };
 		19ED632B8714CBF714E679C2 /* SynthesisDocRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCD9728BB74F860B913921EE /* SynthesisDocRow.swift */; };
+		19F1DA3DB6E92C28DDBEB9ED /* String+PhoneNumber.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EEC414B4F12530436692651 /* String+PhoneNumber.swift */; };
 		1A04574D95FB67060B310965 /* ShareSheetProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16DF694E5452A91A3B0C85E4 /* ShareSheetProtocol.swift */; };
 		1A3C9B4114BC82AFAACB5422 /* L10n+Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0521B65A92A56E042517BB63 /* L10n+Action.swift */; };
 		1A6523A420E11D656491D4D0 /* WebScraperProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9DE1B65474599658CFBB22F /* WebScraperProcessor.swift */; };
@@ -289,6 +290,7 @@
 		228B41E965B79D4191E6CD7B /* GraphViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48351036BECF469DF2648F3B /* GraphViewModel.swift */; };
 		22915BF178308BFCF8C09420 /* VaultService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC89CCD6BDF8A271F1BF8473 /* VaultService.swift */; };
 		22969F3362B9C56CF6EC4B7C /* LLMContextBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D0492E89753819D4046036B /* LLMContextBuilder.swift */; };
+		22D31D6E326BC5082C3C29DF /* String+PhoneNumber.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EEC414B4F12530436692651 /* String+PhoneNumber.swift */; };
 		22D3DA79A28A5DE9DCEB4186 /* PPTXProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FB9ACAFEA11F86CD681D078 /* PPTXProcessor.swift */; };
 		22FE2B09A0454D601995B39F /* PluginDetailHeaderSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D00763753F659AEDB48DEED /* PluginDetailHeaderSection.swift */; };
 		232A84F94708BF399088A9C3 /* PerformanceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31AFCC3B83BA7A24313D6EA7 /* PerformanceService.swift */; };
@@ -1809,6 +1811,7 @@
 		E2F54023B81F72A39D1E57F4 /* BackgroundTaskProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEE7DA0E60E88EBFC1DAE8EB /* BackgroundTaskProtocol.swift */; };
 		E30F689F112C982A14DE53C5 /* pkm_workflow.md in Resources */ = {isa = PBXBuildFile; fileRef = 12D7A1483AD28F6B8791510A /* pkm_workflow.md */; };
 		E320499CA003DC29EF9D1B65 /* KnowledgeInsightService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93DB90D88045E3F1E1C92392 /* KnowledgeInsightService.swift */; };
+		E381708E756F1A330DEFC339 /* String+PhoneNumber.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EEC414B4F12530436692651 /* String+PhoneNumber.swift */; };
 		E39F5F0B9BA4805F12E4FF0C /* CollaborationProviderProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2D1DD594A163F34C57837A7 /* CollaborationProviderProtocol.swift */; };
 		E3BD42D2E4B1A2D2DAB10CBE /* SettingsViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A0E17F66C8BD168E87FF1DF /* SettingsViewTests.swift */; };
 		E3D3B8BD6DCD643086DFCA97 /* URLOpenerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 136444D81CB95A9B84F1EC9C /* URLOpenerProtocol.swift */; };
@@ -2532,6 +2535,7 @@
 		6E54120B598CCF1E1856DCE7 /* AuthIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthIntegrationTests.swift; sourceTree = "<group>"; };
 		6E7FD655454F404D319EBC07 /* AISettingsTabSwitchingUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AISettingsTabSwitchingUITests.swift; sourceTree = "<group>"; };
 		6E8545C593A20702C48AE347 /* ModelStoreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelStoreView.swift; sourceTree = "<group>"; };
+		6EEC414B4F12530436692651 /* String+PhoneNumber.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+PhoneNumber.swift"; sourceTree = "<group>"; };
 		6EFCC702D739EBBCC47B108F /* AIModuleRegistrar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIModuleRegistrar.swift; sourceTree = "<group>"; };
 		6FBD347875AB4FCC36E07EB4 /* PhoneAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneAuthService.swift; sourceTree = "<group>"; };
 		6FCDE6E6A9BBAE9B91346FFA /* IngestLLMService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IngestLLMService.swift; sourceTree = "<group>"; };
@@ -4494,6 +4498,7 @@
 			children = (
 				E6658DF413C53D918BE7A3DE /* Date+App.swift */,
 				B76B953CC50C3072AC188E14 /* Date+Extensions.swift */,
+				6EEC414B4F12530436692651 /* String+PhoneNumber.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -7232,6 +7237,7 @@
 				D71B09DC24C8DE26E1415F2A /* StorageRecords.swift in Sources */,
 				C0711FA5A9DF7747474927FD /* StoreCapabilities.swift in Sources */,
 				75CA7911700DB02E4F4C2EC0 /* StoreKitService.swift in Sources */,
+				22D31D6E326BC5082C3C29DF /* String+PhoneNumber.swift in Sources */,
 				8E115D2C6C653D99BC3ED588 /* StubBackgroundTaskProvider.swift in Sources */,
 				582B3E335C78BB94604472DB /* StubCollaborationProvider.swift in Sources */,
 				A7558756CC62F83C2EA82952 /* StubWatchSyncService.swift in Sources */,
@@ -7916,6 +7922,7 @@
 				F9B5F7271C8DD0AFC3E5C6F4 /* StorageRecords.swift in Sources */,
 				06EDF4AC161A3D86EEA081FA /* StoreCapabilities.swift in Sources */,
 				23E165D23A395B24F10FEE52 /* StoreKitService.swift in Sources */,
+				19F1DA3DB6E92C28DDBEB9ED /* String+PhoneNumber.swift in Sources */,
 				2B81153157415989035087E9 /* StubBackgroundTaskProvider.swift in Sources */,
 				7B40AE3579B25955177DE41D /* StubCollaborationProvider.swift in Sources */,
 				3C26A176B796171E259A508B /* StubWatchSyncService.swift in Sources */,
@@ -8387,6 +8394,7 @@
 				592D2E29731490CF4E693A37 /* StorageRecords.swift in Sources */,
 				CBC84DA9CDD7C61FC30AD7F4 /* StoreCapabilities.swift in Sources */,
 				AD93D7E594FB44398CA05CCE /* StoreKitService.swift in Sources */,
+				E381708E756F1A330DEFC339 /* String+PhoneNumber.swift in Sources */,
 				833EFAA432219B28B2EF0DC0 /* StubBackgroundTaskProvider.swift in Sources */,
 				C4CFEAF6D602D83F0150E223 /* StubCollaborationProvider.swift in Sources */,
 				2C99FE751581EC84B9396384 /* StubIngestService.swift in Sources */,

@@ -122,7 +122,7 @@ struct SidebarToolbarModifier: ViewModifier {
             content.appTabToolbar(title: title)
         } else {
             // 在 iPad/Mac (Regular/Expansive) 下：侧边栏只保留 VaultBadge
-            // UserProfileMenu 已在内容区顶部工具栏（AppSubPageToolbarModifier）中渲染，无需重复放置
+            // UserProfileMenu 已在内容区顶部工具栏（AppSubPageToolbarModifier）中自动追加，无需重复放置
             content
                 .navigationTitle(title)
                 .navigationBarTitleDisplayMode(.inline)

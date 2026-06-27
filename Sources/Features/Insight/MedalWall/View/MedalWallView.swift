@@ -42,8 +42,7 @@ struct MedalWallView: View {
             .padding(.vertical, DesignSystem.standardPadding)
         }
         .background(PageBackgroundView(accentColor: .appAccent))
-        .navigationTitle(L10n.Insight.Medal.Wall.title)
-        .appNavigationBarTitleDisplayMode(.large)
+        .appSubPageToolbar(title: L10n.Insight.Medal.Wall.title)
     }
     
     private func medalSection(title: String, category: MedalService.Medal.Category) -> some View {

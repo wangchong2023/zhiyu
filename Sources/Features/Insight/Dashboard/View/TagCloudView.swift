@@ -77,8 +77,7 @@ struct TagCloudViewContent: View {
         mainContent
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             .background(PageBackgroundView(accentColor: .blue))
-            .navigationTitle(L10n.Tag.title)
-            .navigationBarTitleDisplayMode(.inline)
+            .appSubPageToolbar(title: L10n.Tag.title)
             .task {
                 await coordinator.fetchData()
             }

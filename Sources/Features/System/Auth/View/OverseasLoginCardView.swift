@@ -25,7 +25,16 @@ struct OverseasLoginCardView: View {
     
     var body: some View {
         VStack(spacing: Spacing.large) {
-            // 1. Passkey 一键生物免密注册/登录按钮 (海外首选安全通道)
+            // 1. 顶部占位文案（与大陆版手机号掩码 `authService.currentUser?.phone?.maskedPhoneNumber` 等高对齐）
+            //    使用 L10n 国际化文案，避免在 View 中硬编码任何字符串字面量；
+            //    字号 / 字重 / 字体设计 / 顶部 padding 与大陆版保持完全一致，
+            //    确保 3D 翻转时两侧卡片视觉高度一致，避免下方 OAuth / 游客模式跳变。
+            Text(L10n.Auth.overseasWelcome)
+                .font(.system(size: DesignSystem.titleFontSize * 1.2, weight: .bold, design: .rounded))
+                .foregroundStyle(.appText)
+                .padding(.top, Spacing.medium)
+
+            // 2. Passkey 一键生物免密注册/登录按钮 (海外首选安全通道)
             Button(action: handlePasskeyLogin) {
                 HStack(spacing: Spacing.small) {
                     Image(systemName: "person.badge.key.fill")
@@ -45,6 +54,9 @@ struct OverseasLoginCardView: View {
             
             // 协议勾选
             agreementSection
+
+            // 底部 Spacer：与大陆版第 34 行完全一致，保证切换瞬间高度稳定
+            Spacer().frame(height: Spacing.large)
         }
         .padding(Spacing.wide)
         .appContainer(cornerRadius: Spacing.largeRadius)
