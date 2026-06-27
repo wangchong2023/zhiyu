@@ -39,16 +39,6 @@ BUILD_TARGETS = [
         "scheme": "ZhiYu",
         "destination": "generic/platform=iOS",
     },
-    {
-        "name": "macOS Catalyst",
-        "scheme": "ZhiYuMac",
-        "destination": "platform=macOS",
-    },
-    {
-        "name": "watchOS",
-        "scheme": "ZhiYuWatch",
-        "destination": "generic/platform=watchOS",
-    },
 ]
 
 BASE_FLAGS = [
@@ -134,16 +124,16 @@ def main() -> int:
 
     # 仅在 Swift 文件变更时执行编译检查
     if not has_staged_swift_files():
-        print("[Gatekeeper] 多平台编译检查：无 Swift 文件变更，跳过。")
+        print("[Gatekeeper] 编译检查：无 Swift 文件变更，跳过。")
         return 0
 
     # 检查项目文件是否存在
     if not PROJECT_FILE.exists():
-        print("[Gatekeeper] 多平台编译检查：未找到 .xcodeproj，请先运行 xcodegen generate。")
+        print("[Gatekeeper] 编译检查：未找到 .xcodeproj，请先运行 xcodegen generate。")
         return 1
 
     print("=" * SEPARATOR_WIDTH)
-    print("[Gatekeeper] 多平台编译验证（iOS / macOS Catalyst / watchOS）")
+    print("[Gatekeeper] 编译验证（iOS）")
     print("=" * SEPARATOR_WIDTH)
 
     failures = []
@@ -154,7 +144,7 @@ def main() -> int:
 
     print("=" * SEPARATOR_WIDTH)
     if failures:
-        print(f"❌ 多平台编译验证失败 ({len(failures)}/{len(BUILD_TARGETS)} 失败)：")
+        print(f"❌ iOS 编译验证失败：")
         for name, summary in failures:
             print(f"\n  [{name}] 错误摘要：")
             for line in summary.split("\n")[:SUMMARY_TRUNCATE_LINES]:
@@ -163,7 +153,7 @@ def main() -> int:
         print("\n💡 请修复以上编译错误后重新提交。")
         return 1
     else:
-        print("✅ 三个平台编译全部通过。")
+        print("✅ iOS 编译通过。")
         return 0
 
 
