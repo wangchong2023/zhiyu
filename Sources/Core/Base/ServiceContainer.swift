@@ -136,8 +136,8 @@ final class ServiceContainer: @unchecked Sendable {
         // ── 服务未注册：输出多层次诊断信息 ──
         let rawTypeString = String(describing: type)
         let readyHint = registeredKeys.isEmpty
-            ? "[DI EMPTY — resolve() called before any DI initialization]"
-            : "[\(registeredKeys.count) services registered — this specific service missing]"
+            ? "[DI ERROR — resolve() called before any DI initialization]"
+            : "[error: \(registeredKeys.count) services registered — key '\(key)' not found]"
         let errorSummary = "DI Error: Service [\(key)] not registered. \(readyHint) Type: \(rawTypeString). Keys (\(registeredKeys.count)): \(registeredKeys.sorted().joined(separator: ", "))"
 
         // 层级 1: os_log .fault — 崩溃后仍可在系统日志中检索
