@@ -372,6 +372,20 @@ extension AppConstants {
     }
 }
 
+// MARK: - 应用版本号（防抵赖：版本号落代码，与 git tag 保持同步）
+
+extension AppConstants {
+    /// 应用版本号常量定义（构建时由 inject_version.sh 自动注入）
+    public struct Version {
+        /// 语义化版本号（SemVer），发布时需与 git tag 同步更新
+        public static let semVer = "1.0.0"
+        /// Git 短提交哈希（构建时自动注入）
+        public static let gitShortHash = "94469583"
+        /// 构建时间戳 ISO 8601（构建时自动注入）
+        public static let buildTimestamp = "2026-06-27T11:03:11Z"
+    }
+}
+
 /// 支持的 AI 模型枚举 (技术层标识)
 public enum AppModel: String, CaseIterable, Sendable {
     case gpt4o = "gpt-4o"
