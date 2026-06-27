@@ -123,19 +123,25 @@ final class ComponentSnapshots: XCTestCase {
         let store = AppStore()
         let aiStore = AIWorkflowStore()
         let router = Router.shared
-        
+        let authService = AppEnvironment.shared.authService
+        let themeManager = AppEnvironment.shared.themeManager
+        let onboardingService = AppEnvironment.shared.onboardingService
+
         let view = SnapshotContainer { namespace in
             PageDetailView(page: page, heroNamespace: namespace)
         }
         .environment(store)
         .environment(aiStore)
         .environment(router)
+        .environment(authService)
+        .environmentObject(themeManager)
+        .environmentObject(onboardingService)
         .frame(width: DesignSystem.Metrics.customSize375, height: DesignSystem.Metrics.customSize812)
         .background(Color.appBackground)
-        
+
         assertSnapshot(of: view, as: .image(precision: 0.95, layout: .device(config: .iPhone13Pro)))
     }
-    
+
     /// 测试系统设置页 (SettingsView) 的视觉一致性
     func testSettingsView() {
         setupMockEnvironment()
