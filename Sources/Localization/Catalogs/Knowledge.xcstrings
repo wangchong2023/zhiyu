@@ -494,23 +494,7 @@
         }
       }
     },
-    "editor.iconPicker.reset": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reset"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "重置"
-          }
-        }
-      }
-    },
+
     "editor.iconPicker.selectIcon": {
       "extractionState": "manual",
       "localizations": {
@@ -1990,23 +1974,7 @@
         }
       }
     },
-    "tag.delete": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Delete"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "删除"
-          }
-        }
-      }
-    },
+
     "tag.deleteMessage": {
       "extractionState": "manual",
       "localizations": {
@@ -2109,23 +2077,7 @@
         }
       }
     },
-    "tag.rename": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Rename"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "重命名"
-          }
-        }
-      }
-    },
+
     "tag.renameMessage": {
       "extractionState": "manual",
       "localizations": {
@@ -2466,23 +2418,7 @@
         }
       }
     },
-    "vault.create": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Create"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "创建"
-          }
-        }
-      }
-    },
+
     "vault.defaultDescription": {
       "extractionState": "manual",
       "localizations": {
@@ -2755,23 +2691,7 @@
         }
       }
     },
-    "vault.rename": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Rename"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "重命名"
-          }
-        }
-      }
-    },
+
     "vault.renameMessage": {
       "extractionState": "manual",
       "localizations": {
@@ -2857,23 +2777,7 @@
         }
       }
     },
-    "create.create": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Create"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "创建"
-          }
-        }
-      }
-    },
+
     "pageTitle": {
       "extractionState": "manual",
       "localizations": {

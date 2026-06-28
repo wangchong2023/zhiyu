@@ -107,7 +107,7 @@ struct OCRResultDisplay: View {
                 Spacer()
 
                 Button(action: onCopy) {
-                    Label(L10n.Ingest.OCR.copy, systemImage: DesignSystem.Icons.copy)
+                    Label(L10n.Common.copy, systemImage: DesignSystem.Icons.copy)
                         .font(.caption)
                         .foregroundStyle(.appAccent)
                 }

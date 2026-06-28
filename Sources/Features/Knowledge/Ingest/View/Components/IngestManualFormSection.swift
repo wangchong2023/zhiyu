@@ -278,7 +278,7 @@ struct IngestManualFormSection: View {
 
             if newCustomIcon != nil {
                 Button(action: { newCustomIcon = nil }) {
-                    Text(L10n.Ingest.iconReset)
+                    Text(L10n.Common.reset)
                         .font(horizontalSizeClass == .regular ? .caption : .caption2)
                         .foregroundStyle(.appSecondary)
                         .padding(.horizontal, DesignSystem.small)

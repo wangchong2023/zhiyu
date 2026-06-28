@@ -3012,23 +3012,7 @@
         }
       }
     },
-    "resetData": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reset"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "重置数据"
-          }
-        }
-      }
-    },
+
     "runAIScan": {
       "extractionState": "manual",
       "localizations": {

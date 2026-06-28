@@ -1232,36 +1232,191 @@ def _exit_audit(has_critical, has_any_issues):
         sys.exit(0)
 
 
+# ==============================================================================
+# MARK: - 重复翻译值检测器 (DuplicateTranslationDetector)
+# ==============================================================================
+
+class DuplicateTranslationDetector:
+    """分析各 xcstrings 字典，检测同一语言翻译内容在不同 Key 中重复定义的情形。"""
+
+    MAX_SHORT_EXEMPT_LEN = 3
+
+    def __init__(self, catalogs_dir='Sources/Localization/Catalogs'):
+        self.catalogs_dir = catalogs_dir
+        # 豁免重复值判定的通用技术词汇、占位符和计量单位
+        self.exempt_values = {
+            "AI", "PDF", "Token", "RAG", "ms", "MB", "GB", "KB", "SHA256", "Top-K", "Top-P", "ESC", "·", "—",
+            "ok", "cancel", "done", "save", "delete", "edit", "refresh", "success", "failed", "error", 
+            "loading", "about", "ignore", "preview", "skip", "unknown", "yesterday", "retry", "none", "all",
+            "确定", "取消", "完成", "保存", "删除", "编辑", "刷新", "成功", "失败", "错误", "加载中", "关于", "忽略", 
+            "预览", "跳过", "未知", "昨天", "重试", "无", "全部", "1 Text", "50-69", "70-89", "90-100", "50–69", 
+            "70–89", "90–100", "Mac", "macOS", "MRR", "NDCG@10", "F1@5", "MAP", "Lint", "model-name", "< 50", 
+            "%@ GB", "sk-...", "Constantine", "1", "0"
+        }
+
+    def _is_duplicate_exempt(self, val):
+        """
+        判断某个翻译值是否应豁免判定为重复值。
+        """
+        if not val:
+            return True
+        trimmed = val.strip()
+        if not trimmed:
+            return True
+        if trimmed.lower() in self.exempt_values:
+            return True
+        # 长度小于等于规定的常量，且全由字母或符号组成，或者由数字/标点/占位符组成
+        if len(trimmed) <= self.MAX_SHORT_EXEMPT_LEN and re.match(r'^[a-zA-Z0-9.%@\s\-()\[\]]+$', trimmed):
+            return True
+        if re.match(r'^[0-9.%@\s\-\[\]\(\)<>=+:]+$', trimmed):
+            return True
+        return False
+
+    def _collect_translation_values(self):
+        """
+        遍历所有 .xcstrings 文件，汇总所有翻译项。
+        
+        :return: value_map dict
+        """
+        value_map = {}
+        for file in os.listdir(self.catalogs_dir):
+            if not file.endswith('.xcstrings'):
+                continue
+            path = os.path.join(self.catalogs_dir, file)
+            with open(path, 'r', encoding='utf-8') as f:
+                try:
+                    data = json.load(f)
+                except Exception:
+                    continue
+            for key, val in data.get('strings', {}).items():
+                locs = val.get('localizations', {})
+                zh = locs.get('zh-Hans', {}).get('stringUnit', {}).get('value', '').strip()
+                en = locs.get('en', {}).get('stringUnit', {}).get('value', '').strip()
+                
+                # 记录 zh-Hans
+                if zh and not self._is_duplicate_exempt(zh):
+                    self._add_to_map(value_map, 'zh-Hans', zh, file, key)
+                
+                # 记录 en
+                if en and not self._is_duplicate_exempt(en):
+                    self._add_to_map(value_map, 'en', en, file, key)
+        return value_map
+
+    def _add_to_map(self, value_map, lang, val, file, key):
+        """辅助方法：插入映射表。"""
+        k = (lang, val)
+        if k not in value_map:
+            value_map[k] = {}
+        if file not in value_map[k]:
+            value_map[k][file] = set()
+        value_map[k][file].add(key)
+
+    def _process_duplicate_issues(self, value_map):
+        """
+        处理并归类同文件内与跨文件内的重复翻译项。
+        """
+        in_file_issues = []
+        cross_file_issues = []
+
+        for (lang, val), files_dict in value_map.items():
+            # 计算包含这个翻译的总 key 数量
+            total_keys = sum(len(ks) for ks in files_dict.values())
+            if total_keys <= 1:
+                continue
+
+            # 按同文件内和跨文件分类
+            for file, keys in files_dict.items():
+                if len(keys) > 1:
+                    # 同文件内重复
+                    severity = "WARNING"
+                    in_file_issues.append((file, val, sorted(list(keys)), lang, severity))
+
+            # 跨文件重复
+            if len(files_dict) > 1:
+                # 收集所有出现该重复值的 (file, key) 组合
+                all_occurrences = []
+                for file, keys in files_dict.items():
+                    for key in keys:
+                        all_occurrences.append(f"{file}:{key}")
+                severity = "WARNING"
+                cross_file_issues.append((lang, val, sorted(all_occurrences), severity))
+
+        return in_file_issues, cross_file_issues
+
+    def detect(self):
+        """
+        执行同文件及跨文件翻译内容重复审计。
+        
+        :return: (in_file_issues, cross_file_issues)
+                 每个元素为 (file, value, keys_list, lang, severity)
+        """
+        value_map = self._collect_translation_values()
+        return self._process_duplicate_issues(value_map)
+
+
+def _populate_reporter_issues(reporter, all_source_issues, xcstrings_issues, missing_key_issues, cross_file_issues, unused_key_issues, in_file_dup, cross_file_dup):
+    """辅助将所有检测到的多语言合规缺陷注入到 reporter 中，以降低 main 的圈复杂度。"""
+    # 1. 导入源码硬编码中文/UI英文违规
+    for file_path, issues in sorted(all_source_issues.items()):
+        for line_no, content, msg, level in issues:
+            reporter.add_issue(file_path, line_no, msg, level, content)
+
+    # 2. 导入 .xcstrings Catalog 违规
+    for file, key, msg, level in xcstrings_issues:
+        reporter.add_issue(file, 1, f"Catalog issue for Key: '{key}' - {msg}", level)
+
+    # 3. 导入 Missing Keys 违规
+    for file, key, msg, level in missing_key_issues:
+        reporter.add_issue(file, 1, f"Missing Key: '{key}' - {msg}", level)
+
+    # 4. 导入跨文件不一致违规
+    for key, sources, msg, level in cross_file_issues:
+        for file, val in sources.items():
+            reporter.add_issue(file, 1, f"Cross-file Inconsistency for Key: '{key}' - {msg}", level, val)
+
+    # 5. 导入未使用的 Key 警告
+    for file, key, msg, level in sorted(unused_key_issues):
+        reporter.add_issue(file, 1, f"Unused Key: '{key}' - {msg}", "WARNING")
+
+    # 6. 导入同文件内重复翻译值违规
+    for file, val, keys, lang, level in in_file_dup:
+        keys_str = ", ".join(keys)
+        reporter.add_issue(file, 1, f"Duplicate translation value for '{lang}': \"{val}\" is defined by multiple keys [{keys_str}]", level)
+
+    # 7. 导入跨文件重复翻译值违规
+    for lang, val, occurrences, level in cross_file_dup:
+        occurrences_str = ", ".join(occurrences)
+        first_file = occurrences[0].split(':')[0]
+        reporter.add_issue(first_file, 1, f"Cross-file duplicate translation value for '{lang}': \"{val}\" is defined in multiple files [{occurrences_str}]", level)
+
+
 def main():
     """本地化守卫网关的执行总入口。"""
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+    from gatekeeper_reporter import GatekeeperReporter
+    
+    reporter = GatekeeperReporter("L10n Audit")
     
     code_auditor = SourceCodeAuditor()
     catalog_auditor = XCStringsAuditor()
     missing_detector = MissingKeyDetector()
     inconsistency_detector = CrossFileInconsistencyDetector()
     obsolete_detector = ObsoleteKeyDetector()
+    duplicate_detector = DuplicateTranslationDetector()
 
     all_source_issues = code_auditor.audit_all()
     xcstrings_issues = catalog_auditor.audit()
     missing_key_issues = missing_detector.detect()
     cross_file_issues = inconsistency_detector.detect()
     unused_key_issues = obsolete_detector.detect()
+    in_file_dup, cross_file_dup = duplicate_detector.detect()
 
-    # 格式化并打印各类错误
-    c1, lines1 = _format_audit_issues("[L10n Audit] Source Code Violations", all_source_issues)
-    c2, lines2 = _format_audit_issues("[L10n Audit] .xcstrings Catalog Issues", xcstrings_issues, show_key=True)
-    c3, lines3 = _format_audit_issues("[L10n Audit] Missing Keys in Catalogs", missing_key_issues, show_key=True)
-    c4, lines4 = _format_audit_issues("[L10n Audit] Cross-File Key Inconsistencies", cross_file_issues, is_cross_file=True)
+    _populate_reporter_issues(
+        reporter, all_source_issues, xcstrings_issues, missing_key_issues,
+        cross_file_issues, unused_key_issues, in_file_dup, cross_file_dup
+    )
     
-    has_critical = c1 or c2 or c3 or c4
-    
-    for line in (lines1 + lines2 + lines3 + lines4):
-        print(line)
-
-    _print_obsolete_issues(unused_key_issues)
-    
-    has_any_issues = bool(all_source_issues or xcstrings_issues or missing_key_issues or cross_file_issues or unused_key_issues)
-    _exit_audit(has_critical, has_any_issues)
+    reporter.report()
 
 
 if __name__ == '__main__':

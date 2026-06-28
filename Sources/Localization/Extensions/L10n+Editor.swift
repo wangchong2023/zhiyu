@@ -42,7 +42,6 @@ extension L10n {
         public static var outline: String { Localized.tr("editor.outline", table: t) }
 
         public struct iconPicker {
-            public static var reset: String { Localized.tr("editor.iconPicker.reset", table: t) }
             public static var customSelected: String { Localized.tr("editor.iconPicker.customSelected", table: t) }
             public static var useDefault: String { Localized.tr("editor.iconPicker.useDefault", table: t) }
             public static var selectIcon: String { Localized.tr("editor.iconPicker.selectIcon", table: t) }

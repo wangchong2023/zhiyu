@@ -121,7 +121,6 @@ extension L10n {
         public static var submit: String { Ingest.tr("ingest.submit") }
         public static var iconCustom: String { Ingest.tr("ingest.iconCustom") }
         public static var iconDefault: String { Ingest.tr("ingest.iconDefault") }
-        public static var iconReset: String { Ingest.tr("ingest.iconReset") }
         public static var preview: String { Ingest.tr("ingest.preview") }
         public static var previewConfirm: String { Ingest.tr("ingest.previewConfirm") }
         public static var previewDiscard: String { Ingest.tr("ingest.previewDiscard") }
@@ -130,7 +129,6 @@ extension L10n {
         public static var urlImportPlaceholder: String { Ingest.tr("ingest.urlImportPlaceholder") }
         public static var webDesc: String { Ingest.tr("ingest.webDesc") }
         public static var ok: String { Common.tr("ok") }
-        public static var llmRequired: String { Ingest.tr("ingest.llmRequired") }
         public static var actions: String { Ingest.tr("ingest.actions") }
         public static var recentActivity: String { Ingest.tr("ingest.recentActivity") }
         public static var recent: String { Ingest.tr("ingest.recent") }
@@ -173,7 +171,6 @@ extension L10n {
             public static var selectImage: String { Ingest.tr("ocr.selectImage") }
             public static var fromAlbum: String { Ingest.tr("ocr.fromAlbum") }
             public static var recognize: String { Ingest.tr("ocr.recognize") }
-            public static var copy: String { Ingest.tr("ocr.copy") }
             public static var pageTitle: String { Common.tr("pageTitle") }
             public static var changeIcon: String { Ingest.tr("ocr.changeIcon") }
             public static var customIcon: String { Ingest.tr("ocr.customIcon") }

@@ -1531,23 +1531,7 @@
         }
       }
     },
-    "ingest.iconReset": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reset"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "重置"
-          }
-        }
-      }
-    },
+
     "ingest.importFailed": {
       "extractionState": "manual",
       "localizations": {
@@ -1599,23 +1583,7 @@
         }
       }
     },
-    "ingest.llmRequired": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Please configure AI Model first"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "请先配置大模型"
-          }
-        }
-      }
-    },
+
     "ingest.manualEntry": {
       "extractionState": "manual",
       "localizations": {
@@ -2262,23 +2230,7 @@
         }
       }
     },
-    "ocr.copy": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Copy"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "复制"
-          }
-        }
-      }
-    },
+
     "ocr.customIcon": {
       "extractionState": "manual",
       "localizations": {

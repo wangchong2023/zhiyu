@@ -16,7 +16,7 @@ struct CreateNotebookSheet: View {
     var body: some View {
         NotebookFormSheet(
             title: L10n.Vault.new,
-            submitLabel: L10n.Vault.create,
+            submitLabel: L10n.Common.create,
             name: $viewModel.newNotebookName,
             icon: $viewModel.newNotebookIcon,
             description: $viewModel.newNotebookDescription,

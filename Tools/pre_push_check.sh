@@ -79,6 +79,11 @@ run_check "本地化合规审计" \
     "python3 Tools/Gatekeeper/Compliance/check_localization.py" \
     || exit 1
 
+# 1.2a 重复代码审计
+run_check "重复代码静态检测" \
+    "python3 Tools/Gatekeeper/Compliance/check_code_duplication.py" \
+    || exit 1
+
 # 1.3 架构分层依赖
 run_check "架构分层依赖检查（L0-L3）" \
     "python3 Tools/Gatekeeper/Architecture/check_architecture_dependency.py" \

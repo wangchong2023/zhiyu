@@ -105,7 +105,7 @@ struct IconPickerView: View {
                     selectedIcon = nil
                     dismiss()
                 }) {
-                    Text(L10n.Editor.iconPicker.reset)
+                    Text(L10n.Common.reset)
                         .font(.caption.weight(.medium))
                         .padding(.horizontal, DesignSystem.medium)
                         .padding(.vertical, DesignSystem.tightPadding)
