@@ -133,7 +133,7 @@ final class LocalizationTests: XCTestCase {
             ModuleEntry(name: "Plugin", table: "Plugin", keys: ["section.rag"]),
             // Knowledge 表：Creation/Vault 路由到此
             ModuleEntry(name: "Creation", table: "Knowledge", keys: ["pageTitle", "content"]),
-            ModuleEntry(name: "Vault", table: "Knowledge", keys: ["vault.label", "tag.layoutList", "tag.layoutBubble", "tag.expandAll", "tag.collapse"]),
+            ModuleEntry(name: "Vault", table: "Knowledge", keys: ["vault.label", "editor.list", "tag.layoutBubble", "tag.expandAll", "tag.collapse"]),
             // Insight 表：Dashboard/Graph 路由到此
             // 注意：Graph 模块的 tr() 辅助函数会给 key 添加 "graph." 前缀，
             // 因此 xcstrings 中真实 key 为 "graph.title"。

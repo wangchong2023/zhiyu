@@ -113,6 +113,20 @@ ALLOWED_KEY_PREFIXES = {
     'pkm', 'widget', 'watch', 'platform', 'model_manager'
 }
 
+# 允许重复的通用翻译词汇，不会触发 Duplicate translation 警告
+EXEMPT_DUPLICATE_VALUES = {
+    # 英文
+    "Pages", "Words", "Tags", "Confirm", "%d pages", "Comparison", "New Page", "ZhiYu", "Source", "Project Research", 
+    "Quick Actions", "AI Thinking...", "Ingest", "Clear All", "Import", "Security", "Collaboration", "Plugins", 
+    "Synthesis", "System", "Tools", "Active", "AI Chat", "Concept", "Quality", "Network", "Storage", "Retrieval", 
+    "Reading", "Ready", "Version", "Parameters", "Reset to Defaults", "Vaults", "Get Started", "Data", 
+    "Clear All Data", "Run Stress Test", "Rebuild Initial Notebooks", "Reset Onboarding", "Overview", "Token", 
+    "OCR Scan", "Voice Note", "ZhiYu Room", "Knowledge Graph", "Memory", "Planning", "Tool Use", "All Pages",
+    # 中文
+    "导入到知识库", "剪贴板导入", "笔记本名称", "端侧与在线混合策略", "在线模型选择", "任务路由规则", "网络状态监控", 
+    "安全与隐私", "本地大模型", "AI 正在思考...", "Token 消耗", "未关联笔记", "合成实验室", "AI 对话"
+}
+
 
 # ==============================================================================
 # MARK: - 基础文本分析工具库 (TextUtil)
@@ -1386,6 +1400,25 @@ class DuplicateTranslationDetector:
         return self._process_duplicate_issues(value_map)
 
 
+def _populate_in_file_dup(reporter, in_file_dup):
+    """辅助填充同文件内重复翻译值违规。"""
+    for file, val, keys, lang, level in in_file_dup:
+        if val.strip() in EXEMPT_DUPLICATE_VALUES:
+            continue
+        keys_str = ", ".join(keys)
+        reporter.add_issue(file, 1, f"Duplicate translation value for '{lang}': \"{val}\" is defined by multiple keys [{keys_str}]", level)
+
+
+def _populate_cross_file_dup(reporter, cross_file_dup):
+    """辅助填充跨文件重复翻译值违规。"""
+    for lang, val, occurrences, level in cross_file_dup:
+        if val.strip() in EXEMPT_DUPLICATE_VALUES:
+            continue
+        occurrences_str = ", ".join(occurrences)
+        first_file = occurrences[0].split(':')[0]
+        reporter.add_issue(first_file, 1, f"Cross-file duplicate translation value for '{lang}': \"{val}\" is defined in multiple files [{occurrences_str}]", level)
+
+
 def _populate_reporter_issues(reporter, all_source_issues, xcstrings_issues, missing_key_issues, cross_file_issues, unused_key_issues, in_file_dup, cross_file_dup):
     """辅助将所有检测到的多语言合规缺陷注入到 reporter 中，以降低 main 的圈复杂度。"""
     # 1. 导入源码硬编码中文/UI英文违规
@@ -1411,15 +1444,10 @@ def _populate_reporter_issues(reporter, all_source_issues, xcstrings_issues, mis
         reporter.add_issue(file, 1, f"Unused Key: '{key}' - {msg}", "WARNING")
 
     # 6. 导入同文件内重复翻译值违规
-    for file, val, keys, lang, level in in_file_dup:
-        keys_str = ", ".join(keys)
-        reporter.add_issue(file, 1, f"Duplicate translation value for '{lang}': \"{val}\" is defined by multiple keys [{keys_str}]", level)
+    _populate_in_file_dup(reporter, in_file_dup)
 
     # 7. 导入跨文件重复翻译值违规
-    for lang, val, occurrences, level in cross_file_dup:
-        occurrences_str = ", ".join(occurrences)
-        first_file = occurrences[0].split(':')[0]
-        reporter.add_issue(first_file, 1, f"Cross-file duplicate translation value for '{lang}': \"{val}\" is defined in multiple files [{occurrences_str}]", level)
+    _populate_cross_file_dup(reporter, cross_file_dup)
 
 
 def main():

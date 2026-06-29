@@ -290,23 +290,6 @@
         }
       }
     },
-    "dashboard.insight.tips.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Deep Insights"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "深度建议"
-          }
-        }
-      }
-    },
     "dashboard.insight.weekly.systemPrompt": {
       "extractionState": "manual",
       "localizations": {
@@ -4332,23 +4315,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "检索阶段"
-          }
-        }
-      }
-    },
-    "dashboard.pageList.overview": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Overview"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "概览"
           }
         }
       }
