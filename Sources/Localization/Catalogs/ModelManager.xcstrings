@@ -64,7 +64,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "本地资源不足时自动降级至云端大模型"
+            "value": "本地资源不足时自动降级至在线大模型"
           }
         }
       }
@@ -846,7 +846,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "云端模型选择"
+            "value": "在线模型选择"
           }
         }
       }
@@ -1441,7 +1441,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "云端深度考据提权"
+            "value": "在线深度考据提权"
           }
         }
       }
@@ -1458,7 +1458,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "开启后强网络优先路由到云端，获得更高质量的合成结果"
+            "value": "开启后强网络优先路由到在线，获得更高质量的合成结果"
           }
         }
       }
@@ -1475,7 +1475,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "当前云端模型: %@"
+            "value": "当前在线模型: %@"
           }
         }
       }
@@ -1713,7 +1713,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "仅在 WiFi 下使用云端"
+            "value": "仅在 WiFi 下使用在线"
           }
         }
       }
@@ -1781,7 +1781,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "使用云端推理"
+            "value": "使用在线推理"
           }
         }
       }
@@ -1815,7 +1815,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "自动路由到云端"
+            "value": "自动路由到在线"
           }
         }
       }
@@ -3175,7 +3175,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "云端模型选择"
+            "value": "在线模型选择"
           }
         }
       }
