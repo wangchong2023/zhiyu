@@ -829,7 +829,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "端云混合策略"
+            "value": "端侧与在线混合策略"
           }
         }
       }
@@ -3158,7 +3158,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "端云混合策略"
+            "value": "端侧与在线混合策略"
           }
         }
       }
