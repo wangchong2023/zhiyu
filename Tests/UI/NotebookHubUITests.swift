@@ -142,7 +142,12 @@ final class NotebookHubUITests: KnowledgeBaseUITests {
         guard refreshedCards.count >= 2 else {
             throw XCTSkip("返回后笔记本卡片数量不足")
         }
-        refreshedCards.element(boundBy: 1).tap()
+        let secondCard = refreshedCards.element(boundBy: 1)
+        if secondCard.isHittable {
+            secondCard.tap()
+        } else {
+            secondCard.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+        }
 
         tabBar = app.tabBars.firstMatch
         XCTAssertTrue(tabBar.waitForExistence(timeout: 5), "第二次点击应进入主界面")
