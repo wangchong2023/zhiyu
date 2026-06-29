@@ -142,15 +142,15 @@ final class ModelLabManagerTests: XCTestCase {
         
         // 2. 多模态视觉和音频返回 Multimodal 专用提示
         manager.selectedUseCase = .askImage
-        XCTAssertTrue(manager.paramTips.contains("Multimodal"))
+        XCTAssertEqual(manager.paramTips, L10n.ModelManager.Lab.tipsMultimodal)
         manager.selectedUseCase = .audioScribe
-        XCTAssertTrue(manager.paramTips.contains("Multimodal"))
+        XCTAssertEqual(manager.paramTips, L10n.ModelManager.Lab.tipsMultimodal)
         
         // 3. 智能体与快捷指令返回 Temperature 锁定为 0.0 的只读安全提示
         manager.selectedUseCase = .tinyGarden
-        XCTAssertTrue(manager.paramTips.contains("Temperature locked"))
+        XCTAssertEqual(manager.paramTips, L10n.ModelManager.Lab.tipsAgent)
         manager.selectedUseCase = .mobileActions
-        XCTAssertTrue(manager.paramTips.contains("Temperature locked"))
+        XCTAssertEqual(manager.paramTips, L10n.ModelManager.Lab.tipsAgent)
     }
     
     /// 验证多轮对话中，Chat 和 Agent 分发的附件选项是否特化匹配
@@ -159,15 +159,15 @@ final class ModelLabManagerTests: XCTestCase {
         manager.selectedUseCase = .aiChat
         let chatOptions = manager.attachmentOptions
         XCTAssertEqual(chatOptions.count, 2)
-        XCTAssertEqual(chatOptions[0].title, "Link Knowledge Page")
-        XCTAssertEqual(chatOptions[1].title, "Inject Semantic Tags")
+        XCTAssertEqual(chatOptions[0].title, L10n.ModelManager.Lab.Attach.linkPage)
+        XCTAssertEqual(chatOptions[1].title, L10n.ModelManager.Lab.Attach.injectTag)
         
         // 2. 非 aiChat (如 agentSkills 等) 应该分发“Mount Sandbox API”与“Load Agent Template”
         manager.selectedUseCase = .agentSkills
         let agentOptions = manager.attachmentOptions
         XCTAssertEqual(agentOptions.count, 2)
-        XCTAssertEqual(agentOptions[0].title, "Mount Sandbox API")
-        XCTAssertEqual(agentOptions[1].title, "Load Agent Template")
+        XCTAssertEqual(agentOptions[0].title, L10n.ModelManager.Lab.Attach.mountSandbox)
+        XCTAssertEqual(agentOptions[1].title, L10n.ModelManager.Lab.Attach.loadTemplate)
     }
     
     /// 验证运行模拟时，是否会自动构造和填充专属于当前用例的特化数据结构，以驱动 View 层的高保真卡片渲染
@@ -184,7 +184,7 @@ final class ModelLabManagerTests: XCTestCase {
         try? await Task.sleep(nanoseconds: 10_000_000)
         
         // 验证特化数据已被完美填充
-        XCTAssertEqual(manager.extraPanelTitle, "MediaPipe Object Detection")
+        XCTAssertEqual(manager.extraPanelTitle, L10n.ModelManager.Lab.Extra.objectDetection)
         XCTAssertEqual(manager.confidenceItems.count, 3)
         XCTAssertEqual(manager.confidenceItems[0].name, "Notebook (笔记本)")
         
