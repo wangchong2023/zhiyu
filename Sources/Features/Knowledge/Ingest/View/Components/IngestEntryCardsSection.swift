@@ -20,6 +20,8 @@ struct IngestEntryCardsSection: View {
     @Binding var showFileImporter: Bool
     @Binding var showVoiceNote: Bool
     @Binding var showURLImport: Bool
+    let isLLMConfigured: Bool
+    let onLLMNotConfigured: () -> Void
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     /// iPad 大屏幕下副标题从 10pt 升到 12pt
@@ -40,6 +42,7 @@ struct IngestEntryCardsSection: View {
         LazyVGrid(columns: columns, spacing: DesignSystem.medium) {
             // 1. File import card
             Button(action: {
+                guard isLLMConfigured else { onLLMNotConfigured(); return }
                 showFileImporter = true
             }) {
                 entryCardContent(
@@ -55,6 +58,7 @@ struct IngestEntryCardsSection: View {
 
             // 2. Manual entry card
             Button(action: {
+                guard isLLMConfigured else { onLLMNotConfigured(); return }
                 showManualForm = true
             }) {
                 entryCardContent(
@@ -70,6 +74,7 @@ struct IngestEntryCardsSection: View {
 
             // 3. URL import card
             Button(action: {
+                guard isLLMConfigured else { onLLMNotConfigured(); return }
                 showURLImport = true
             }) {
                 entryCardContent(
@@ -85,6 +90,7 @@ struct IngestEntryCardsSection: View {
 
             // 4. OCR entry card
             Button(action: {
+                guard isLLMConfigured else { onLLMNotConfigured(); return }
                 showOCRScan = true
             }) {
                 entryCardContent(
@@ -100,6 +106,7 @@ struct IngestEntryCardsSection: View {
 
             // 5. Clipboard import card
             Button(action: {
+                guard isLLMConfigured else { onLLMNotConfigured(); return }
                 NotificationCenter.default.post(name: .importFromClipboard, object: nil)
             }) {
                 entryCardContent(
@@ -115,6 +122,7 @@ struct IngestEntryCardsSection: View {
 
             // 6. Voice note card
             Button(action: {
+                guard isLLMConfigured else { onLLMNotConfigured(); return }
                 showVoiceNote = true
             }) {
                 entryCardContent(

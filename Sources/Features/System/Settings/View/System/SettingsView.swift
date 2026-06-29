@@ -18,6 +18,7 @@ struct SettingsView: View {
     @Environment(SettingsStore.self) var settingsStore
     @EnvironmentObject var onboardingService: OnboardingService
     @ObservedObject var themeManager: ThemeManager = ThemeManager.shared
+    @Environment(\.colorScheme) var colorScheme
     
     /// 设置分类枚举，表示各个设置大类
     private enum SettingsSection: String, CaseIterable, Identifiable {
@@ -26,10 +27,17 @@ struct SettingsView: View {
         case data            // 数据与日志
         case plugins         // 插件与扩展
         case feedback        // 反馈改进
+        #if DEBUG
+        case developer       // 开发调试
+        #endif
         case about           // 关于软件
 
         static var allCases: [SettingsSection] {
+            #if DEBUG
+            return [.appearance, .security, .data, .plugins, .feedback, .developer, .about]
+            #else
             return [.appearance, .security, .data, .plugins, .feedback, .about]
+            #endif
         }
 
         var id: String { rawValue }
@@ -47,6 +55,10 @@ struct SettingsView: View {
                 return L10n.Settings.Section.plugins
             case .feedback:
                 return L10n.Settings.Feedback.title
+            #if DEBUG
+            case .developer:
+                return L10n.Settings.Section.developer
+            #endif
             case .about:
                 return L10n.Settings.Section.about
             }
@@ -65,6 +77,10 @@ struct SettingsView: View {
                 return DesignSystem.Icons.settingsPlugins
             case .feedback:
                 return "bubble.left.and.bubble.right.fill"
+            #if DEBUG
+            case .developer:
+                return "hammer.fill"
+            #endif
             case .about:
                 return DesignSystem.Icons.settingsAbout
             }
@@ -123,6 +139,9 @@ struct SettingsView: View {
             #endif
         }
         .environment(\.locale, router.currentLocale)
+        // 绑定当前主题对应的 preferredColorScheme，使深色模式和浅色模式切换能立即在该视图层实时生效
+        .preferredColorScheme(themeManager.colorSchemeMode.preferredColorScheme)
+        .id(themeManager.colorSchemeMode)
         .appToast()
         .alert(L10n.Settings.injectConfirm.title, isPresented: $showInjectConfirmation) {
             Button(L10n.Common.confirm) {
@@ -176,6 +195,11 @@ struct SettingsView: View {
             feedbackSection
                 .appListRowBackground()
 
+            #if DEBUG
+            developerSection
+                .appListRowBackground()
+            #endif
+
             aboutSection
                 .appListRowBackground()
         }
@@ -228,38 +252,21 @@ struct SettingsView: View {
             Group {
                 switch section {
                 case .about:
-                    // 直接渲染 AboutView，消除冗余的中间列表层
                     AboutView()
                 case .feedback:
-                    // 直接渲染 FeedbackView，消除”点击反馈 -> 出现列表项 -> 再点击”的冗余交互
                     FeedbackView()
                         .environmentObject(themeManager)
                 case .plugins:
-                    // 插件页：有已安装插件时展示列表，无插件时展示空状态引导
                     PluginExtensionsDetailView()
+                #if DEBUG
+                case .developer:
+                    developerSettingsDestination
+                #endif
                 default:
-                    List {
-                        switch section {
-                        case .appearance:
-                            appearanceSection
-                                .appListRowBackground()
-                        case .security:
-                            securitySection(store: store)
-                                .appListRowBackground()
-                        case .data:
-                            dataManagementSection
-                                .appListRowBackground()
-                        case .plugins, .feedback, .about:
-                            EmptyView()
-                        }
-                    }
-                    .listStyle(.insetGrouped)
-                    .scrollContentBackground(.hidden)
+                    defaultSettingsList(for: section)
                 }
             }
             .navigationTitle(section.displayName)
-            // macOS 偏好设置采用小字居中 (inline) 标题样式，完美契合 macOS 视觉规范
-            // 同时彻底解决由于 NavigationStack 宽度被约束而导致的 Large Title 偏左贴近侧边栏分割线的排版缺陷
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
@@ -267,19 +274,7 @@ struct SettingsView: View {
                 }
             }
         } else {
-            VStack(spacing: DesignSystem.medium) {
-                Image(systemName: "gearshape.2")
-                    .font(.system(size: 48)) // Dynamic Type
-                    .foregroundStyle(.appAccent)
-                Text(L10n.Settings.selectCategoryTip)
-                    .font(.headline)
-                    .foregroundStyle(.appText)
-            }
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    doneButton(router: router)
-                }
-            }
+            emptyDetailPlaceholder(router: router)
         }
     }
     
@@ -326,6 +321,14 @@ struct SettingsView: View {
     
     private var dataManagementSection: some View {
         Section {
+            // 将用量统计调整至首行，提高核心运营数据的展示优先级
+            NavigationLink {
+                SystemStatsView()
+            } label: {
+                Label(L10n.Common.usage, systemImage: "chart.bar.fill")
+                    .labelStyle(ColorfulIconLabelStyle(color: .teal))
+            }
+
             #if ICLOUD_ENABLED
             NavigationLink {
                 iCloudSyncView()
@@ -335,6 +338,7 @@ struct SettingsView: View {
             }
             #endif
             
+            // 将恢复备份调整至第三行，降低非常规操作的入口级别
             NavigationLink {
                 BackupView()
             } label: {
@@ -349,14 +353,7 @@ struct SettingsView: View {
                     .labelStyle(ColorfulIconLabelStyle(color: .mint))
             }
             
-            NavigationLink {
-                SystemStatsView()
-            } label: {
-                Label(L10n.Common.usage, systemImage: "chart.bar.fill")
-                    .labelStyle(ColorfulIconLabelStyle(color: .teal))
-            }
-            
-            // 恢复初始数据：生成默认的演示笔记本
+            // 恢复预设：生成默认的演示笔记本
             Button(action: { showInjectConfirmation = true }) {
                 HStack {
                     Label(L10n.Settings.rebuildInitialNotebooks, systemImage: "arrow.counterclockwise")
@@ -365,10 +362,6 @@ struct SettingsView: View {
                     Spacer()
                     if isInjecting {
                         ProgressView()
-                    } else {
-                        Image(systemName: "chevron.right")
-                            .font(.system(size: 14, weight: .semibold)) // Dynamic Type
-                            .foregroundStyle(.appSecondary)
                     }
                 }
             }
@@ -457,6 +450,70 @@ struct SettingsView: View {
             } label: {
                 Label(L10n.Settings.Section.about, systemImage: "info.circle")
                     .labelStyle(ColorfulIconLabelStyle(color: .gray))
+            }
+        }
+    }
+    
+    #if DEBUG
+    private var developerSection: some View {
+        Section {
+            NavigationLink {
+                DeveloperSettingsView()
+                    .environment(store)
+                    .environment(store.knowledgeStore)
+                    .environment(store.settingsStore)
+                    .environmentObject(onboardingService)
+            } label: {
+                Label(L10n.Settings.Section.developer, systemImage: "hammer.fill")
+                    .labelStyle(ColorfulIconLabelStyle(color: .gray))
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private var developerSettingsDestination: some View {
+        DeveloperSettingsView()
+            .environment(store)
+            .environment(store.knowledgeStore)
+            .environment(store.settingsStore)
+            .environmentObject(onboardingService)
+    }
+    #endif
+    
+    @ViewBuilder
+    private func defaultSettingsList(for section: SettingsSection) -> some View {
+        List {
+            switch section {
+            case .appearance:
+                appearanceSection
+                    .appListRowBackground()
+            case .security:
+                securitySection(store: store)
+                    .appListRowBackground()
+            case .data:
+                dataManagementSection
+                    .appListRowBackground()
+            default:
+                EmptyView()
+            }
+        }
+        .listStyle(.insetGrouped)
+        .scrollContentBackground(.hidden)
+    }
+    
+    @ViewBuilder
+    private func emptyDetailPlaceholder(router: Router) -> some View {
+        VStack(spacing: DesignSystem.medium) {
+            Image(systemName: "gearshape.2")
+                .font(.system(size: 48)) // Dynamic Type
+                .foregroundStyle(.appAccent)
+            Text(L10n.Settings.selectCategoryTip)
+                .font(.headline)
+                .foregroundStyle(.appText)
+        }
+        .toolbar {
+            ToolbarItem(placement: .confirmationAction) {
+                doneButton(router: router)
             }
         }
     }

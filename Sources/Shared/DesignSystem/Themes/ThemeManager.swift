@@ -58,6 +58,7 @@ class ThemeManager: ObservableObject {
         }
         set {
             colorSchemeModeRaw = newValue.rawValue
+            objectWillChange.send()
         }
     }
 

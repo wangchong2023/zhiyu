@@ -18,6 +18,7 @@ struct PluginManifest: Codable {
     let author: String
     let permissions: [String]
     let allowedDomains: [String]? // 网络白名单：仅允许访问指定的域名
+    public let category: String? // 插件分类
     
     /// 本地化显示名称 (Key 为语言代码，如 "en", "zh-Hans")
     private let names: [String: String]
@@ -28,12 +29,13 @@ struct PluginManifest: Codable {
     /// 插件图标文件名
     public let iconFile: String?
 
-    init(id: String, version: String, author: String = "Unknown", permissions: [String] = [], allowedDomains: [String]? = nil, names: [String: String], descriptions: [String: String], readmeFiles: [String: String]? = nil, iconFile: String? = nil) {
+    init(id: String, version: String, author: String = "Unknown", permissions: [String] = [], allowedDomains: [String]? = nil, names: [String: String], descriptions: [String: String], readmeFiles: [String: String]? = nil, iconFile: String? = nil, category: String? = nil) {
         self.id = id
         self.version = version
         self.author = author
         self.permissions = permissions
         self.allowedDomains = allowedDomains
+        self.category = category
         self.names = names
         self.descriptions = descriptions
         self.readmeFiles = readmeFiles

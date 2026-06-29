@@ -81,10 +81,13 @@ def check_file(filepath):
 def main():
     """
     主程序入口。遍历 Sources 目录下的所有 Swift 代码文件（排除豁免白名单文件），
-    调用 check_file 校验物理表字段和硬编码 SQL，若有发现则以 1 退出，否则以 0 成功退出。
+    调用 check_file 校验物理表字段和硬编码 SQL，若有发现则记录到门禁报告中。
     """
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+    from gatekeeper_reporter import GatekeeperReporter
+    
+    reporter = GatekeeperReporter("Storage Constants Audit")
     sources_dir = "Sources"
-    found_issues = False
     
     # 白名单排除：允许定义常量或 Scheme 定义的文件
     allow_list = [
@@ -98,18 +101,15 @@ def main():
                     continue
                 filepath = os.path.join(root, file)
                 issues = check_file(filepath)
-                if issues:
-                    print(f"❌ 发现硬编码的物理字段或 SQL 在文件: {filepath}")
-                    for line, msg in issues:
-                        print(f"   -> 行 {line}: {msg}")
-                    found_issues = True
+                for line, msg in issues:
+                    reporter.add_issue(
+                        filepath=filepath,
+                        line_no=line,
+                        message=msg,
+                        level="ERROR"
+                    )
                     
-    if found_issues:
-        print("\n❌ 编译阻断: 检测到直接使用了物理表字段或硬编码SQL。请使用 AppConstants.Storage 中定义的常量！")
-        sys.exit(1)
-    else:
-        print("✅ 存储常量检查通过。未发现硬编码的物理表字段或 SQL。")
-        sys.exit(0)
+    reporter.report()
 
 if __name__ == "__main__":
     main()

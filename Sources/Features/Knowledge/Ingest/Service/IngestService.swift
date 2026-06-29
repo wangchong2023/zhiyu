@@ -218,6 +218,7 @@ actor IngestService {
         at url: URL,
         title: String? = nil,
         type: PageType = .source,
+        forceDeepScan: Bool = true,
         pageStore: any AnyPageStore
     ) async -> KnowledgePage? {
         let format = DocumentFormat.detectFormat(from: url)
@@ -231,7 +232,7 @@ actor IngestService {
         do {
             let text = try await docExtractor.extractText(from: url)
             if text.isEmpty { return nil }
-            return await ingestRawContent(title: extractedTitle, content: text, type: type, forceDeepScan: true, pageStore: pageStore)
+            return await ingestRawContent(title: extractedTitle, content: text, type: type, forceDeepScan: forceDeepScan, pageStore: pageStore)
         } catch {
             Logger.shared.error("Failed to" + " extract text" + " from document" + " \(url.path):" + " \(error)", error: error)
             return nil

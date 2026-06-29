@@ -55,6 +55,8 @@ struct BreadcrumbView: View {
                                     .font(.caption2)
                                 Text(page.title)
                                     .font(.caption.weight(index == history.count - 1 ? .bold : .medium))
+                                    .lineLimit(1)
+                                    .fixedSize(horizontal: true, vertical: false)
                             }
                             .foregroundStyle(index == history.count - 1 ? .appAccent : .appSecondary)
                         }

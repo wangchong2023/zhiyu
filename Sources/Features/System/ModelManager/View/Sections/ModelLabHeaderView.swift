@@ -15,47 +15,9 @@ import SwiftUI
 
 extension ModelLabView {
 
-    /// 实验室头部导语区
+    /// 实验室头部导语区 (已简化，移除冲突大标题与活跃模型状态标签)
     var labHeaderView: some View {
-        VStack(alignment: .leading, spacing: DesignSystem.small) {
-            HStack {
-                Text(L10n.ModelManager.laboratoryTitle)
-                    .font(.system(size: DesignSystem.iconHuge - DesignSystem.tiny, weight: .bold, design: .rounded))
-                    .foregroundStyle(
-                        LinearGradient(
-                            colors: [.purple, .cyan, .blue],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
-
-                Spacer()
-
-                // 活跃模型指示器
-                if let activeModel = getActiveModel() {
-                    HStack(spacing: DesignSystem.standardPadding) {
-                        Circle()
-                            .fill(Color.theme.green)
-                            .frame(width: DesignSystem.small, height: DesignSystem.small)
-
-                        Text(activeModel.displayName)
-                            .font(.system(.caption, design: .monospaced))
-                            .bold()
-                            .foregroundStyle(.white.opacity(DesignSystem.Opacity.prominent))
-                    }
-                    .padding(.horizontal, DesignSystem.standardPadding + 2)
-                    .padding(.vertical, DesignSystem.standardPadding / 2)
-                    .background(Color.theme.white.opacity(DesignSystem.Opacity.subtle))
-                    .clipShape(Capsule())
-                }
-            }
-
-            Text(L10n.ModelManager.Lab.exploreOther)
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.vertical, DesignSystem.small)
+        EmptyView()
     }
 
     /// 用例卡片列表
@@ -105,16 +67,17 @@ extension ModelLabView {
 
                 Text(useCase.title)
                     .font(.headline)
-                    .foregroundStyle(isCompatible ? .white : .secondary)
+                    .foregroundStyle(isCompatible ? .appText : .secondary)
 
                 Text(useCase.description)
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
+                    .font(.caption)
+                    .foregroundStyle(isCompatible ? .appText.opacity(DesignSystem.subtleOpacity) : .secondary)
                     .lineLimit(3)
                     .multilineTextAlignment(.leading)
+                    .fixedSize(horizontal: false, vertical: true)
             }
             .padding(DesignSystem.medium)
-            .frame(height: DesignSystem.Metrics.sourceCardHeight + DesignSystem.large, alignment: .topLeading)
+            .frame(minHeight: DesignSystem.Metrics.sourceCardHeight + DesignSystem.large, alignment: .topLeading)
             // 暗黑毛玻璃态 (Glassmorphism)
             .background(.ultraThinMaterial.opacity(isCompatible ? DesignSystem.Opacity.shadow : DesignSystem.Opacity.glass))
             .cornerRadius(DesignSystem.mediumRadius)

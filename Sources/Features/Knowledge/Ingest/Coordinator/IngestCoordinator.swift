@@ -40,6 +40,7 @@ final class IngestCoordinator {
     var showVoiceNote = false
     var errorMessage: String?
     var showError = false
+    var showLLMAlert = false
 
     // ── 业务表单数据 ──
     var newTitle = ""

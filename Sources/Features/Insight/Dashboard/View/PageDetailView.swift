@@ -197,7 +197,7 @@ struct PageDetailView: View {
                 Color.clear.frame(height: DesignSystem.mediumRadius)
                 
                 VStack(alignment: .leading, spacing: 0) {
-                    PageDetailAISection(pageTitle: coordinator.page.title, onLinkTap: navigateToPage)
+                    PageDetailAISection(page: coordinator.page, onLinkTap: navigateToPage)
                         .id("aiResultSection")
                         .padding(.bottom, DesignSystem.standardPadding)
                     
@@ -215,6 +215,8 @@ struct PageDetailView: View {
                         if coordinator.page.title == L10n.Common.Demo.Welcome.title {
                             welcomeAhaPromptCard
                         }
+
+                        potentialLinksSection(coordinator: coordinator)
 
                         Divider().background(Color.appBorder)
                         
@@ -392,5 +394,111 @@ struct PageDetailView: View {
         if let target = store.pages.first(where: { $0.title == title }) {
             router.navigate(to: .pageDetail(id: target.id))
         }
+    }
+
+    @ViewBuilder
+    private func potentialLinksSection(coordinator: PageDetailCoordinator) -> some View {
+        let relevantLinks = aiStore.potentialLinks.filter { $0.sourcePageID == coordinator.page.id }
+        
+        Group {
+            if aiStore.isScanningAI {
+                VStack(alignment: .leading, spacing: DesignSystem.medium) {
+                    HStack(spacing: DesignSystem.small) {
+                        ProgressView()
+                            .controlSize(.small)
+                        Text(L10n.Knowledge.Page.AI.potentialLinksScanning)
+                            .font(.subheadline)
+                            .foregroundStyle(.appSecondary)
+                    }
+                    .padding()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(RoundedRectangle(cornerRadius: DesignSystem.largeRadius).fill(Color.appAccent.opacity(DesignSystem.Opacity.atomic)))
+                    .padding(.vertical, DesignSystem.small)
+                }
+            } else if !relevantLinks.isEmpty {
+                VStack(alignment: .leading, spacing: DesignSystem.medium) {
+                    HStack(spacing: DesignSystem.small) {
+                        Image(systemName: "link.badge.plus")
+                            .foregroundStyle(.appAccent)
+                        Text(L10n.Knowledge.Page.AI.potentialLinksTitle)
+                            .font(.headline)
+                            .foregroundStyle(.appText)
+                    }
+                    .padding(.bottom, DesignSystem.tiny)
+                    
+                    VStack(spacing: DesignSystem.tightPadding) {
+                        ForEach(relevantLinks) { link in
+                            potentialLinkRow(link: link, store: store, aiStore: aiStore)
+                        }
+                    }
+                }
+                .padding()
+                .background(RoundedRectangle(cornerRadius: DesignSystem.largeRadius).fill(Color.appAccent.opacity(DesignSystem.Opacity.atomic)))
+                .overlay(
+                    RoundedRectangle(cornerRadius: DesignSystem.largeRadius)
+                        .stroke(LinearGradient(colors: [.appAccent.opacity(DesignSystem.Opacity.medium), .clear], startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: 1)
+                )
+                .padding(.vertical, DesignSystem.small)
+            } else if coordinator.hasScannedForLinks {
+                VStack(alignment: .leading, spacing: DesignSystem.medium) {
+                    HStack(spacing: DesignSystem.small) {
+                        Image(systemName: "info.circle")
+                            .foregroundStyle(.appSecondary)
+                        Text(L10n.Knowledge.Page.AI.potentialLinksEmpty)
+                            .font(.subheadline)
+                            .foregroundStyle(.appSecondary)
+                    }
+                    .padding()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(RoundedRectangle(cornerRadius: DesignSystem.largeRadius).fill(Color.appCard.opacity(DesignSystem.Opacity.dim)))
+                    .padding(.vertical, DesignSystem.small)
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func potentialLinkRow(link: PotentialLinkSuggestion, store: AppStore, aiStore: AIWorkflowStore) -> some View {
+        HStack {
+            VStack(alignment: .leading, spacing: DesignSystem.atomic) {
+                HStack(spacing: DesignSystem.tiny) {
+                    Text(link.sourceTitle)
+                        .font(.subheadline.bold())
+                        .foregroundStyle(.appText)
+                    Image(systemName: DesignSystem.Icons.forward)
+                        .font(.caption2)
+                        .foregroundStyle(.appSecondary)
+                    Text("[[\(link.targetTitle)]]")
+                        .font(.subheadline.bold())
+                        .foregroundStyle(.appAccent)
+                }
+            }
+            
+            Spacer()
+            
+            Button(action: {
+                Task {
+                    await store.applyPotentialLink(link)
+                    aiStore.removePotentialLink(id: link.id)
+                    ToastManager.shared.show(type: .success, message: L10n.Lint.apply)
+                }
+            }) {
+                Text(L10n.Lint.apply)
+                    .font(.caption.bold())
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, DesignSystem.medium)
+                    .padding(.vertical, DesignSystem.tiny)
+                    .background(Color.appAccent)
+                    .clipShape(Capsule())
+            }
+            .buttonStyle(ScaleButtonStyle())
+        }
+        .padding(DesignSystem.medium)
+        .background(Color.appCard)
+        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.tightPadding))
+        .overlay(
+            RoundedRectangle(cornerRadius: DesignSystem.tightPadding)
+                .stroke(Color.appBorder.opacity(DesignSystem.glassOpacity), lineWidth: 1)
+        )
     }
 }

@@ -36,10 +36,11 @@ extension L10n {
         public static var noSelection: String { tr("vault.noSelection") }
         public static var new: String { Localized.tr("vault.new", table: t) }
 
-        public static var create: String { Localized.tr("vault.create", table: t) }
+        public static var create: String { L10n.Common.create }
+        public static var rename: String { L10n.Common.rename }
+        public static var deleteNotebook: String { tr("vault.deleteNotebook") }
         public static var edit: String { Localized.tr("vault.edit", table: t) }
         public static var iconLabel: String { Localized.tr("vault.iconLabel", table: t) }
-        public static var rename: String { Localized.tr("vault.rename", table: t) }
         public static var namePlaceholder: String { Localized.tr("vault.namePlaceholder", table: t) }
         public static var renameMessage: String { Localized.tr("vault.renameMessage", table: t) }
         /// 默认笔记本描述信息

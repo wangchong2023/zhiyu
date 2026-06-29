@@ -34,6 +34,7 @@ public struct ModelLabView: View {
 
     // MARK: - 局部交互状态
 
+    @FocusState var isPromptFocused: Bool
     @State var testPrompt: String = ""
     @State var tempTemperature: Double = 0.7
     @State var tempTopP: Double = 0.9
@@ -81,34 +82,30 @@ public struct ModelLabView: View {
         GridItem(.adaptive(minimum: DesignSystem.Vault.gridCardMin, maximum: DesignSystem.Vault.gridCardMax), spacing: DesignSystem.medium)
     ]
 
-    public init(onGoToStore: @escaping () -> Void) {
+    /// 是否需要外层 ScrollView 包装，用于扁平化整合单页滚动
+    public var embedInScrollView: Bool = true
+
+    public init(embedInScrollView: Bool = true, onGoToStore: @escaping () -> Void) {
+        self.embedInScrollView = embedInScrollView
         self.onGoToStore = onGoToStore
     }
 
     public var body: some View {
         ZStack {
-            ScrollView {
-                VStack(spacing: DesignSystem.large) {
-                    if let selectedUseCase = labManager.selectedUseCase {
-                        // 进入单独用例的沙盒测试面板
-                        useCaseDetailPanel(for: selectedUseCase)
-                    } else {
-                        // 展示格栅主页
-                        labHeaderView
-                        useCaseGridView
-                    }
+            if embedInScrollView {
+                ScrollView {
+                    contentStack
                 }
-                .padding(DesignSystem.medium)
-            }
-
-            // 无可用本地模型时的毛玻璃引导遮罩拦截
-            if !hasActiveLocalModel() {
-                noModelMaskView
+            } else {
+                contentStack
             }
         }
         .animation(.spring(response: 0.35, dampingFraction: 0.8), value: labManager.selectedUseCase)
         .sheet(isPresented: $showConfigSheet) {
             configurationSheet
+        }
+        .fullScreenCover(item: $labManager.selectedUseCase) { useCase in
+            useCaseDetailPanel(for: useCase)
         }
         .onChange(of: tempTemperature) { _, _ in autoSave() }
         .onChange(of: tempTopP) { _, _ in autoSave() }
@@ -122,5 +119,20 @@ public struct ModelLabView: View {
         .onChange(of: modelManager.activeModelId) { _, newModelId in
             loadParametersForModel(newModelId)
         }
+    }
+
+    @ViewBuilder
+    private var contentStack: some View {
+        VStack(spacing: DesignSystem.large) {
+            if !hasActiveLocalModel() {
+                // 如果没有激活的模型，直接在局域展示未激活提示卡，不阻拦上方的商店
+                noModelMaskView
+            } else {
+                // 展示格栅主页
+                labHeaderView
+                useCaseGridView
+            }
+        }
+        .padding(DesignSystem.medium)
     }
 }

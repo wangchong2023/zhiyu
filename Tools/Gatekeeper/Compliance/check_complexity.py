@@ -131,6 +131,10 @@ def main() -> int:
     # 门禁熔断
     if violations:
         print(f"💥 [Complexity] 圈复杂度门禁熔断：{len(violations)} 个函数超过阈值 {COMPLEXITY_THRESHOLD}！")
+        for v in violations:
+            # 兼容 Xcode 编译器报错日志格式
+            xcode_level = "error" if v["severity"].lower() in ("error", "critical") else "warning"
+            print(f"{v['file']}:{v['line']}: {xcode_level}: [Complexity] {v['reason']}")
         print(f"   请在本地执行: swiftlint lint --reporter json | python3 -m json.tool")
         return 1
 

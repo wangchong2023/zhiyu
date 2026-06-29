@@ -42,7 +42,7 @@ struct ModelCardView: View {
             VStack(alignment: .leading, spacing: DesignSystem.small) {
                 // 头部：标题与状态标签
                 HStack(alignment: .top) {
-                    VStack(alignment: .leading, spacing: 2) {
+                    VStack(alignment: .leading, spacing: DesignSystem.tiny) {
                         HStack(spacing: DesignSystem.small) {
                             Text(manifest.displayName)
                                 .font(.headline)
@@ -57,20 +57,87 @@ struct ModelCardView: View {
                                 .foregroundStyle(.appAccent)
                         }
 
-                        Text("\(manifest.vendor)    \(formattedSize(manifest.fileSizeInBytes))")
+                        Text(manifest.vendor)
                             .font(.caption2)
                             .foregroundStyle(.appSecondary)
+
+                        // 独立的文件大小和状态行
+                        HStack(spacing: DesignSystem.small) {
+                            let statusIcon: String = {
+                                if isLocalReady {
+                                    return "checkmark.circle.fill"
+                                } else {
+                                    switch downloadState {
+                                    case .downloading, .pending:
+                                        return "arrow.down.circle.fill"
+                                    default:
+                                        return "questionmark.circle"
+                                    }
+                                }
+                            }()
+                            
+                            let iconColor: Color = {
+                                if isLocalReady {
+                                    return .green
+                                } else {
+                                    switch downloadState {
+                                    case .downloading, .pending:
+                                        return .blue
+                                    default:
+                                        return .gray
+                                    }
+                                }
+                            }()
+
+                            HStack(spacing: 4) {
+                                Image(systemName: statusIcon)
+                                    .font(.caption2)
+                                    .foregroundStyle(iconColor)
+                                
+                                Text(formattedSize(manifest.fileSizeInBytes))
+                                    .font(.caption2.monospaced())
+                                    .foregroundStyle(.appSecondary)
+                            }
+                            
+                            if let urlString = manifest.huggingfaceURLString ?? manifest.modelscopeURLString,
+                               let url = URL(string: urlString) {
+                                HStack(spacing: 2) {
+                                    Image(systemName: "arrow.up.right.square")
+                                        .font(.caption2)
+                                        .foregroundStyle(.appAccent)
+                                    Link(L10n.ModelManager.Card.learnMore, destination: url)
+                                        .font(.caption2)
+                                        .foregroundStyle(.appAccent)
+                                }
+                            }
+                        }
                     }
 
                     Spacer()
 
-                    if isLocalReady {
-                        HStack(spacing: 2) {
-                            Image(systemName: "checkmark.shield.fill")
-                            Text(L10n.ModelManager.Card.ready)
+                    HStack(spacing: DesignSystem.small) {
+                        if isLocalReady {
+                            HStack(spacing: 2) {
+                                Image(systemName: "checkmark.shield.fill")
+                                Text(L10n.ModelManager.Card.ready)
+                            }
+                            .font(.caption2.bold())
+                            .foregroundStyle(.green)
                         }
-                        .font(.caption2.bold())
-                        .foregroundStyle(.green)
+                        
+                        Button {
+                            withAnimation(.easeInOut(duration: 0.3)) {
+                                expandedModelId = (expandedModelId == manifest.modelId) ? nil : manifest.modelId
+                            }
+                        } label: {
+                            Image(systemName: "chevron.up.chevron.down")
+                                .font(.caption2)
+                                .foregroundStyle(.appSecondary)
+                                .padding(DesignSystem.tiny)
+                                .background(Color.appCard.opacity(DesignSystem.Opacity.soft))
+                                .clipShape(Circle())
+                        }
+                        .buttonStyle(.plain)
                     }
                 }
 
@@ -169,9 +236,17 @@ struct ModelCardView: View {
                 HStack(spacing: DesignSystem.tiny) {
                     Text(L10n.ModelManager.Spec.tasks).font(.caption).foregroundStyle(.appSecondary)
                     ForEach(manifest.displayTasks, id: \.self) { t in
-                        Text(taskLabel(for: t)).font(.caption2).padding(.horizontal, 6).padding(.vertical, 2)
-                            .background(taskColor(for: t).opacity(DesignSystem.Opacity.subtle)).clipShape(Capsule())
-                            .foregroundStyle(taskColor(for: t))
+                        HStack(spacing: 3) {
+                            // 胶囊引入微型功能图标，增强视觉可读性
+                            Image(systemName: taskIcon(for: t))
+                                .font(.system(size: 8)) // Dynamic Type
+                            Text(taskLabel(for: t))
+                                .font(.caption2)
+                        }
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(taskColor(for: t).opacity(DesignSystem.Opacity.subtle)).clipShape(Capsule())
+                        .foregroundStyle(taskColor(for: t))
                     }
                 }
             }
@@ -265,6 +340,19 @@ struct ModelCardView: View {
         case "rag": return .pink
         case "translation": return .teal
         default: return .appSecondary
+        }
+    }
+
+    /// 映射模型能力任务对应的 SF Symbols 图标名称
+    func taskIcon(for task: String) -> String {
+        switch task {
+        case "chat": return "bubble.left.and.bubble.right.fill"
+        case "completion": return "checklist.checked"
+        case "reasoning": return "brain.head.profile"
+        case "code": return "chevron.left.forwardslash.chevron.right"
+        case "rag": return "doc.text.magnifyingglass"
+        case "translation": return "character.book.closed.fill"
+        default: return "sparkles"
         }
     }
 }

@@ -6,8 +6,9 @@
 //  Copyright © 2026 WangChong. All rights reserved.
 //
 //  系统层级：[L1] 基础设施层
-//  核心职责：实现 PluginMarket 模块的核心业务逻辑服务。
+//  核心职责：实现 PluginMarket 模块的核心业务逻辑服务，管理云端分发与下载。
 //
+
 import Foundation
 import Combine
 
@@ -89,7 +90,17 @@ struct MarketPlugin: Codable, Identifiable {
         // 初始下载计数：未开始下载时默认为 "0"
         self.downloads = "0"
         self.rating = 0
-        self.icon = "puzzlepiece.extension.fill"
+        
+        // 优先采纳 json 配置文件中声明的专属图标，若无则使用自适应匹配 SF Symbol 图标，保证各示意插件展示各具特色
+        if let customIcon = entry.icon, !customIcon.isEmpty {
+            self.icon = customIcon
+        } else {
+            self.icon = downloadBase
+                .appendingPathComponent(entry.id)
+                .appendingPathComponent("icon.png")
+                .absoluteString
+        }
+        
         self.downloadURL = downloadBase
             .appendingPathComponent(entry.id)
             .absoluteString
@@ -97,7 +108,7 @@ struct MarketPlugin: Codable, Identifiable {
         self.requiredPermissions = nil
         self.monetization = nil
         self.reviewCount = nil
-        self.category = nil
+        self.category = entry.category ?? "efficiency"
         self.source = "community"
         
         // 优先采纳 entry.names 多语言字典，若为空则自动补充默认英文名称
@@ -114,6 +125,29 @@ struct MarketPlugin: Codable, Identifiable {
         }
         self.descriptions = resolvedDescs
     }
+
+    /// 根据插件 ID 智能映射默认 of SF Symbol 兜底图标，防止在未解压或无本地物理图片时各插件展示单一的拼图块
+    private static func defaultIcon(for id: String) -> String {
+        if id.contains("toc-generator") {
+            return "list.bullet.rectangle.portrait"
+        } else if id.contains("word-counter") {
+            return "character.textbox"
+        } else if id.contains("smart-cleaner") {
+            return "wand.and.stars"
+        } else if id.contains("ai-summary") {
+            return "brain.head.profile"
+        } else if id.contains("code-highlighter") {
+            return "curlybraces"
+        } else if id.contains("link-preview") {
+            return "link"
+        } else if id.contains("ai-translator") {
+            return "translate"
+        } else if id.contains("markdown-beautifier") {
+            return "doc.text.magnifyingglass"
+        } else {
+            return "puzzlepiece.extension.fill"
+        }
+    }
 }
 
 /// community-plugins.json 条目（Obsidian 风格，扩展支持多语言元数据）
@@ -125,9 +159,12 @@ struct CommunityPluginEntry: Codable {
     let repo: String
     /// 自定义增加动态版本属性，由云端 json 配置文件统一调配
     let version: String?
+    /// 插件自定义 SF Symbol 图标名称，允许从云端直接下发控制图标展示
+    let icon: String?
     
     let names: [String: String]?
     let descriptions: [String: String]?
+    let category: String?
 }
 
 /// 插件市场服务 (Architect 视角：实现云端分发体系)
@@ -153,8 +190,7 @@ final class PluginMarketService: ObservableObject {
         return registryGitHub
     }
 
-    /// 拉取云端插件市场的最新插件列表（从 GitHub 远端配置地址异步加载，无本地静态 Fallback）
-    /// - Returns: Void。更新 `@Published` 的 `availablePlugins` 与 `isLoading` 状态。
+    /// 从云端抓取插件元数据并更新可用的插件列表
     func fetchPlugins() async {
         await MainActor.run {
             self.isLoading = true
@@ -174,7 +210,6 @@ final class PluginMarketService: ObservableObject {
     }
 
     /// 构建要尝试请求的插件市场 URL 地址列表（支持按首选语言加载）
-    /// - Returns: 包含高优先级多语言包及通用兜底包的 URL 数组。
     private func buildPluginURLs() -> [URL] {
         let preferredLanguage = Localized.currentLanguage
         var urls: [URL] = []
@@ -191,22 +226,17 @@ final class PluginMarketService: ObservableObject {
     }
 
     /// 并发依次尝试拉取请求列表中的第一个可用插件元数据
-    /// - Parameter urls: 待尝试的 URL 数组列表
-    /// - Returns: 是否有一项拉取成功。
     private func tryFetchAny(from urls: [URL]) async -> Bool {
-        // swiftlint:disable for_where
         for url in urls {
-            if await tryFetch(from: url) {
+            let hasFetched = await tryFetch(from: url)
+            if hasFetched {
                 return true
             }
         }
-        // swiftlint:enable for_where
         return false
     }
 
     /// 尝试从单个 URL 抓取插件元数据
-    /// - Parameter url: 目标 URL
-    /// - Returns: 抓取并解析是否成功。
     private func tryFetch(from url: URL) async -> Bool {
         do {
             Logger.shared.info("[PluginMarket] 正在尝试从以下地址拉取插件市场: \(url.absoluteString)")
@@ -226,13 +256,10 @@ final class PluginMarketService: ObservableObject {
     }
 
     /// 解析服务器返回的插件市场元数据 JSON 并转换为 MarketPlugin 结构
-    /// - Parameter data: 二进制响应数据
-    /// - Returns: 反序列化与数据填充是否成功。
     private func processPluginResponse(data: Data) async -> Bool {
         let decoder = JSONDecoder()
 
         if let communityPlugins = try? decoder.decode([CommunityPluginEntry].self, from: data) {
-            // 根据实际请求的目标 URL，计算得出其下载子文件（manifest, index.js）的 downloadBase 基准路径
             let currentTargetURL = targetURL
             let rawURLString: String
             if currentTargetURL.absoluteString.contains("community-plugins.json") {
@@ -242,7 +269,6 @@ final class PluginMarketService: ObservableObject {
             } else if currentTargetURL.absoluteString.contains("community.json") {
                 rawURLString = currentTargetURL.absoluteString.replacingOccurrences(of: "community.json", with: "plugins")
             } else {
-                // 如果是 api/plugins 等调试接口，直接用其父级目录的 plugins
                 rawURLString = currentTargetURL.deletingLastPathComponent().appendingPathComponent("plugins").absoluteString
             }
             
@@ -279,14 +305,6 @@ final class PluginMarketService: ObservableObject {
     }
 
     /// 下载指定的插件并将其保存到本地沙盒存储目录中
-    /// - Parameter plugin: 目标下载插件条目
-    /// - Returns: Bool，代表下载与解包保存是否成功。
-    /// 下载指定的插件并将其保存到本地沙盒存储目录中（明文分流并发下载版）
-    /// - Parameter plugin: 目标下载插件条目
-    /// - Returns: Bool，代表下载保存是否成功。
-    /// 下载指定的插件并将其保存到本地沙盒存储目录中（明文分流并发下载版）
-    /// - Parameter plugin: 目标下载插件条目
-    /// - Returns: Bool，代表下载保存是否成功。
     func downloadPlugin(_ plugin: MarketPlugin) async -> Bool {
         guard let urlString = plugin.downloadURL, let baseURL = URL(string: urlString) else {
             Logger.shared.warning("[PluginMarket] 插件 \(plugin.name) 下载链接无效或缺失。")
@@ -424,12 +442,7 @@ final class PluginMarketService: ObservableObject {
         }
     }
 
-    /// 获取云端 README.md 拉取时的候选 URL 降级路径数组（支持根据当前首选语言自动降级）
-    /// - Parameters:
-    ///   - pluginID: 插件 ID 标识
-    ///   - downloadURLString: 插件下载物理包的 URL 地址字符串
-    ///   - preferredLanguages: 系统首选语言链条，默认自 Locale.preferredLanguages 自动生成，允许单测注入
-    /// - Returns: 按尝试优先级从高到低排列的 URL 数组。
+    /// 获取云端 README.md 拉取时的候选 URL 降级路径数组
     public func readmeCandidateURLs(
         forID pluginID: String,
         downloadURLString: String,
@@ -440,7 +453,6 @@ final class PluginMarketService: ObservableObject {
         let preferredLanguage = preferredLanguages.first ?? "en"
         
         var urlsToTry: [URL] = []
-        // 1. 优先拼接首选语言专属的 README (如 _zh-Hans.md / _en.md)
         if preferredLanguage.hasPrefix("zh") {
             urlsToTry.append(base.appendingPathComponent("\(pluginID)_zh-Hans.md"))
         } else if preferredLanguage.hasPrefix("en") {
@@ -450,14 +462,11 @@ final class PluginMarketService: ObservableObject {
             urlsToTry.append(base.appendingPathComponent("\(pluginID)_\(cleanLang).md"))
         }
         
-        // 2. 其次添加英文版 README 兜底 (若首选语言不是英文)
         if !preferredLanguage.hasPrefix("en") {
             urlsToTry.append(base.appendingPathComponent("\(pluginID)_en.md"))
         }
         
-        // 3. 最后使用默认 README.md 文件无后缀路径兜底
         urlsToTry.append(base.appendingPathComponent("\(pluginID).md"))
-        
         return urlsToTry
     }
 }

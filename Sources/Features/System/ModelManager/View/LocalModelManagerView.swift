@@ -24,106 +24,67 @@ public struct LocalModelManagerView: View {
 
     // MARK: - 状态管理
 
-    /// 当前选中的 Tab 索引
-    /// 0: 模型市场, 1: 测试实验室
-    @State private var selectedTab: Tab = .store
-
-    // MARK: - Tab 枚举
-
-    private enum Tab: Int, CaseIterable {
-        case store = 0
-        case laboratory = 1
-
-        var title: String {
-            switch self {
-            case .store:
-                return L10n.ModelManager.storeTitle
-            case .laboratory:
-                return L10n.ModelManager.laboratoryTitle
-            }
-        }
-
-        var icon: String {
-            switch self {
-            case .store:
-                return "square.stack.3d.up.fill"
-            case .laboratory:
-                return "flask.fill"
-            }
-        }
-    }
-
-    // MARK: - 布局常量 (Layout Constants)
-    private struct Layout {
-        static let springResponse: Double = 0.3
-        static let springDamping: Double = 0.7
-        static let tabHorizontalPadding: CGFloat = 18
-        static let tabVerticalPadding: CGFloat = 8
-        static let selectorSpacing: CGFloat = 4
-        static let selectorBorderWidth: CGFloat = 1.0
-    }
-
     public init() {}
 
     public var body: some View {
-        // 直接返回 VStack，使用父视图统一渲染的渐变背景，规避 ignoresSafeArea 拦截点击事件的问题
-        VStack(spacing: 0) {
-            // 自定义精致胶囊型 Tab 选择器
-            tabSelector
-
-            // 内容区域
-            TabView(selection: $selectedTab) {
-                ModelStoreView(onGoToLab: {
-                    withAnimation(.easeInOut(duration: 0.3)) {
-                        selectedTab = .laboratory
+        ScrollView {
+            ScrollViewReader { proxy in
+                VStack(spacing: DesignSystem.giant) {
+                    // Section 1: 模型市场
+                    VStack(alignment: .leading, spacing: 0) {
+                        HStack(spacing: DesignSystem.small) {
+                            Image(systemName: "square.stack.3d.up.fill")
+                                .foregroundStyle(.cyan)
+                                .font(.title3)
+                            Text(L10n.ModelManager.storeTitle)
+                                .font(.title3.bold())
+                                .foregroundStyle(Color.theme.text)
+                        }
+                        .padding(.horizontal, DesignSystem.medium)
+                        .padding(.top, DesignSystem.medium)
+                        
+                        ModelStoreView(embedInScrollView: false) {
+                            withAnimation(.easeInOut) {
+                                proxy.scrollTo("lab_section", anchor: .top)
+                            }
+                        }
+                        .environment(store)
+                        .environment(router)
                     }
-                })
-                .tag(Tab.store)
-
-                ModelLabView(onGoToStore: {
-                    withAnimation(.easeInOut(duration: 0.3)) {
-                        selectedTab = .store
+                    .background(Color.appCard.opacity(DesignSystem.Opacity.dim))
+                    .cornerRadius(DesignSystem.mediumRadius)
+                    .padding(.horizontal)
+                    .id("store_section")
+                    
+                    // Section 2: 测试实验室
+                    VStack(alignment: .leading, spacing: 0) {
+                        HStack(spacing: DesignSystem.small) {
+                            Image(systemName: "flask.fill")
+                                .foregroundStyle(.purple)
+                                .font(.title3)
+                            Text(L10n.ModelManager.laboratoryTitle)
+                                .font(.title3.bold())
+                                .foregroundStyle(Color.theme.text)
+                        }
+                        .padding(.horizontal, DesignSystem.medium)
+                        .padding(.top, DesignSystem.medium)
+                        
+                        ModelLabView(embedInScrollView: false) {
+                            withAnimation(.easeInOut) {
+                                proxy.scrollTo("store_section", anchor: .top)
+                            }
+                        }
+                        .environment(store)
+                        .environment(router)
                     }
-                })
-                .tag(Tab.laboratory)
-            }
-            .tabViewStyle(.page(indexDisplayMode: .never))
-        }
-    }
-
-    // MARK: - 子视图组件
-
-    /// 顶部精致胶囊型 Tab 选择器，减少主屏纵向高度占用，提升可视面积
-    private var tabSelector: some View {
-        HStack(spacing: Layout.selectorSpacing) {
-            ForEach(Tab.allCases, id: \.self) { tab in
-                Button(action: {
-                    withAnimation(.spring(response: Layout.springResponse, dampingFraction: Layout.springDamping)) {
-                        selectedTab = tab
-                    }
-                    HapticFeedback.shared.trigger(.selection)
-                }) {
-                    Text(tab.title)
-                        .font(.subheadline.weight(.medium))
-                        .padding(.horizontal, Layout.tabHorizontalPadding)
-                        .padding(.vertical, Layout.tabVerticalPadding)
-                        .background(
-                            Capsule()
-                                .fill(selectedTab == tab ? Color.appAccent : Color.clear)
-                        )
-                        .foregroundStyle(selectedTab == tab ? Color.theme.white : .appSecondary)
+                    .background(Color.appCard.opacity(DesignSystem.Opacity.dim))
+                    .cornerRadius(DesignSystem.mediumRadius)
+                    .padding(.horizontal)
+                    .id("lab_section")
                 }
-                .buttonStyle(.plain)
+                .padding(.vertical)
             }
         }
-        .padding(DesignSystem.tiny)
-        .background(Capsule().fill(Color.appCard.opacity(DesignSystem.Opacity.prominent)))
-        .overlay(
-            Capsule()
-                .stroke(Color.appBorder.opacity(DesignSystem.Opacity.prominent), lineWidth: Layout.selectorBorderWidth)
-        )
-        .padding(.vertical, DesignSystem.medium)
-        .frame(maxWidth: .infinity, alignment: .center)
     }
 }
 

@@ -13,8 +13,9 @@ import SwiftUI
 /// 页面详情 AI 结果展示区
 struct PageDetailAISection: View {
     @Environment(AIWorkflowStore.self) var aiStore
+    @Environment(AppStore.self) var store
     @Environment(Router.self) var router
-    let pageTitle: String
+    let page: KnowledgePage
     let onLinkTap: (String) -> Void
     
     var body: some View {
@@ -28,11 +29,32 @@ struct PageDetailAISection: View {
                         .foregroundStyle(.appText)
                     Spacer()
                     if !aiStore.isProcessingPageAI {
+                        // 一键“合入正文”按钮：将生成的 AI 智能总结和行动项追加到该页面正文的末尾
+                        if let result = aiStore.activePageAIResult {
+                            Button(action: {
+                                Task {
+                                    var updatedPage = page
+                                    // 追加 Markdown 分隔线和一键总结标题
+                                    updatedPage.content = page.content + "\n\n---\n### " + L10n.Common.appendToBody + "\n" + result
+                                    // 保存修改，物理库和内存同步，并自动增量生成 Embedding 向量
+                                    await store.updatePage(updatedPage, forceDeepScan: false)
+                                    HapticFeedback.shared.trigger(.success)
+                                    // 成功合入后清空结果区，使用户专注于新正文
+                                    aiStore.activePageAIResult = nil
+                                }
+                            }) {
+                                Label(L10n.Common.appendToBody, systemImage: "square.and.arrow.down")
+                                    .font(.caption)
+                                    .foregroundStyle(.appAccent)
+                            }
+                            .padding(.trailing, DesignSystem.small)
+                        }
+
                         if let result = aiStore.activePageAIResult, result.contains("- ") {
                             Button(action: {
                                 Task {
                                     @Inject var workflowService: WorkflowService
-                                    try await workflowService.syncToReminders(text: result, title: pageTitle)
+                                    try await workflowService.syncToReminders(text: result, title: page.title)
                                 }
                             }) {
                                 Label(L10n.Common.syncToReminders, systemImage: DesignSystem.Icons.checklist)

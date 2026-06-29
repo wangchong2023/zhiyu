@@ -30,6 +30,9 @@ protocol RouterProtocol: AnyObject, Observable {
     /// 是否正在显示设置面板
     var isShowingSettingsSheet: Bool { get set }
 
+    /// 是否正在显示人工智能参数设置面板
+    var isShowingAISettingsSheet: Bool { get set }
+
     /// 用于在跳转至 AI 对话时自动发送的预设提示词
     var pendingInitialChatPrompt: String? { get set }
 

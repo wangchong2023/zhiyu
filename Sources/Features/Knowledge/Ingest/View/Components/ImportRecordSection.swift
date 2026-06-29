@@ -99,45 +99,32 @@ struct ImportRecordSection: View {
         return textExtensions.contains(ext)
     }
 
-    /// 预览导入的原始内容
-    /// - Parameter record: 导入记录实体
-    private func previewContent(_ record: ImportRecord) {
-        // 对于用户手工录入的记录，优先分派编辑事件以拉起表单
-        if record.category == ImportCategory.manual.rawValue {
+    private func previewContent(_ record: ImportRecord, forceRaw: Bool = false) {
+        let handler = ImportPreviewHandler(urlOpener: urlOpener, shareSheet: shareSheet, router: router)
+        let action = handler.resolveAction(for: record, forceRaw: forceRaw)
+        
+        print("DEBUG_INGEST: ClickedRecordTitle=\(record.title), ResolvedAction=\(action)")
+        
+        switch action {
+        case .navigateToPage(let uuid):
+            router.navigateToPage(id: uuid)
+        case .manualEdit:
             onManualEdit?(record)
-            return
-        }
-
-        // 优先处理本地磁盘文件
-        if let path = record.filePath, FileManager.default.fileExists(atPath: path) {
-            if isTextFile(path: path) {
-                // 流式异步分块加载预览，避免 ANR/OOM
-                previewFilePath = path
-                previewText = nil
-                showTextPreview = true
-                return
-            }
-            
-            // 降级处理：非纯文本二进制文件（如 PDF、图片）则通过 QuickLook 预览
-            quickLookURL = URL(fileURLWithPath: path)
+        case .localTextFile(let path):
+            previewFilePath = path
+            previewText = nil
+            showTextPreview = true
+        case .localBinaryFile(let url):
+            quickLookURL = url
             showQuickLook = true
-            return
-        }
-        // 链接 → 浏览器（仅当无本地文件时）
-        if let urlStr = record.sourceURL, let url = URL(string: urlStr) {
+        case .openURL(let url):
             Task { await urlOpener.open(url) }
-            return
-        }
-        // 文本 → Sheet
-        if let rawText = record.rawText {
-            previewText = rawText
+        case .rawTextPreview(let text):
+            previewText = text
             previewFilePath = nil
             showTextPreview = true
-            return
-        }
-        // 回退：无原始内容可预览时，若有关联页面则导航过去
-        if let pageID = record.pageID, let uuid = UUID(uuidString: pageID), record.status == ImportRecordStatus.done {
-            router.navigateToPage(id: uuid)
+        case .none:
+            break
         }
     }
 
@@ -178,16 +165,13 @@ struct ImportRecordSection: View {
             ImportRecordCard(
                 record: record,
                 onTap: { previewContent(record) },
-                onViewPage: {
-                    guard let pageID = record.pageID, let uuid = UUID(uuidString: pageID) else { return }
-                    router.navigateToPage(id: uuid)
-                },
+                onPreview: { previewContent(record, forceRaw: true) },
                 onOpenWith: {
                     guard let path = record.filePath else { return }
                     let fileURL = URL(fileURLWithPath: path)
                     Task { await shareSheet.presentShareSheet(items: [fileURL]) }
                 },
-                onAITag: { onAITag?(record) }
+                onEdit: { onManualEdit?(record) }
             )
         }
     }
@@ -207,5 +191,66 @@ struct ImportRecordSection: View {
     private func loadRecords() async {
         let cat: String? = selectedCategory == "all" ? nil : selectedCategory
         records = (try? await repo.fetchAll(category: cat, limit: 50)) ?? []
+    }
+}
+
+// MARK: - 预览动作分发处理器（支持单元测试）
+
+enum PreviewAction: Equatable {
+    case navigateToPage(id: UUID)
+    case manualEdit
+    case localTextFile(path: String)
+    case localBinaryFile(url: URL)
+    case openURL(url: URL)
+    case rawTextPreview(text: String)
+    case none
+}
+
+struct ImportPreviewHandler {
+    let urlOpener: any URLOpenerProtocol
+    let shareSheet: any ShareSheetProtocol
+    let router: Router
+    
+    /// 根据导入记录的状态和内容，决定预览分发动作
+    func resolveAction(for record: ImportRecord, forceRaw: Bool = false, fileExists: (String) -> Bool = { FileManager.default.fileExists(atPath: $0) }) -> PreviewAction {
+        // 1. 优先：若有成功关联的知识页面，且非强预览类（文件/OCR/语音），则直接跳转至页面详情
+        let isForcePreviewCategory = record.category == ImportCategory.file.rawValue ||
+                                     record.category == ImportCategory.ocr.rawValue ||
+                                     record.category == ImportCategory.voice.rawValue
+        
+        if !forceRaw && !isForcePreviewCategory, let pageID = record.pageID, let uuid = UUID(uuidString: pageID), record.status == ImportRecordStatus.done {
+            return .navigateToPage(id: uuid)
+        }
+
+        // 2. 对于用户手工录入的记录，优先分派编辑事件以拉起表单
+        if !forceRaw, record.category == ImportCategory.manual.rawValue {
+            return .manualEdit
+        }
+
+        // 3. 处理本地磁盘文件
+        if let path = record.filePath, fileExists(path) {
+            if isTextFile(path: path) {
+                return .localTextFile(path: path)
+            }
+            return .localBinaryFile(url: URL(fileURLWithPath: path))
+        }
+        
+        // 4. 链接 → 浏览器
+        if let urlStr = record.sourceURL, let url = URL(string: urlStr) {
+            return .openURL(url: url)
+        }
+        
+        // 5. 文本 → 兜底弹窗预览
+        if let rawText = record.rawText {
+            return .rawTextPreview(text: rawText)
+        }
+        
+        return .none
+    }
+    
+    private func isTextFile(path: String) -> Bool {
+        let textExtensions = ["txt", "md", "json", "csv", "js", "py", "html", "xml", "css", "log", "swift", "yaml", "yml"]
+        let ext = URL(fileURLWithPath: path).pathExtension.lowercased()
+        return textExtensions.contains(ext)
     }
 }

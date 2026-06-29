@@ -143,6 +143,9 @@ extension L10n {
                 public static var lab: String { Knowledge.tr("page.ai.lab") }
                 public static var expansion: String { Knowledge.tr("page.ai.expansion") }
                 public static var labOutput: String { Knowledge.tr("page.ai.labOutput") }
+                public static var potentialLinksScanning: String { Knowledge.tr("page.ai.potentialLinksScanning") }
+                public static var potentialLinksTitle: String { Knowledge.tr("page.ai.potentialLinksTitle") }
+                public static var potentialLinksEmpty: String { Knowledge.tr("page.ai.potentialLinksEmpty") }
             }
 
             public enum History {

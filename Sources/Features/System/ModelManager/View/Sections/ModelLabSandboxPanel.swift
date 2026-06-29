@@ -19,18 +19,40 @@ extension ModelLabView {
     // MARK: - 实验室专属沙盒交互面板
 
     func useCaseDetailPanel(for useCase: UseCaseType) -> some View {
-        VStack(spacing: DesignSystem.medium) {
-            // 顶部导航栏
-            useCaseDetailHeader(for: useCase)
-                .padding(.bottom, DesignSystem.small)
+        NavigationStack {
+            ZStack {
+                // 配色与系统保持一致，背景铺满全屏，强制忽略所有安全区
+                PageBackgroundView(accentColor: .appAccent)
+                    .ignoresSafeArea(.all)
 
-            if useCase == .aiChat {
-                aiChatSandboxView
-            } else {
-                standardSandboxView(for: useCase)
+                VStack(spacing: DesignSystem.medium) {
+                    if useCase == .aiChat {
+                        aiChatSandboxView
+                    } else {
+                        // 使用 ScrollView 包裹标准交互沙盒，防止多参数导致内容溢出挤压安全区
+                        ScrollView(.vertical, showsIndicators: false) {
+                            standardSandboxView(for: useCase)
+                                .padding(.vertical, 2)
+                        }
+                    }
+                }
+                .padding(.horizontal, DesignSystem.medium)
+                .padding(.bottom, 8)
+            }
+            .navigationTitle(useCase.title)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button(L10n.Common.done) {
+                        HapticFeedback.shared.trigger(.selection)
+                        labManager.stopSimulation()
+                        labManager.selectedUseCase = nil
+                    }
+                    .bold()
+                }
             }
         }
-        .id(useCase.rawValue)
+        .ignoresSafeArea(.keyboard) // 仅忽略键盘，不忽略容器安全区
     }
 
     /// 实验室沙盒面板的顶部导航与配置栏视图
@@ -38,36 +60,25 @@ extension ModelLabView {
     /// - Returns: 顶部状态和配置项的 HStack 视图
     func useCaseDetailHeader(for useCase: UseCaseType) -> some View {
         HStack {
+            Spacer().frame(width: DesignSystem.Metrics.largeIconBoxSize)
+            
+            Spacer()
+
+            Text(useCase.title)
+                .font(.headline.bold())
+                .foregroundStyle(.appText)
+
+            Spacer()
+
             Button(action: {
                 HapticFeedback.shared.trigger(.selection)
                 labManager.stopSimulation()
                 labManager.selectedUseCase = nil
             }) {
-                HStack(spacing: DesignSystem.standardPadding / 2) {
-                    Image(systemName: "chevron.left")
-                    Text(L10n.ModelManager.Lab.back)
-                }
-                .foregroundStyle(.cyan)
-            }
-            .buttonStyle(.plain)
-
-            Spacer()
-
-            modelSelectionMenu(for: useCase)
-
-            Spacer()
-
-            // 参数配置按钮（仿参考图右上角 Configurations 入口）
-            Button(action: {
-                HapticFeedback.shared.trigger(.selection)
-                showConfigSheet = true
-            }) {
-                Image(systemName: "slider.horizontal.3")
-                    .font(.title3)
+                Text(L10n.Common.done)
+                    .font(.body.bold())
                     .foregroundStyle(.cyan)
-                    .padding(DesignSystem.standardPadding)
-                    .background(Color.theme.white.opacity(DesignSystem.Opacity.subtle))
-                    .clipShape(Circle())
+                    .frame(width: DesignSystem.Metrics.largeIconBoxSize, alignment: .trailing)
             }
             .buttonStyle(.plain)
         }
@@ -98,14 +109,14 @@ extension ModelLabView {
             HStack(spacing: 4) {
                 Text(getActiveModel()?.displayName ?? useCase.title)
                     .font(.headline)
-                    .foregroundStyle(.white)
+                    .foregroundStyle(.appText)
                 Image(systemName: "chevron.down")
                     .font(.caption)
                     .foregroundStyle(.cyan)
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 6)
-            .background(Color.theme.white.opacity(DesignSystem.Opacity.subtle))
+            .background(Color.appCard.opacity(DesignSystem.Opacity.dim))
             .clipShape(Capsule())
         }
     }
@@ -135,14 +146,21 @@ extension ModelLabView {
     func promptEditorView(for useCase: UseCaseType) -> some View {
         if useCase != .audioScribe {
             TextEditor(text: $testPrompt)
+                .focused($isPromptFocused)
                 .padding(DesignSystem.standardPadding)
                 .frame(height: DesignSystem.Metrics.iconBoxSize * 2)
                 .background(Color.theme.white.opacity(DesignSystem.Opacity.ghost))
                 .cornerRadius(DesignSystem.smallRadius)
                 .overlay(
                     RoundedRectangle(cornerRadius: DesignSystem.smallRadius)
-                        .stroke(Color.theme.white.opacity(DesignSystem.Opacity.glass), lineWidth: 1)
+                        .stroke(
+                            isPromptFocused ?
+                            LinearGradient(colors: [.cyan, .purple, .blue], startPoint: .topLeading, endPoint: .bottomTrailing) :
+                            LinearGradient(colors: [Color.theme.white.opacity(DesignSystem.Opacity.glass)], startPoint: .topLeading, endPoint: .bottomTrailing),
+                            lineWidth: isPromptFocused ? 1.5 : 1.0
+                        )
                 )
+                .shadow(color: isPromptFocused ? .cyan.opacity(DesignSystem.disabledOpacity) : .clear, radius: isPromptFocused ? 6 : 0, x: 0, y: 0)
                 .overlay(
                     Group {
                         if testPrompt.isEmpty {
@@ -155,7 +173,7 @@ extension ModelLabView {
                     alignment: .topLeading
                 )
                 .font(.body)
-                .foregroundStyle(Color.theme.white)
+                .foregroundStyle(Color.theme.text)
         }
     }
 
@@ -201,10 +219,40 @@ extension ModelLabView {
         }
     }
 
+    /// 大模型选择与配置控制栏组件，供实验室各测试面板使用
+    func modelAndConfigControlBar(for useCase: UseCaseType) -> some View {
+        HStack {
+            modelSelectionMenu(for: useCase)
+            
+            Spacer()
+            
+            Button(action: {
+                HapticFeedback.shared.trigger(.selection)
+                showConfigSheet = true
+            }) {
+                HStack(spacing: 4) {
+                    Image(systemName: "slider.horizontal.3")
+                        .font(.caption)
+                    Text(L10n.ModelManager.parametersTitle)
+                        .font(.caption)
+                }
+                .foregroundStyle(.cyan)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(Color.appCard.opacity(DesignSystem.Opacity.dim))
+                .clipShape(Capsule())
+            }
+            .buttonStyle(.plain)
+        }
+    }
+
     /// 单轮沙盒交互测试视图
     @ViewBuilder
     func standardSandboxView(for useCase: UseCaseType) -> some View {
         VStack(spacing: DesignSystem.medium) {
+            // 大模型选择与参数配置栏
+            modelAndConfigControlBar(for: useCase)
+
             // 实时性能评估看板
             metricsMonitorBoard
 
@@ -212,7 +260,7 @@ extension ModelLabView {
             VStack(alignment: .leading, spacing: DesignSystem.medium) {
                 Text(L10n.ModelManager.Lab.configureInputs)
                     .font(.subheadline.bold())
-                    .foregroundStyle(.white.opacity(DesignSystem.Opacity.prominent))
+                    .foregroundStyle(.appText)
 
                 // 根据用例分发特殊输入源组件
                 switch useCase {

@@ -70,6 +70,7 @@ struct SynthesisView: View {
                 docToRename: docToRename,
                 docToDelete: docToDelete,
                 batchDelete: batchDelete,
+                onConfigureAI: { router.isShowingAISettingsSheet = true },
                 outputSheet: outputSheet
             )
             .onTaskStatusChange(taskCenter)
@@ -78,14 +79,6 @@ struct SynthesisView: View {
 
     private var mainList: some View {
         List {
-            if !llmService.isEnabled || llmService.apiKey.isEmpty {
-                llmWarningSection
-                    #if !os(watchOS)
-                    .listRowSeparator(.hidden)
-                    #endif
-                    .listRowInsets(EdgeInsets(top: 0, leading: DesignSystem.standardPadding, bottom: DesignSystem.small, trailing: DesignSystem.standardPadding))
-                    .listRowBackground(Color.clear)
-            }
             entrySection
             runningTasksContainer
             mainContentSection
@@ -112,25 +105,6 @@ struct SynthesisView: View {
         #endif
         .listRowInsets(EdgeInsets(top: 0, leading: DesignSystem.standardPadding, bottom: DesignSystem.loosePadding, trailing: DesignSystem.standardPadding))
         .listRowBackground(Color.clear)
-    }
-
-    private var llmWarningSection: some View {
-        // 使用 Button 触发全局路由设置 Sheet 弹窗，防止在分栏布局中 NavigationLink 发生环境丢失、点击无响应。
-        // 同时利用 Button 替换 NavigationLink，彻底消除 List 行尾自动添加冗余系统 Chevron（>）的渲染缺陷。
-        Button {
-            HapticFeedback.shared.trigger(.selection)
-            router.isShowingSettingsSheet = true
-        } label: {
-            HStack(spacing: DesignSystem.medium) {
-                Image(systemName: DesignSystem.Icons.warning).foregroundStyle(Color.theme.orange)
-                Text(L10n.Chat.configureFirst).font(.subheadline).foregroundStyle(.appText)
-                Spacer()
-                Image(systemName: DesignSystem.Icons.forward).font(.caption).foregroundStyle(.appSecondary)
-            }
-            .padding().background(Color.theme.orange.opacity(DesignSystem.Opacity.glass))
-            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
-        }
-        .buttonStyle(.plain)
     }
 
     private var mainContentSection: some View {
@@ -402,6 +376,7 @@ extension View {
         docToRename: SynthesisStore.SynthesisDocument?,
         docToDelete: SynthesisStore.SynthesisDocument?,
         batchDelete: @escaping () -> Void,
+        onConfigureAI: @escaping () -> Void,
         outputSheet: some View
     ) -> some View {
         self
@@ -423,7 +398,8 @@ extension View {
                 newDocName: newDocName,
                 docToRename: docToRename,
                 docToDelete: docToDelete,
-                batchDelete: batchDelete
+                batchDelete: batchDelete,
+                onConfigureAI: onConfigureAI
             )
     }
 
@@ -437,15 +413,30 @@ extension View {
         newDocName: Binding<String>,
         docToRename: SynthesisStore.SynthesisDocument?,
         docToDelete: SynthesisStore.SynthesisDocument?,
-        batchDelete: @escaping () -> Void
+        batchDelete: @escaping () -> Void,
+        onConfigureAI: @escaping () -> Void
     ) -> some View {
         self
             .alertNoPages(isPresented: showNoPagesAlert)
             .alertLimitReached(isPresented: showLimitAlert)
             .alertRenameDoc(isPresented: showRenameDialog, name: newDocName, doc: docToRename)
-            .alertLLMNotConfigured(isPresented: showLLMAlert)
+            .alertLLMNotConfigured(isPresented: showLLMAlert, onConfigure: onConfigureAI)
             .confirmBatchDelete(isPresented: showBatchDeleteConfirm, action: batchDelete)
             .alertDeleteDoc(isPresented: showDeleteDocConfirm, doc: docToDelete)
+    }
+
+    /// alertLLMNotConfigured
+    /// - Parameter isPresented: isPresented
+    func alertLLMNotConfigured(isPresented: Binding<Bool>, onConfigure: @escaping () -> Void) -> some View {
+        self.alert(L10n.Common.configureAI, isPresented: isPresented) {
+            Button(L10n.ModelManager.Lab.configurations) {
+                HapticFeedback.shared.trigger(.selection)
+                onConfigure()
+            }
+            Button(L10n.Common.cancel, role: .cancel) { }
+        } message: {
+            Text(L10n.Common.configureAI)
+        }
     }
 }
 
@@ -472,25 +463,15 @@ extension View {
     /// - Parameter name: name
     /// - Parameter doc: doc
     func alertRenameDoc(isPresented: Binding<Bool>, name: Binding<String>, doc: SynthesisStore.SynthesisDocument?) -> some View {
-        self.alert(L10n.Tag.Action.rename, isPresented: isPresented) {
+        self.alert(L10n.Common.rename, isPresented: isPresented) {
             TextField(L10n.Tag.Management.inputName, text: name)
-            Button(L10n.Tag.Action.rename) {
+            Button(L10n.Common.rename) {
                 if let doc = doc {
                     @Inject var store: SynthesisStore
                     store.renameSynthesisDoc(type: doc.type, docID: doc.id, newName: name.wrappedValue)
                 }
             }
             Button(L10n.Common.cancel, role: .cancel) { }
-        }
-    }
-    
-    /// alertLLMNotConfigured
-    /// - Parameter isPresented: isPresented
-    func alertLLMNotConfigured(isPresented: Binding<Bool>) -> some View {
-        self.alert(L10n.Chat.configureFirst, isPresented: isPresented) {
-            Button(L10n.Common.confirm, role: .cancel) { }
-        } message: {
-            Text(L10n.AI.LLM.Error.notConfigured)
         }
     }
     

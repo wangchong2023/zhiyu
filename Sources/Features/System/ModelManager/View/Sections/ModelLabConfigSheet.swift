@@ -55,9 +55,28 @@ extension ModelLabView {
     // MARK: - Model Configs 分段内容
 
     private var modelConfigsTabContent: some View {
-        VStack(spacing: DesignSystem.medium) {
+        let useCase = labManager.selectedUseCase ?? .aiChat
+        let isMultimodal = useCase == .askImage || useCase == .audioScribe
+        let isAgent = useCase == .tinyGarden || useCase == .mobileActions
+        
+        return VStack(spacing: DesignSystem.medium) {
             // 预设模板选择
             presetSelectorView
+            
+            // 提示文案展示
+            if !labManager.paramTips.isEmpty {
+                HStack(alignment: .top, spacing: DesignSystem.tiny) {
+                    Image(systemName: "info.circle.fill")
+                        .foregroundStyle(Color.theme.orange)
+                    Text(labManager.paramTips)
+                        .font(.system(size: DesignSystem.captionFontSize))
+                        .foregroundStyle(Color.theme.orange)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .padding(DesignSystem.small)
+                .background(Color.theme.orange.opacity(DesignSystem.subtleFillOpacity))
+                .cornerRadius(DesignSystem.smallRadius)
+            }
 
             // Max Tokens
             paramSheetSlider(
@@ -71,35 +90,40 @@ extension ModelLabView {
                 displayValue: "\(tempMaxTokens)"
             )
 
-            // TopK
-            paramSheetSlider(
-                title: L10n.ModelManager.Parameters.topK,
-                value: Binding(
-                    get: { Double(tempTopK) },
-                    set: { tempTopK = Int($0) }
-                ),
-                range: 1...100,
-                step: 1,
-                displayValue: "\(tempTopK)"
-            )
+            if !isMultimodal {
+                // TopK
+                paramSheetSlider(
+                    title: L10n.ModelManager.Parameters.topK,
+                    value: Binding(
+                        get: { Double(tempTopK) },
+                        set: { tempTopK = Int($0) }
+                    ),
+                    range: 1...100,
+                    step: 1,
+                    displayValue: "\(tempTopK)",
+                    isDisabled: isAgent
+                )
 
-            // TopP
-            paramSheetSlider(
-                title: L10n.ModelManager.Parameters.topP,
-                value: $tempTopP,
-                range: 0.0...1.0,
-                step: 0.05,
-                displayValue: String(format: "%.2f", tempTopP)
-            )
+                // TopP
+                paramSheetSlider(
+                    title: L10n.ModelManager.Parameters.topP,
+                    value: $tempTopP,
+                    range: 0.0...1.0,
+                    step: 0.05,
+                    displayValue: String(format: "%.2f", tempTopP),
+                    isDisabled: isAgent
+                )
 
-            // Temperature
-            paramSheetSlider(
-                title: L10n.ModelManager.Parameters.temperature,
-                value: $tempTemperature,
-                range: 0.0...2.0,
-                step: 0.05,
-                displayValue: String(format: "%.2f", tempTemperature)
-            )
+                // Temperature
+                paramSheetSlider(
+                    title: L10n.ModelManager.Parameters.temperature,
+                    value: isAgent ? .constant(0.0) : $tempTemperature,
+                    range: 0.0...2.0,
+                    step: 0.05,
+                    displayValue: String(format: "%.2f", isAgent ? 0.0 : tempTemperature),
+                    isDisabled: isAgent
+                )
+            }
 
             Divider().padding(.vertical, DesignSystem.standardPadding)
 
@@ -130,8 +154,8 @@ extension ModelLabView {
                         .font(.headline)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, DesignSystem.standardPadding + 4)
-                        .background(useGPU ? Color.clear : Color.theme.white.opacity(DesignSystem.Opacity.light))
-                        .foregroundStyle(useGPU ? Color.secondary : Color.theme.white)
+                        .background(useGPU ? Color.clear : Color.theme.cyan)
+                        .foregroundStyle(useGPU ? Color.secondary : .white)
                 }
                 .buttonStyle(.plain)
 
@@ -140,12 +164,12 @@ extension ModelLabView {
                         .font(.headline)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, DesignSystem.standardPadding + 4)
-                        .background(useGPU ? Color.theme.white.opacity(DesignSystem.Opacity.light) : Color.clear)
-                        .foregroundStyle(useGPU ? Color.theme.white : Color.secondary)
+                        .background(useGPU ? Color.theme.cyan : Color.clear)
+                        .foregroundStyle(useGPU ? .white : Color.secondary)
                 }
                 .buttonStyle(.plain)
             }
-            .background(Color.theme.white.opacity(DesignSystem.Opacity.ghost))
+            .background(Color.appCard.opacity(DesignSystem.Opacity.subtle))
             .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
         }
     }
@@ -156,19 +180,19 @@ extension ModelLabView {
         VStack(alignment: .leading, spacing: DesignSystem.medium) {
             Text(L10n.ModelManager.Lab.systemPrompt)
                 .font(.subheadline.bold())
-                .foregroundStyle(.white.opacity(DesignSystem.Opacity.prominent))
+                .foregroundStyle(.appText)
 
             TextEditor(text: $systemPromptText)
                 .frame(minHeight: 180)
                 .padding(DesignSystem.standardPadding)
-                .background(Color.theme.white.opacity(DesignSystem.Opacity.ghost))
+                .background(Color.appCard.opacity(DesignSystem.Opacity.subtle))
                 .cornerRadius(DesignSystem.smallRadius)
                 .overlay(
                     RoundedRectangle(cornerRadius: DesignSystem.smallRadius)
-                        .stroke(Color.theme.white.opacity(DesignSystem.Opacity.glass), lineWidth: 1)
+                        .stroke(Color.appBorder.opacity(DesignSystem.Opacity.glass), lineWidth: 1)
                 )
                 .font(.body)
-                .foregroundStyle(Color.theme.white)
+                .foregroundStyle(Color.theme.text)
         }
         .padding(.horizontal, DesignSystem.medium)
     }
@@ -179,7 +203,8 @@ extension ModelLabView {
         value: Binding<Double>,
         range: ClosedRange<Double>,
         step: Double,
-        displayValue: String
+        displayValue: String,
+        isDisabled: Bool = false
     ) -> some View {
         VStack(alignment: .leading, spacing: DesignSystem.standardPadding / 2) {
             Text(title)
@@ -188,7 +213,7 @@ extension ModelLabView {
             HStack(spacing: DesignSystem.medium) {
                 Slider(value: value, in: range, step: step)
                     .tint(.cyan)
-                    .disabled(!isCustomMode)
+                    .disabled(isDisabled || !isCustomMode)
 
                 Text(displayValue)
                     .font(.system(.body, design: .monospaced))
@@ -196,7 +221,7 @@ extension ModelLabView {
                     .frame(minWidth: 50, alignment: .trailing)
                     .padding(.horizontal, DesignSystem.standardPadding)
                     .padding(.vertical, DesignSystem.standardPadding / 2)
-                    .background(Color.theme.white.opacity(DesignSystem.Opacity.subtle))
+                    .background(Color.appCard.opacity(DesignSystem.Opacity.subtle))
                     .clipShape(RoundedRectangle(cornerRadius: DesignSystem.standardPadding))
             }
         }
@@ -208,7 +233,7 @@ extension ModelLabView {
         VStack(alignment: .leading, spacing: DesignSystem.small) {
             Text(L10n.ModelManager.Parameters.presetTemplate)
                 .font(.subheadline.weight(.semibold))
-                .foregroundStyle(.white)
+                .foregroundStyle(.appText)
 
             HStack(spacing: DesignSystem.small) {
                 ForEach(ParameterPreset.allCases, id: \.self) { preset in
@@ -237,7 +262,7 @@ extension ModelLabView {
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, DesignSystem.small)
-            .background(isCustom ? Color.theme.cyan : Color.theme.white.opacity(DesignSystem.Opacity.ghost))
+            .background(isCustom ? Color.theme.cyan : Color.appCard.opacity(DesignSystem.Opacity.subtle))
             .foregroundStyle(isCustom ? .white : .secondary)
             .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
         }
@@ -256,7 +281,7 @@ extension ModelLabView {
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, DesignSystem.small)
-            .background(isSelected ? Color.theme.cyan : Color.theme.white.opacity(DesignSystem.Opacity.ghost))
+            .background(isSelected ? Color.theme.cyan : Color.appCard.opacity(DesignSystem.Opacity.subtle))
             .foregroundStyle(isSelected ? .white : .secondary)
             .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
         }

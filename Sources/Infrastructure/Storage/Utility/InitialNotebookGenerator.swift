@@ -243,6 +243,7 @@ struct InitialNotebookGenerator {
     ///   - workflowURL: pkm_workflow.md 的本地物理文件路径
     ///   - ocrFolderURL: ocr_folder_scan.png 的本地物理文件路径
     ///   - voiceForgetURL: voice_note_forgetting_curve.mp3 的本地物理文件路径
+    /// - Returns: 包含15个页面的种子数据数组
     private static func buildPKMPageSeeds(
         methodologyURL: String,
         workflowURL: String,
@@ -252,21 +253,80 @@ struct InitialNotebookGenerator {
         let methodologySnippet = L10n.InitialNotebook.Snippet.methodology
         let workflowSnippet = L10n.InitialNotebook.Snippet.workflow
         return [
+            // 1. 个人知识图谱指南
             PageSeed(title: L10n.InitialNotebook.PKM.title1, type: .concept, content: L10n.InitialNotebook.PKM.content1,
                      tags: [L10n.InitialNotebook.Tags.knowledgeMgmt, L10n.InitialNotebook.Tags.methodology],
                      sourceURL: methodologyURL, rawTextSnippet: methodologySnippet, sourceType: "markdown"),
+            
+            // 2. 词条：什么是神经元
             PageSeed(title: L10n.InitialNotebook.PKM.title2, type: .entity, content: L10n.InitialNotebook.PKM.content2,
                      tags: [L10n.InitialNotebook.Tags.noteStyles, L10n.InitialNotebook.Tags.efficiency],
                      sourceURL: ocrFolderURL, rawTextSnippet: L10n.InitialNotebook.Snippet.pkmOcrFolder, sourceType: "ocr"),
+            
+            // 3. 跨领域笔记枢纽指南
             PageSeed(title: L10n.InitialNotebook.PKM.title3, type: .concept, content: L10n.InitialNotebook.PKM.content3,
                      tags: [L10n.InitialNotebook.Tags.techPrinciple, L10n.InitialNotebook.Tags.association],
                      sourceURL: AppConstants.URLs.exampleKarpathyLLM, rawTextSnippet: L10n.InitialNotebook.Snippet.pkmRagLink, sourceType: "link"),
+            
+            // 4. 语音速记的未关联笔记
             PageSeed(title: L10n.InitialNotebook.PKM.title4, type: .source, content: L10n.InitialNotebook.PKM.content4,
                      tags: [L10n.InitialNotebook.Tags.cognitivePsych],
                      sourceURL: voiceForgetURL, rawTextSnippet: L10n.InitialNotebook.Snippet.pkmVoiceForget, sourceType: "voice"),
+            
+            // 5. 渐进式总结对比分析
             PageSeed(title: L10n.InitialNotebook.PKM.title5, type: .comparison, content: L10n.InitialNotebook.PKM.content5,
                      tags: [L10n.InitialNotebook.Tags.retrievalTech],
-                     sourceURL: workflowURL, rawTextSnippet: workflowSnippet, sourceType: "pdf")
+                     sourceURL: workflowURL, rawTextSnippet: workflowSnippet, sourceType: "pdf"),
+            
+            // 6. 笔记的原子化解构
+            PageSeed(title: String(localized: "demo.pkm.6.title", defaultValue: "笔记的原子化解构"), type: .concept,
+                     content: String(localized: "demo.pkm.6.content", defaultValue: "原子化笔记（Atomic Notes）要求每个笔记只包含一个核心思想。它是[[个人知识图谱指南]]与[[卡片盒笔记法]]的基石，便于后续的灵活组合与复用。"),
+                     tags: [L10n.InitialNotebook.Tags.noteStyles, L10n.InitialNotebook.Tags.efficiency]),
+            
+            // 7. 双向链接的价值
+            PageSeed(title: String(localized: "demo.pkm.7.title", defaultValue: "双向链接的价值"), type: .concept,
+                     content: String(localized: "demo.pkm.7.content", defaultValue: "通过[[双向链接的价值]]，我们可以在[[个人知识图谱指南]]中发现不同知识点之间隐藏的关联，从而将孤立的[[语音速记的未关联笔记]]连结起来，形成非线性的网状知识结构。"),
+                     tags: [L10n.InitialNotebook.Tags.association, L10n.InitialNotebook.Tags.techPrinciple]),
+            
+            // 8. 费曼学习法实践
+            PageSeed(title: String(localized: "demo.pkm.8.title", defaultValue: "费曼学习法实践"), type: .entity,
+                     content: String(localized: "demo.pkm.8.content", defaultValue: "费曼学习法要求用最简单的语言解释复杂的概念。它是检验自己是否真正掌握知识的最好方法，在编写[[词条：什么是神经元]]或进行[[渐进式总结对比分析]]时有极大帮助。"),
+                     tags: [L10n.InitialNotebook.Tags.learningMethod, L10n.InitialNotebook.Tags.cognitivePsych]),
+            
+            // 9. 渐进式总结
+            PageSeed(title: String(localized: "demo.pkm.9.title", defaultValue: "渐进式总结"), type: .comparison,
+                     content: String(localized: "demo.pkm.9.content", defaultValue: "Tiago Forte 提出的渐进式总结，要求通过多层高亮和加粗，快速提取文章核心精华。在[[个人知识图谱指南]]的构建过程中，它能够平衡阅读理解与笔记记录的精力消耗。"),
+                     tags: [L10n.InitialNotebook.Tags.readingMethod, L10n.InitialNotebook.Tags.summary]),
+            
+            // 10. 卡片盒笔记法
+            PageSeed(title: String(localized: "demo.pkm.10.title", defaultValue: "卡片盒笔记法"), type: .concept,
+                     content: String(localized: "demo.pkm.10.content", defaultValue: "Zettelkasten 是一种自下而上的知识管理方法，通过卡片之间的[[双向链接的价值]]实现灵感的自然涌现。每一个原子卡片都遵循[[笔记的原子化解构]]原则。"),
+                     tags: [L10n.InitialNotebook.Tags.knowledgeMgmt, L10n.InitialNotebook.Tags.innovation]),
+            
+            // 11. 语义网与知识图谱
+            PageSeed(title: String(localized: "demo.pkm.11.title", defaultValue: "语义网与知识图谱"), type: .concept,
+                     content: "语义网络通过图谱结构呈现复杂关联。在[[个人知识图谱指南]]的深入实践中，我们通过[[双向链接的价值]]将分散的卡片关联起来，最终建立一个类似[[卡片盒笔记法]]的语义网络图谱。",
+                     tags: [L10n.InitialNotebook.Tags.association, L10n.InitialNotebook.Tags.techPrinciple]),
+            
+            // 12. 混合检索策略
+            PageSeed(title: String(localized: "demo.pkm.12.title", defaultValue: "混合检索策略"), type: .concept,
+                     content: "在[[个人知识图谱指南]]的检索设计中，混合检索结合了传统的关键字检索与向量相似度检索。当笔记完成了[[笔记的原子化解构]]后，混合检索可以极大提升 RAG 系统在[[跨领域笔记枢纽指南]]上下文召回中的准确率。",
+                     tags: [L10n.InitialNotebook.Tags.retrievalTech, L10n.InitialNotebook.Tags.efficiency]),
+            
+            // 13. 主动召回与间隔重复
+            PageSeed(title: String(localized: "demo.pkm.13.title", defaultValue: "主动召回与间隔重复"), type: .entity,
+                     content: "主动召回是克服遗忘的科学手段。我们在实践[[费曼学习法实践]]时，可以结合主动召回机制，为[[卡片盒笔记法]]中的每一个神经元词条（例如[[词条：什么是神经元]]）设定渐进式的复习排程。",
+                     tags: [L10n.InitialNotebook.Tags.cognitivePsych, L10n.InitialNotebook.Tags.learningMethod]),
+            
+            // 14. 结构化知识输出
+            PageSeed(title: String(localized: "demo.pkm.14.title", defaultValue: "结构化知识输出"), type: .comparison,
+                     content: "输入知识的最终目的是为了创造和输出。通过[[渐进式总结]]提炼信息，再在[[卡片盒笔记法]]中交叉连接，最后利用[[费曼学习法实践]]将它们组织成[[结构化知识输出]]的系统文章。",
+                     tags: [L10n.InitialNotebook.Tags.summary, L10n.InitialNotebook.Tags.productivity]),
+            
+            // 15. 知识的涌现效应
+            PageSeed(title: String(localized: "demo.pkm.15.title", defaultValue: "知识的涌现效应"), type: .concept,
+                     content: "涌现效应是指当系统节点达到一定数量时出现的质变。在[[个人知识图谱指南]]中，只要我们不断为[[语音速记的未关联笔记]]建立链接，庞大的[[双向链接的价值]]网络就会自发在[[跨领域笔记枢纽指南]]中催生出全新的交叉学科灵感。",
+                     tags: [L10n.InitialNotebook.Tags.association, L10n.InitialNotebook.Tags.innovation])
         ]
     }
 
@@ -276,6 +336,7 @@ struct InitialNotebookGenerator {
     ///   - surveyURL: 用户调研问卷 PDF 的本地物理文件路径
     ///   - ocrStoreURL: ocr_store_manual.png 的本地物理文件路径
     ///   - voiceProcureURL: voice_note_procurement.mp3 的本地物理文件路径
+    /// - Returns: 包含15个页面的种子数据数组
     private static func buildResearchPageSeeds(
         luckinURL: String,
         surveyURL: String,
@@ -285,26 +346,85 @@ struct InitialNotebookGenerator {
         let luckinSnippet = L10n.InitialNotebook.Snippet.luckin
         let surveySnippet = L10n.InitialNotebook.Snippet.survey
         return [
+            // 1. 瑞幸与星巴克商业对比报告
             PageSeed(title: L10n.InitialNotebook.Coffee.title1, type: .comparison,
                      content: L10n.InitialNotebook.Coffee.content1,
                      tags: [L10n.InitialNotebook.Tags.competitorAnalysis, L10n.InitialNotebook.Tags.marketResearch],
                      sourceURL: luckinURL, rawTextSnippet: luckinSnippet, sourceType: "pdf"),
+            
+            // 2. 词条：什么是咖啡豆烘焙度
             PageSeed(title: L10n.InitialNotebook.Coffee.title2, type: .entity,
                      content: L10n.InitialNotebook.Coffee.content2,
                      tags: [L10n.InitialNotebook.Tags.productDesign, L10n.InitialNotebook.Tags.operation],
                      sourceURL: ocrStoreURL, rawTextSnippet: L10n.InitialNotebook.Snippet.coffeeOcrManual, sourceType: "ocr"),
+            
+            // 3. 咖啡连锁行业选址规划
             PageSeed(title: L10n.InitialNotebook.Coffee.title3, type: .concept,
                      content: L10n.InitialNotebook.Coffee.content3,
                      tags: [L10n.InitialNotebook.Tags.userResearch],
                      sourceURL: AppConstants.URLs.exampleCoffeeIndustry, rawTextSnippet: L10n.InitialNotebook.Snippet.coffeeRagLink, sourceType: "link"),
+            
+            // 4. 语音速记：咖啡设备采购清单
             PageSeed(title: L10n.InitialNotebook.Coffee.title4, type: .source,
                      content: L10n.InitialNotebook.Coffee.content4,
                      tags: [L10n.InitialNotebook.Tags.infrastructure, L10n.InitialNotebook.Tags.decoration],
                      sourceURL: voiceProcureURL, rawTextSnippet: L10n.InitialNotebook.Snippet.coffeeVoiceProcure, sourceType: "voice"),
+            
+            // 5. 咖啡店日常运营手册
             PageSeed(title: L10n.InitialNotebook.Coffee.title5, type: .concept,
                      content: L10n.InitialNotebook.Coffee.content5,
                      tags: [L10n.InitialNotebook.Tags.finance, L10n.InitialNotebook.Tags.planning],
-                     sourceURL: surveyURL, rawTextSnippet: surveySnippet, sourceType: "markdown")
+                     sourceURL: surveyURL, rawTextSnippet: surveySnippet, sourceType: "markdown"),
+            
+            // 6. Manner 扩张策略
+            PageSeed(title: String(localized: "demo.coffee.6.title", defaultValue: "Manner 扩张策略"), type: .comparison,
+                     content: String(localized: "demo.coffee.6.content", defaultValue: "Manner 早期主打极小店面和自带杯优惠，以极高坪效支撑其[[咖啡连锁行业选址规划]]。随后通过[[咖啡豆供应链成本拆解]]获得的成本红利，向一线城市的核心商圈进行规模扩张。"),
+                     tags: [L10n.InitialNotebook.Tags.competitorAnalysis, L10n.InitialNotebook.Tags.planning]),
+            
+            // 7. 下沉市场咖啡消费洞察
+            PageSeed(title: String(localized: "demo.coffee.7.title", defaultValue: "下沉市场咖啡消费洞察"), type: .concept,
+                     content: String(localized: "demo.coffee.7.content", defaultValue: "三四线城市的消费者更注重社交属性和极致性价比，这与[[瑞幸与星巴克商业对比报告]]中的瑞幸打法不谋合。在进行[[咖啡连锁行业选址规划]]时，必须针对下沉市场的用户画像做定制化菜单。"),
+                     tags: [L10n.InitialNotebook.Tags.marketResearch, L10n.InitialNotebook.Tags.userResearch]),
+            
+            // 8. 独立咖啡馆生存指南
+            PageSeed(title: String(localized: "demo.coffee.8.title", defaultValue: "独立咖啡馆生存指南"), type: .entity,
+                     content: String(localized: "demo.coffee.8.content", defaultValue: "独立咖啡馆需要建立独特的品牌调性和社区连接，以差异化体验对抗[[瑞幸与星巴克商业对比报告]]中的连锁品牌规模优势。在日常运营中，可参考[[咖啡店日常运营手册]]进行精细化管理。"),
+                     tags: [L10n.InitialNotebook.Tags.operation, L10n.InitialNotebook.Tags.team]),
+            
+            // 9. 咖啡豆供应链成本拆解
+            PageSeed(title: String(localized: "demo.coffee.9.title", defaultValue: "咖啡豆供应链成本拆解"), type: .source,
+                     content: String(localized: "demo.coffee.9.content", defaultValue: "供应链成本控制是咖啡馆盈利的生命线。从生豆采购、烘焙损耗（参考[[词条：什么是咖啡豆烘焙度]]）到物流，每个环节的成本把控都直接决定了[[独立咖啡馆生存指南]]中的毛利表现。"),
+                     tags: [L10n.InitialNotebook.Tags.supplyChain, L10n.InitialNotebook.Tags.finance]),
+            
+            // 10. 第三空间设计原则
+            PageSeed(title: String(localized: "demo.coffee.10.title", defaultValue: "第三空间设计原则"), type: .concept,
+                     content: String(localized: "demo.coffee.10.content", defaultValue: "第三空间概念强调舒适的座椅、适宜的灯光，旨在为顾客提供家与工作场所之外的放松区域。这一原则在[[咖啡店日常运营手册]]中被奉为圭臬，也是我们设计新店空间时的重要参考。"),
+                     tags: [L10n.InitialNotebook.Tags.decoration, L10n.InitialNotebook.Tags.design]),
+            
+            // 11. 咖啡店选址方法论
+            PageSeed(title: String(localized: "demo.coffee.11.title", defaultValue: "咖啡店选址方法论"), type: .concept,
+                     content: "咖啡店选址是一门科学。我们需要结合[[下沉市场咖啡消费洞察]]的数据流，并在[[咖啡连锁行业选址规划]]的框架下，通过客流模型和租金模型进行综合评估，这直接关乎[[独立咖啡馆生存指南]]的生死存亡。",
+                     tags: [L10n.InitialNotebook.Tags.planning, L10n.InitialNotebook.Tags.operation]),
+            
+            // 12. 菜单研发与爆款策略
+            PageSeed(title: String(localized: "demo.coffee.12.title", defaultValue: "菜单研发与爆款策略"), type: .comparison,
+                     content: "爆款战略能迅速打开品牌知名度。借鉴[[瑞幸与星巴克商业对比报告]]中瑞幸生椰拿铁的成功逻辑，研发团队需利用[[词条：什么是咖啡豆烘焙度]]中不同的风味基调设计新品，并通过[[咖啡豆供应链成本拆解]]锁定原材料采购优势。",
+                     tags: [L10n.InitialNotebook.Tags.productDesign, L10n.InitialNotebook.Tags.competitorAnalysis]),
+            
+            // 13. 咖啡会员与数字化运营
+            PageSeed(title: String(localized: "demo.coffee.13.title", defaultValue: "咖啡会员与数字化运营"), type: .entity,
+                     content: "数字化是提升复购率的核武器。连锁咖啡品牌（如[[瑞幸与星巴克商业对比报告]]）通过小程序券包和社群营销将顾客转化为会员。对于小店来说，将这些技术简化后写入[[咖啡店日常运营手册]]中，也能获得稳定的熟客流量。",
+                     tags: [L10n.InitialNotebook.Tags.operation, L10n.InitialNotebook.Tags.userResearch]),
+            
+            // 14. 烘焙工厂与产地直采
+            PageSeed(title: String(localized: "demo.coffee.14.title", defaultValue: "烘焙工厂与产地直采"), type: .source,
+                     content: "为了从根本上降低[[咖啡豆供应链成本拆解]]中的原料损耗，头部连锁咖啡店开始自建烘焙工厂并直接向产地直采咖啡生豆，这对于稳定风味（如保障[[词条：什么是咖啡豆烘焙度]]的标准）和支撑[[Manner 扩张策略]]的超高开店速度至关重要。",
+                     tags: [L10n.InitialNotebook.Tags.supplyChain, L10n.InitialNotebook.Tags.finance]),
+            
+            // 15. 社区咖啡与熟客文化
+            PageSeed(title: String(localized: "demo.coffee.15.title", defaultValue: "社区咖啡与熟客文化"), type: .concept,
+                     content: "社区咖啡馆强调邻里熟人间的信任纽带，这与大型连锁品牌抛弃[[第三空间设计原则]]主打快取店的策略相反。它是[[独立咖啡馆生存指南]]的核心防线，通过高品质的日常交流与精细化运营，建立起天然的本地竞争壁垒。",
+                     tags: [L10n.InitialNotebook.Tags.decoration, L10n.InitialNotebook.Tags.team])
         ]
     }
 

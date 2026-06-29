@@ -152,13 +152,13 @@ struct CircularTagBubbleView: View {
                     coordinator.tagToRename = item.tag
                     coordinator.newTagName = item.tag
                 }) {
-                    Label(L10n.Tag.Action.rename, systemImage: DesignSystem.Icons.edit)
+                    Label(L10n.Common.rename, systemImage: DesignSystem.Icons.edit)
                 }
                 Button(role: .destructive, action: {
                     coordinator.tagToDelete = item.tag
                     coordinator.showDeleteConfirm = true
                 }) {
-                    Label(L10n.Tag.Action.delete, systemImage: DesignSystem.Icons.delete)
+                    Label(L10n.Common.delete, systemImage: DesignSystem.Icons.delete)
                 }
             }
         }

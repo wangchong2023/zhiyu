@@ -17,6 +17,8 @@ struct PageHistoryView: View {
     @State private var history: [SnapshotInfo] = []
     @State private var selectedSnapshot: SnapshotInfo?
     @State private var showRollbackAlert = false
+    /// 用于临时保留待回滚的特定快照，避免 sheet 销毁导致目标丢失
+    @State private var snapshotToRollback: SnapshotInfo?
     @Environment(\.dismiss) var dismiss
     
     var body: some View {
@@ -45,6 +47,7 @@ struct PageHistoryView: View {
                             }
                             .padding(.vertical, DesignSystem.tiny)
                         }
+                        .foregroundStyle(.primary)
                     }
                 }
             }
@@ -62,14 +65,16 @@ struct PageHistoryView: View {
             }
             .sheet(item: $selectedSnapshot) { snapshot in
                 SnapshotDetailView(snapshot: snapshot) {
+                    // 精准转移：在 selectedSnapshot 设空之前保留快照目标
+                    snapshotToRollback = snapshot
                     selectedSnapshot = nil
                     showRollbackAlert = true
                 }
             }
             .alert(L10n.Knowledge.Page.confirmDelete, isPresented: $showRollbackAlert) {
                 Button(L10n.Knowledge.Page.History.rollback, role: .destructive) {
-                    if let snapshot = history.first, store.snapshotService.rollback(to: snapshot) != nil {
-                        // 执行回滚逻辑
+                    // 修正：使用选中的具体历史快照 snapshotToRollback 执行回滚，解决硬编码 history.first 导致其他快照失效的 bug
+                    if let snapshot = snapshotToRollback, store.snapshotService.rollback(to: snapshot) != nil {
                         dismiss()
                     }
                 }

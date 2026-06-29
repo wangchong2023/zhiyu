@@ -19,6 +19,9 @@ extension L10n {
         // MARK: - App Metadata
         public static var appName: String { tr("app.name") }
         public static var aiThinking: String { tr("aiThinking") }
+        public static var configureAI: String { tr("configureAI") }
+        public static var rename: String { tr("rename") }
+        public static var appendToBody: String { tr("appendToBody") }
         
         // MARK: - Basic Actions
         public static var ok: String { tr("ok") }

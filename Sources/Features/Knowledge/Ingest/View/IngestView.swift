@@ -28,7 +28,6 @@ struct IngestView: View {
             themeManager.pageBackground().ignoresSafeArea()
             ScrollView {
                 VStack(spacing: DesignSystem.standardPadding + DesignSystem.small) {
-                    if !coordinator.isLLMConfigured { llmWarningSection }
                     ingestProgressPanel
                     actionsSection
                     ImportRecordSection(
@@ -47,6 +46,15 @@ struct IngestView: View {
         .alert(L10n.Ingest.error, isPresented: $coordinator.showError) {
             Button(L10n.Ingest.ok) { coordinator.errorMessage = nil }
         } message: { Text(coordinator.errorMessage ?? "") }
+        .alert(L10n.Common.configureAI, isPresented: $coordinator.showLLMAlert) {
+            Button(L10n.ModelManager.Lab.configurations) {
+                HapticFeedback.shared.trigger(.selection)
+                router.isShowingAISettingsSheet = true
+            }
+            Button(L10n.Common.cancel, role: .cancel) {}
+        } message: {
+            Text(L10n.Common.configureAI)
+        }
         #if !os(watchOS)
         .fileImporter(
             isPresented: $coordinator.showFileImporter,
@@ -133,24 +141,6 @@ struct IngestView: View {
         )
     }
 
-    private var llmWarningSection: some View {
-        // 使用 Button 触发全局路由设置 Sheet 弹窗，防止在分栏布局中 NavigationLink 发生环境丢失及黑屏警告。
-        Button {
-            HapticFeedback.shared.trigger(.selection)
-            router.isShowingSettingsSheet = true
-        } label: {
-            HStack(spacing: DesignSystem.medium) {
-                Image(systemName: DesignSystem.Icons.warning).foregroundStyle(Color.theme.orange)
-                Text(L10n.Ingest.llmRequired).font(.subheadline).foregroundStyle(.appText)
-                Spacer()
-                Image(systemName: DesignSystem.Icons.forward).font(.caption).foregroundStyle(.appSecondary)
-            }
-            .padding().background(Color.theme.orange.opacity(DesignSystem.Opacity.glass))
-            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
-        }
-        .buttonStyle(.plain)
-    }
-
     private var actionsSection: some View {
         VStack(alignment: .leading, spacing: DesignSystem.medium) {
             AppSectionHeader(title: L10n.Ingest.actions, icon: DesignSystem.Icons.trayArrowDown).padding(.horizontal, DesignSystem.tiny)
@@ -160,10 +150,14 @@ struct IngestView: View {
                 newType: $coordinator.newType, 
                 showFileImporter: $coordinator.showFileImporter, 
                 showVoiceNote: $coordinator.showVoiceNote, 
-                showURLImport: $coordinator.showURLImport
+                showURLImport: $coordinator.showURLImport,
+                isLLMConfigured: coordinator.isLLMConfigured,
+                onLLMNotConfigured: {
+                    HapticFeedback.shared.trigger(.warning)
+                    coordinator.showLLMAlert = true
+                }
             )
             .appContainer(padding: true)
-            .disabled(!coordinator.isLLMConfigured).opacity(coordinator.isLLMConfigured ? DesignSystem.fullOpacity : DesignSystem.disabledOpacity)
         }
     }
 

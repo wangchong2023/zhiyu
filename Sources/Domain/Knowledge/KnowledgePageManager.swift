@@ -25,6 +25,8 @@ public final class KnowledgePageManager {
     @ObservationIgnored @Inject private var logger: any LoggerProtocol
     @ObservationIgnored @Inject private var tagStore: TagStore
     @ObservationIgnored @Inject private var aiWorkflowStore: any AIWorkflowCapabilities
+    @ObservationIgnored @Inject private var llmService: any LLMServiceProtocol
+    @ObservationIgnored @Inject private var embeddingProvider: any EmbeddingProvider
 
     // MARK: - 动态处理器 (Phase 3)
     
@@ -143,6 +145,23 @@ public final class KnowledgePageManager {
         
         let totalLinks = currentPages.reduce(0) { $0 + $1.outgoingLinks.count }
         AppEventBus.shared.publish(.pageUpdated(id: processedPage.id, nodeCount: currentPages.count, linkCount: totalLinks))
+        
+        // 增量同步 RAG 向量：编辑保存后，把新内容跑一次 Ingest Pipeline，确保 RAG 库内容实时一致
+        let llm = self.llmService
+        let embedding = self.embeddingProvider
+        Task { [weak self] in
+            do {
+                _ = try await KnowledgeIngestPipeline.shared.process(
+                    content: processedPage.content,
+                    pageID: processedPage.id,
+                    llm: llm,
+                    embeddingProvider: embedding
+                )
+                self?.logger.info("[RAG Sync] Successfully synced increment embedding for page: \(processedPage.title)")
+            } catch {
+                self?.logger.error("[RAG Sync] Failed to sync increment embedding for page: \(processedPage.title), error: \(error)")
+            }
+        }
     }
 
     /// 保存页面 (含插件事件触发)

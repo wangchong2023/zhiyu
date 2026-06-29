@@ -33,7 +33,7 @@ extension L10n {
 
         public static var title: String { tr("create.title") }
         public static var tagsPlaceholder: String { tr("create.tagsPlaceholder") }
-        public static var create: String { tr("create.create") }
+        public static var create: String { L10n.Common.create }
         public static var content: String { tr("create.content") }
         public static var quickTemplates: String { tr("create.quickTemplates") }
         public static var relatedLinks: String { Creation.tr("creation.relatedLinks") }

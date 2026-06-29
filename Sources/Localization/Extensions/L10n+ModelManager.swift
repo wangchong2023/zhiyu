@@ -85,6 +85,10 @@ extension L10n {
             public static var warningLowMemory: String {
                 ModelManager.tr("model_manager.card.warning_low_memory")
             }
+
+            public static var learnMore: String {
+                ModelManager.tr("model_manager.card.learnMore")
+            }
         }
 
         // MARK: - 顶部摘要
@@ -460,6 +464,14 @@ extension L10n {
                 ModelManager.tr("model_manager.routing.decision.local")
             }
 
+            public static var autoCloudDesc: String {
+                ModelManager.tr("model_manager.routing.auto_cloud_desc")
+            }
+
+            public static var statusNotReady: String {
+                ModelManager.tr("model_manager.routing.status_not_ready")
+            }
+
             public static var decisionAutoCloud: String {
                 ModelManager.tr("model_manager.routing.decision.auto_cloud")
             }
@@ -564,6 +576,42 @@ extension L10n {
                 public static var promptLab: String { ModelManager.tr("model_manager.lab.prompt.prompt_lab") }
                 public static var tinyGarden: String { ModelManager.tr("model_manager.lab.prompt.tiny_garden") }
                 public static var mobileActions: String { ModelManager.tr("model_manager.lab.prompt.mobile_actions") }
+            }
+
+            public static var tipsMultimodal: String { ModelManager.tr("model_manager.lab.tips_multimodal") }
+            public static var tipsAgent: String { ModelManager.tr("model_manager.lab.tips_agent") }
+
+            public enum Attach {
+                public static var linkPage: String { ModelManager.tr("model_manager.lab.attach.link_page") }
+                public static var linkPageSuccess: String { ModelManager.tr("model_manager.lab.attach.link_page_success") }
+                public static var injectTag: String { ModelManager.tr("model_manager.lab.attach.inject_tag") }
+                public static var injectTagSuccess: String { ModelManager.tr("model_manager.lab.attach.inject_tag_success") }
+                public static var mountSandbox: String { ModelManager.tr("model_manager.lab.attach.mount_sandbox") }
+                public static var mountSandboxSuccess: String { ModelManager.tr("model_manager.lab.attach.mount_sandbox_success") }
+                public static var loadTemplate: String { ModelManager.tr("model_manager.lab.attach.load_template") }
+                public static var loadTemplateSuccess: String { ModelManager.tr("model_manager.lab.attach.load_template_success") }
+            }
+
+            public enum Extra {
+                public static var objectDetection: String { ModelManager.tr("model_manager.lab.extra.object_detection") }
+                public static var speechTranscribing: String { ModelManager.tr("model_manager.lab.extra.speech_transcribing") }
+                public static var functionCallTree: String { ModelManager.tr("model_manager.lab.extra.function_call_tree") }
+                public static var intentMatch: String { ModelManager.tr("model_manager.lab.extra.intent_match") }
+                public static var apiInvocation: String { ModelManager.tr("model_manager.lab.extra.api_invocation") }
+                public static var gardenRender: String { ModelManager.tr("model_manager.lab.extra.garden_render") }
+                public static var uiRendering: String { ModelManager.tr("model_manager.lab.extra.ui_rendering") }
+                public static var devicePipeline: String { ModelManager.tr("model_manager.lab.extra.device_pipeline") }
+                public static var intentAnalyser: String { ModelManager.tr("model_manager.lab.extra.intent_analyser") }
+                public static var hapticFeedback: String { ModelManager.tr("model_manager.lab.extra.haptic_feedback") }
+                public static var toolLocation: String { ModelManager.tr("model_manager.lab.extra.tool_location") }
+                public static var contextSummary: String { ModelManager.tr("model_manager.lab.extra.context_summary") }
+            }
+        }
+
+        public enum Alert {
+            public static var oomTitle: String { ModelManager.tr("model_manager.alert.oom_title") }
+            public static func oomMessage(_ displayName: String, _ requiredGb: String, _ currentGb: String) -> String {
+                ModelManager.trf("model_manager.alert.oom_message", displayName, requiredGb, currentGb)
             }
         }
     }

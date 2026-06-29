@@ -22,6 +22,7 @@ final class PageDetailCoordinator {
     var newAlias = ""
     var showIconPicker = false
     var showSnapshotHistory = false
+    var hasScannedForLinks = false
     
     // AI 任务相关状态由注入的 aiStore 提供
 
@@ -114,8 +115,9 @@ final class PageDetailCoordinator {
     
     /// 查找RelatedLinks
     func findRelatedLinks() {
+        hasScannedForLinks = true
         Task {
-            await aiStore.runAIScan()
+            await aiStore.runAIScan(forPage: page)
         }
     }
 }

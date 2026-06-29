@@ -25,7 +25,6 @@ public struct SmartRoutingView: View {
         ScrollView {
             VStack(spacing: DesignSystem.large) {
                 modelStrategySection
-                taskRoutingSection
                 runtimeStatusSection
             }
             .padding(DesignSystem.medium)
@@ -41,7 +40,10 @@ public struct SmartRoutingView: View {
 
             // 端云混合开关
             VStack(alignment: .leading, spacing: DesignSystem.small) {
-                HStack {
+                HStack(alignment: .center, spacing: 8) {
+                    // 主开关左侧添加合并融合图标，以表现端云智能调度的含义
+                    Image(systemName: "arrow.triangle.merge")
+                        .foregroundStyle(Color.theme.accent)
                     VStack(alignment: .leading, spacing: DesignSystem.atomic) {
                         Text(L10n.ModelManager.Routing.cloudEscalationToggle)
                             .font(.subheadline).foregroundStyle(.appText)
@@ -53,29 +55,22 @@ public struct SmartRoutingView: View {
                         set: { modelManager.isCloudEscalationEnabled = $0 })).labelsHidden()
                 }
                 Divider()
-                Toggle(L10n.ModelManager.Routing.wifiOnly, isOn: .constant(false)).font(.subheadline)
-                Toggle(L10n.ModelManager.Routing.autoFallback, isOn: .constant(true)).font(.subheadline)
-                Toggle(L10n.ModelManager.Routing.preferLocal, isOn: .constant(true)).font(.subheadline)
-            }
-            .padding()
-            .background(Color.appCard.opacity(DesignSystem.Opacity.dim))
-            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
-        }
-    }
-
-    // MARK: - 任务路由
-
-    private var taskRoutingSection: some View {
-        VStack(alignment: .leading, spacing: DesignSystem.small) {
-            Text(L10n.ModelManager.Routing.taskRules)
-                .font(.subheadline.weight(.semibold)).foregroundStyle(.appText).padding(.horizontal, DesignSystem.small)
-
-            VStack(spacing: DesignSystem.small) {
-                routingRuleRow(icon: "lock.fill", iconColor: .red, task: L10n.ModelManager.Routing.taskSemanticChunking, rule: L10n.ModelManager.Routing.strategyForceLocal)
-                routingRuleRow(icon: "lock.fill", iconColor: .red, task: L10n.ModelManager.Routing.taskLinkDiscovery, rule: L10n.ModelManager.Routing.strategyForceLocal)
-                routingRuleRow(icon: "arrow.triangle.branch", iconColor: .blue, task: L10n.ModelManager.Routing.taskSynthesis, rule: L10n.ModelManager.Routing.strategySmartRouting)
-                routingRuleRow(icon: "arrow.triangle.branch", iconColor: .blue, task: L10n.ModelManager.Routing.taskChat, rule: L10n.ModelManager.Routing.strategySmartRouting)
-                routingRuleRow(icon: "arrow.triangle.branch", iconColor: .blue, task: L10n.ModelManager.Routing.taskTagGeneration, rule: L10n.ModelManager.Routing.strategySmartRouting)
+                
+                // 补全辅助配置的微型功能图标
+                Toggle(isOn: .constant(false)) {
+                    Label(L10n.ModelManager.Routing.wifiOnly, systemImage: "wifi")
+                }
+                .font(.subheadline)
+                
+                Toggle(isOn: .constant(true)) {
+                    Label(L10n.ModelManager.Routing.autoFallback, systemImage: "shield.fill")
+                }
+                .font(.subheadline)
+                
+                Toggle(isOn: .constant(true)) {
+                    Label(L10n.ModelManager.Routing.preferLocal, systemImage: "cpu.fill")
+                }
+                .font(.subheadline)
             }
             .padding()
             .background(Color.appCard.opacity(DesignSystem.Opacity.dim))
@@ -102,6 +97,16 @@ public struct SmartRoutingView: View {
                         .padding(.horizontal, DesignSystem.small).padding(.vertical, DesignSystem.atomic)
                         .background(Color.appAccent.opacity(DesignSystem.Opacity.glass)).clipShape(Capsule())
                 }
+                
+                // 本地模型未就绪且非强制云端时的自动托管友好诊断提示
+                if !modelManager.isCloudEscalationEnabled && !modelManager.isModelLocalReady(for: modelManager.activeModelId) {
+                    Text(L10n.ModelManager.Routing.autoCloudDesc)
+                        .font(.caption2)
+                        .foregroundStyle(.orange)
+                        .padding(.leading, DesignSystem.titleIconSize + 8)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                
                 Divider()
                 statusRow(label: L10n.ModelManager.Routing.networkCurrent, value: "WiFi", status: .healthy)
                 statusRow(label: L10n.ModelManager.Routing.networkLatency, value: "23ms", status: .healthy)
@@ -113,33 +118,20 @@ public struct SmartRoutingView: View {
         }
     }
 
-    // MARK: - 子视图组件
-
-    private func routingRuleRow(icon: String, iconColor: Color, task: String, rule: String) -> some View {
-        HStack(spacing: DesignSystem.medium) {
-            Image(systemName: icon).font(.caption).foregroundStyle(iconColor).frame(width: DesignSystem.titleIconSize)
-            Text(task).font(.subheadline).foregroundStyle(.appText)
-            Spacer()
-            Image(systemName: "arrow.right").font(.caption2).foregroundStyle(.appSecondary)
-            Text(rule).font(.caption.weight(.medium)).foregroundStyle(.appAccent)
-        }
-        .padding(.vertical, DesignSystem.small).padding(.horizontal, DesignSystem.medium)
-        .background(Color.appBackground.opacity(DesignSystem.Opacity.soft))
-        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
-    }
-
     private func statusRow(label: String, value: String, status: HealthStatus) -> some View {
         HStack {
             Circle().fill(status.color).frame(width: DesignSystem.iconSmall, height: DesignSystem.iconSmall)
             Text(label).font(.subheadline).foregroundStyle(.appText)
             Spacer()
-            Text(value).font(.caption.weight(.medium)).foregroundStyle(.appSecondary)
+            Text(value).font(.subheadline.weight(.medium)).foregroundStyle(.appText)
         }
     }
 
     private func getActiveModelName() -> String {
         if let m = modelManager.remoteManifests.first(where: { $0.modelId == modelManager.activeModelId }) {
-            return m.displayName
+            let isReady = modelManager.isModelLocalReady(for: modelManager.activeModelId)
+            let suffix = isReady ? " (\(L10n.ModelManager.Card.ready))" : " (\(L10n.ModelManager.Routing.statusNotReady))"
+            return m.displayName + suffix
         }
         return L10n.ModelManager.Routing.decisionUnselected
     }

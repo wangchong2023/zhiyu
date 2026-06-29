@@ -25,7 +25,8 @@ struct AboutView: View {
                             .frame(width: DesignSystem.Domain.About.logoSize, height: DesignSystem.Domain.About.logoSize)
                             .shadow(color: .appAccent.opacity(DesignSystem.Opacity.shadow), radius: 15, y: 8)
                         
-                        Image(systemName: DesignSystem.Icons.sparkles)
+                        // 修正：使用 DesignSystem.Icons.library 作为标志图标，以确保与 Splash 启动页的品牌标志完全一致
+                        Image(systemName: DesignSystem.Icons.library)
                             .font(.system(size: DesignSystem.Domain.About.logoSize / 2))
                             .foregroundStyle(.white)
                     }
@@ -37,17 +38,29 @@ struct AboutView: View {
                 }
                 .padding(.top, 40)
                 
-                // Description
-                Text(L10n.Vault.subtitle)
-                    .font(.body)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, Spacing.huge)
+                // 去粗糙化：移除在此处误引用的 L10n.Vault.subtitle (即“选择一个笔记本开始探索”提示语)
                 
                 // Info List
                 VStack(spacing: 1) {
                     infoRow(title: L10n.Settings.About.developer, value: L10n.Settings.About.developerName)
                     Divider().padding(.leading, Spacing.standardPadding)
-                    infoRow(title: L10n.Settings.About.website, value: AppConstants.URLs.officialWebsite)
+                    
+                    // 将“官方网站”只读文本更换为 Link，支持点击调用系统默认浏览器进行跳转
+                    HStack {
+                        Text(L10n.Settings.About.website)
+                            .foregroundStyle(.primary)
+                        Spacer()
+                        if let url = URL(string: AppConstants.URLs.officialWebsite) {
+                            Link(AppConstants.URLs.officialWebsite, destination: url)
+                                .font(.body)
+                                .foregroundColor(Color.theme.blue) // 采用高亮蓝色以暗示可交互的超链接属性
+                        } else {
+                            Text(AppConstants.URLs.officialWebsite)
+                                .foregroundStyle(.appSecondary)
+                        }
+                    }
+                    .padding(Spacing.standardPadding)
+                    
                     Divider().padding(.leading, Spacing.standardPadding)
                     infoRow(title: L10n.Settings.About.version, value: versionDisplayString)
                     Divider().padding(.leading, Spacing.standardPadding)

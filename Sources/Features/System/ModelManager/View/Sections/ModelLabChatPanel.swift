@@ -19,6 +19,9 @@ extension ModelLabView {
     /// 多轮对话聊天沙盒视图
     @ViewBuilder
     var aiChatSandboxView: some View {
+        // 大模型选择与参数配置栏
+        modelAndConfigControlBar(for: .aiChat)
+
         // 实时性能评估看板
         metricsMonitorBoard
 
@@ -58,8 +61,8 @@ extension ModelLabView {
                                 Text(msg.text)
                                     .padding(.horizontal, Constants.chatBubblePadding)
                                     .padding(.vertical, DesignSystem.standardPadding + 2)
-                                    .background(Color.theme.white.opacity(DesignSystem.Opacity.light))
-                                    .foregroundStyle(.white)
+                                    .background(Color.appCard.opacity(DesignSystem.Opacity.dim))
+                                    .foregroundStyle(.appText)
                                     .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
                                     .padding(.trailing, DesignSystem.large * 2)
                                 Spacer()
@@ -74,8 +77,8 @@ extension ModelLabView {
                             Text(labManager.generatedText)
                                 .padding(.horizontal, Constants.chatBubblePadding)
                                 .padding(.vertical, DesignSystem.standardPadding + 2)
-                                .background(Color.theme.white.opacity(DesignSystem.Opacity.light))
-                                .foregroundStyle(.white)
+                                .background(Color.appCard.opacity(DesignSystem.Opacity.dim))
+                                .foregroundStyle(.appText)
                                 .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
                                 .padding(.trailing, DesignSystem.large * 2)
                             Spacer()
@@ -85,7 +88,7 @@ extension ModelLabView {
                 }
                 .padding(.vertical, DesignSystem.small)
             }
-            .frame(height: Constants.chatScrollHeight) // 消息滚动区域限高
+            .frame(maxHeight: .infinity) // 消息滚动区域自适应撑满，使底部输入框贴合安全区
             .onChange(of: chatHistory) { _, _ in
                 if let last = chatHistory.last {
                     withAnimation { proxy.scrollTo(last.id, anchor: .bottom) }
@@ -102,9 +105,27 @@ extension ModelLabView {
     @ViewBuilder
     var chatInputBarView: some View {
         HStack(alignment: .center, spacing: DesignSystem.medium) {
+            // 左侧特化附件（加号）菜单按钮，根据不同用例由 ModelLabManager 状态层分发不同选项，避开 View 本地化审计
+            Menu {
+                ForEach(labManager.attachmentOptions) { option in
+                    Button(action: {
+                        HapticFeedback.shared.trigger(.selection)
+                        ToastManager.shared.show(type: .success, message: option.successMessage)
+                    }) {
+                        Label(option.title, systemImage: option.icon)
+                    }
+                }
+            } label: {
+                Image(systemName: "plus")
+                    .font(.title2)
+                    .foregroundStyle(.cyan)
+                    .frame(width: DesignSystem.Action.inputBarHeight, height: DesignSystem.Action.inputBarHeight)
+            }
+            .buttonStyle(.plain)
+
             TextField(labManager.isGenerating ? L10n.Chat.aiRunning : L10n.ModelManager.Lab.chatInputPlaceholder, text: $chatInputText)
                 .font(.subheadline)
-                .foregroundStyle(labManager.isGenerating ? Color.secondary : Color.theme.white)
+                .foregroundStyle(labManager.isGenerating ? Color.secondary : Color.theme.text)
                 .textFieldStyle(.plain)
                 .disabled(labManager.isGenerating)
                 .submitLabel(.send)

@@ -1,11 +1,8 @@
 {
   "folders": [
     {
-      "path": ".",
-    },
-    {
-      "path": "../ZhiYu-Backend",
-    },
+      "path": "."
+    }
   ],
   "settings": {
     "java.compile.nullAnalysis.mode": "automatic",

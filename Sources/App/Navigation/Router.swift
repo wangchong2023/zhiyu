@@ -237,6 +237,9 @@ final class Router {
     /// 是否正在显示设置面板
     var isShowingSettingsSheet: Bool = false
     
+    /// 是否正在显示人工智能参数设置面板
+    var isShowingAISettingsSheet: Bool = false
+    
     /// 触发全局语言刷新
     func triggerLanguageRefresh() {
         languageForceUpdate.toggle()
@@ -245,6 +248,7 @@ final class Router {
     /// 关闭当前显示的 sheet (通过单例路由协调)
     func dismissSheet() {
         isShowingSettingsSheet = false
+        isShowingAISettingsSheet = false
     }
 
     /// 仅用于预览和测试的公开初始化器

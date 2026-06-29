@@ -531,4 +531,50 @@ final class ModelStoreConfigTests: XCTestCase {
             XCTFail("状态应降级为 failed 且提示为 Not Downloaded，当前状态是: \(String(describing: manager.downloadStates[modelId]))")
         }
     }
+    
+    // MARK: - 验证大小不匹配（例如测试遗留 100 字节残留文件）也被视为损坏并执行物理清理
+    @MainActor
+    func testIncorrectSizeLocalFileCleanup() async throws {
+        let manager = GlobalModelManager.shared
+        let modelId = "incorrect-size-test-model"
+        
+        let manifest = LLMManifest(
+            modelId: modelId,
+            displayName: "Incorrect Size Model",
+            vendor: "Test",
+            fileSizeInBytes: 5000,
+            minDeviceMemoryInGb: 2.0,
+            remoteURLString: "https://cdn.example.com/incorrect.bin",
+            sha256Checksum: "abc",
+            parameterCount: "1B",
+            supportedTasks: ["chat"],
+            description: "Incorrect size test description",
+            defaultParameters: InferenceParameters()
+        )
+        
+        let mockRemoteConfig = MockRemoteConfigService()
+        mockRemoteConfig.mockManifests = [manifest]
+        ServiceContainer.shared.register(mockRemoteConfig as any RemoteConfigCapabilities, for: (any RemoteConfigCapabilities).self)
+        
+        // 重新 load，使管理器持有 mock 后的 manifests
+        await manager.reload()
+        
+        let documentDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        let fileURL = documentDirectory.appendingPathComponent("\(modelId).bin")
+        
+        // 1. 物理写入一个 100 字节的不匹配大小文件
+        let fakeData = Data(repeating: 0, count: 100)
+        try fakeData.write(to: fileURL)
+        XCTAssertTrue(FileManager.default.fileExists(atPath: fileURL.path))
+        
+        // 2. 物理刷新状态，触发大小比对及物理清理
+        manager.refreshLocalModelFiles()
+        
+        // 3. 断言：大小不匹配的残留文件必须已经被物理删除
+        XCTAssertFalse(FileManager.default.fileExists(atPath: fileURL.path), "不匹配大小的权重包应当被物理清理删除")
+        
+        // 4. 断言：模型本地不显示为就绪状态
+        let isReady = manager.isModelLocalReady(for: modelId)
+        XCTAssertFalse(isReady, "大小不匹配的包存在时，模型本地不能显示为就绪状态")
+    }
 }

@@ -25,19 +25,10 @@ extension PluginDetailView {
             // 如果本地没有 README 缓存，且远端 README 正在加载，则呈现骨架屏
             if localReadme == nil && isReadmeLoading {
                 VStack(alignment: .leading, spacing: DesignSystem.small) {
-                    RoundedRectangle(cornerRadius: DesignSystem.microRadius)
-                        .fill(Color.appCard.opacity(DesignSystem.subtleOpacity * 2.5))
-                        .frame(height: Spacing.large)
-                    RoundedRectangle(cornerRadius: DesignSystem.microRadius)
-                        .fill(Color.appCard.opacity(DesignSystem.subtleOpacity * 2.5))
-                        .frame(height: Spacing.large)
-                    RoundedRectangle(cornerRadius: DesignSystem.microRadius)
-                        .fill(Color.appCard.opacity(DesignSystem.subtleOpacity * 2.5))
-                        .frame(height: Spacing.large)
-                        .frame(maxWidth: 200)
+                    AppSkeleton(height: Spacing.large, cornerRadius: DesignSystem.microRadius)
+                    AppSkeleton(height: Spacing.large, cornerRadius: DesignSystem.microRadius)
+                    AppSkeleton(width: 200, height: Spacing.large, cornerRadius: DesignSystem.microRadius)
                 }
-                .opacity(isReadmeLoading ? 0.6 : 1.0)
-                .animation(.easeInOut(duration: 1.2).repeatForever(autoreverses: true), value: isReadmeLoading)
                 .padding(.vertical, DesignSystem.small)
             } else {
                 // 降级选择链：优先显示本地缓存的 README -> 远端多语言 README -> 插件自身的简短描述

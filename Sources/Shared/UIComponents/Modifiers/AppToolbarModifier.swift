@@ -54,6 +54,7 @@ struct AppTabToolbarModifier<Trailing: View>: ViewModifier {
                     }
                 }
             }
+            .toolbarBackground(.hidden, for: .navigationBar)
     }
 }
 

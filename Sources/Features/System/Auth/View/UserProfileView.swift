@@ -18,8 +18,15 @@ public struct UserProfileView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(AuthService.self) private var authService
     @EnvironmentObject var themeManager: ThemeManager
+    @Environment(AppStore.self) private var store
+    @Environment(KnowledgeStore.self) private var knowledgeStore
+    @Environment(VaultService.self) private var vaultService
+    @Environment(SynthesisStore.self) private var synthesisStore
 
     // MARK: - 状态属性
+
+    /// 头像彩虹呼吸渐变发光的动画状态，用于触发头像外边框特效
+    @State private var isAnimatingGlow = false
 
     /// 当前编辑的昵称
     @State private var nickname: String = ""
@@ -57,6 +64,9 @@ public struct UserProfileView: View {
 
                         // 2. 基本信息表单
                         infoFormSection
+                        
+                        // 3. 知识资产统计与活跃度看板（用于充实大屏设备底部的留白空间）
+                        statisticsSection
                     }
                     .padding(DesignSystem.medium)
                 }
@@ -144,8 +154,27 @@ public struct UserProfileView: View {
             }
             .overlay(
                 Circle()
-                    .stroke(Color.appAccent.opacity(DesignSystem.Opacity.medium), lineWidth: 2)
+                    // 使用彩虹色线性渐变绘制外环，打造暗黑高科技星空设计感
+                    .stroke(
+                        LinearGradient(
+                            colors: [.red, .orange, .yellow, .green, .blue, .purple],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: 2
+                    )
+                    // 绑定发光呼吸动效：通过动态切换阴影的透明度模拟发光呼吸
+                    .shadow(
+                        color: Color.appAccent.opacity(isAnimatingGlow ? DesignSystem.glassOpacity : DesignSystem.subtleOpacity),
+                        radius: 6
+                    )
             )
+            .onAppear {
+                // 开启无限循环的呼吸缓动动画，控制发光强弱
+                withAnimation(.easeInOut(duration: 2.0).repeatForever(autoreverses: true)) {
+                    isAnimatingGlow = true
+                }
+            }
 
             // 打开相册的胶囊按钮
             PhotosPicker(
@@ -172,9 +201,13 @@ public struct UserProfileView: View {
             VStack(alignment: .leading, spacing: DesignSystem.large) {
                 // 账号 ID (不可修改)
                 VStack(alignment: .leading, spacing: DesignSystem.small) {
-                    Text(L10n.Auth.accountId)
-                        .font(.caption.bold())
-                        .foregroundStyle(.appSecondary)
+                    HStack(spacing: 8) {
+                        Image(systemName: "person.text.rectangle.fill")
+                            .foregroundStyle(.gray)
+                        Text(L10n.Auth.accountId)
+                            .font(.caption.bold())
+                            .foregroundStyle(.appSecondary)
+                    }
                     Text(authService.currentUser?.id.uuidString ?? "-")
                         .font(.subheadline)
                         .foregroundStyle(.appText)
@@ -184,9 +217,13 @@ public struct UserProfileView: View {
                 // 手机号（如果通过短信登录则展示，不可修改）
                 if let phone = authService.currentUser?.phone, !phone.isEmpty {
                     VStack(alignment: .leading, spacing: DesignSystem.small) {
-                        Text(L10n.Auth.phoneLabel)
-                            .font(.caption.bold())
-                            .foregroundStyle(.appSecondary)
+                        HStack(spacing: 8) {
+                            Image(systemName: "phone.fill")
+                                .foregroundStyle(.gray)
+                            Text(L10n.Auth.phoneLabel)
+                                .font(.caption.bold())
+                                .foregroundStyle(.appSecondary)
+                        }
                         Text(phone)
                             .font(.subheadline)
                             .foregroundStyle(.appText)
@@ -195,9 +232,13 @@ public struct UserProfileView: View {
 
                 // 昵称修改
                 VStack(alignment: .leading, spacing: DesignSystem.small) {
-                    Text(L10n.Auth.nickname)
-                        .font(.caption.bold())
-                        .foregroundStyle(.appSecondary)
+                    HStack(spacing: 8) {
+                        Image(systemName: "person.fill")
+                            .foregroundStyle(Color.theme.accent)
+                        Text(L10n.Auth.nickname)
+                            .font(.caption.bold())
+                            .foregroundStyle(.appSecondary)
+                    }
 
                     // AppTextField 正确参数顺序：placeholder: 在前，text: 在后
                     AppTextField(
@@ -209,9 +250,13 @@ public struct UserProfileView: View {
                 
                 // 性别选择
                 VStack(alignment: .leading, spacing: DesignSystem.small) {
-                    Text(L10n.Auth.gender)
-                        .font(.caption.bold())
-                        .foregroundStyle(.appSecondary)
+                    HStack(spacing: 8) {
+                        Image(systemName: "person.2.fill")
+                            .foregroundStyle(Color.theme.accent)
+                        Text(L10n.Auth.gender)
+                            .font(.caption.bold())
+                            .foregroundStyle(.appSecondary)
+                    }
                     
                     Picker("", selection: $gender) {
                         Text(L10n.Auth.genderSecret).tag(0)
@@ -223,9 +268,13 @@ public struct UserProfileView: View {
                 
                 // 生日选择
                 VStack(alignment: .leading, spacing: DesignSystem.small) {
-                    Text(L10n.Auth.birthday)
-                        .font(.caption.bold())
-                        .foregroundStyle(.appSecondary)
+                    HStack(spacing: 8) {
+                        Image(systemName: "calendar")
+                            .foregroundStyle(Color.theme.accent)
+                        Text(L10n.Auth.birthday)
+                            .font(.caption.bold())
+                            .foregroundStyle(.appSecondary)
+                    }
                     
                     DatePicker("", selection: $birthday, displayedComponents: .date)
                         .labelsHidden()
@@ -233,6 +282,85 @@ public struct UserProfileView: View {
                 }
             }
             .padding(DesignSystem.medium)
+        }
+    }
+
+    /// 知识资产统计与活跃度仪表卡 (用以充实页面大屏留白，提供真实的资产和活跃指标)
+    private var statisticsSection: some View {
+        AppCard {
+            VStack(alignment: .leading, spacing: DesignSystem.medium) {
+                // 模块页头
+                HStack(spacing: 8) {
+                    Image(systemName: "chart.line.uptrend.xyaxis")
+                        .foregroundStyle(Color.theme.accent)
+                    Text(L10n.Auth.statsBoard)
+                        .font(.headline.bold())
+                        .foregroundStyle(.primary)
+                }
+                .padding(.bottom, 4)
+                
+                // 2x2 网格，清晰统计用户的知识库状况
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: DesignSystem.medium) {
+                    metricItem(
+                        title: L10n.Auth.statsNotebooks,
+                        value: "\(vaultService.vaults.count)",
+                        icon: "books.vertical.fill",
+                        color: .blue
+                    )
+                    metricItem(
+                        title: L10n.Auth.statsPages,
+                        value: "\(knowledgeStore.totalPages)",
+                        icon: "doc.text.fill",
+                        color: .green
+                    )
+                    metricItem(
+                        title: L10n.Auth.statsSynthesis,
+                        value: "\(synthesisStore.allSortedDocuments.count)",
+                        icon: "sparkles",
+                        color: .purple
+                    )
+                    metricItem(
+                        title: L10n.Auth.statsActiveDays,
+                        value: "\(activeDays)",
+                        icon: "calendar.day.timeline.left",
+                        color: .orange
+                    )
+                }
+            }
+            .padding(DesignSystem.medium)
+        }
+    }
+
+    /// 单个资产数据指标组件
+    private func metricItem(title: String, value: String, icon: String, color: Color) -> some View {
+        VStack(alignment: .leading, spacing: DesignSystem.tiny) {
+            HStack(spacing: 6) {
+                Image(systemName: icon)
+                    .font(.caption)
+                    .foregroundStyle(color)
+                Text(title)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            Text(value)
+                .font(.title3.bold())
+                .foregroundStyle(.primary)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(DesignSystem.small)
+        .background(Color.appCard.opacity(DesignSystem.softOpacity))
+        .cornerRadius(DesignSystem.cardRadius)
+    }
+
+    /// 活跃天数逻辑：初次启动时在本地存储中打点，自动计算距今的累积使用天数
+    private var activeDays: Int {
+        let key = "app.firstLaunchTime"
+        if let time = UserDefaults.standard.object(forKey: key) as? Date {
+            let diff = Calendar.current.dateComponents([.day], from: time, to: Date())
+            return max(1, (diff.day ?? 0) + 1)
+        } else {
+            UserDefaults.standard.set(Date(), forKey: key)
+            return 1
         }
     }
 

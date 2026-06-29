@@ -94,10 +94,11 @@ struct NotebookListRow: View {
                     Label(L10n.Vault.edit, systemImage: DesignSystem.Icons.edit)
                 }
                 
+                // 统一删除操作文案：使用“删除笔记本”以确保与“编辑笔记本”的动宾结构对齐
                 Button(role: .destructive) {
                     viewModel.deleteNotebook(id: notebook.id)
                 } label: {
-                    Label(L10n.Common.delete, systemImage: DesignSystem.Icons.delete)
+                    Label(L10n.Vault.deleteNotebook, systemImage: DesignSystem.Icons.delete)
                 }
             }
         }

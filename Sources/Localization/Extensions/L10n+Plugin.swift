@@ -116,6 +116,10 @@ extension L10n {
             public static var rating: String { Plugin.tr("plugin.stat.rating") }
             public static var resourceUsage: String { Plugin.tr("plugin.stats.resourceUsage") }
             public static var noUsage: String { Plugin.tr("plugin.stats.noUsage") }
+            public static var enabledCount: String { Plugin.tr("plugin.stats.enabledCount") }
+            public static var activeCount: String { Plugin.tr("plugin.stats.activeCount") }
+            public static var cpu: String { Plugin.tr("plugin.stats.cpu") }
+            public static var ratio: String { Plugin.tr("plugin.stats.ratio") }
 
             /// call计数格式化
             /// - Parameter calls: calls
@@ -124,7 +128,21 @@ extension L10n {
             public static func callCountFormat(calls: Int, avgMs: Double) -> String {
                 Plugin.trf("plugin.stats.callCountFormat", calls, avgMs)
             }
+            public static func totalExecutionTime(_ val: String) -> String {
+                Plugin.trf("plugin.stats.totalExecutionTime", val)
+            }
         }
+
+        public enum Category {
+            public static var all: String { Plugin.tr("plugin.category.all") }
+            public static var efficiency: String { Plugin.tr("plugin.category.efficiency") }
+            public static var social: String { Plugin.tr("plugin.category.social") }
+            public static var reading: String { Plugin.tr("plugin.category.reading") }
+            public static var other: String { Plugin.tr("plugin.category.other") }
+        }
+
+        public static var noPluginsInCategory: String { tr("plugin.noPluginsInCategory") }
+        public static var noPluginsInCategoryHint: String { tr("plugin.noPluginsInCategoryHint") }
 
         public enum settings {
             public static var noSettings: String { Plugin.tr("plugin.settings.noSettings") }

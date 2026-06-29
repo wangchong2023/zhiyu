@@ -100,6 +100,7 @@ extension L10n {
                 public static func nodes(_ n: Int) -> String { Localized.trf("settings.developer.stressTest.nodes", table: t, n) }
                 public static var confirmTitle: String { Localized.tr("settings.developer.stressTest.confirmTitle", table: t) }
                 public static var confirmMessage: String { Localized.tr("settings.developer.stressTest.confirmMessage", table: t) }
+                public static var sliderLabel: String { Localized.tr("settings.developer.stressTest.sliderLabel", table: t) }
 
                 /// success
                 /// - Parameter n: n

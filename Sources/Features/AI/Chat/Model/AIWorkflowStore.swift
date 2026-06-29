@@ -98,26 +98,30 @@ public final class AIWorkflowStore: AIWorkflowCapabilities {
     }
 
     /// 运行AI扫描
-    public func runAIScan() async {
+    public func runAIScan(forPage specificPage: KnowledgePage? = nil) async {
         guard llmService.isEnabled else {
-            logger.addLog(action: .aiscanSkipped, target: "System", details: "LLM service disabled")
+            logger.addLog(action: .aiscanSkipped, target: specificPage?.title ?? "System", details: "LLM service disabled")
             return
         }
 
         isScanningAI = true
-        let taskID = TaskCenter.shared.addTask(type: .ai, name: "Scan_Task", target: "System")
+        let taskTarget = specificPage?.title ?? "System"
+        let taskID = TaskCenter.shared.addTask(type: .ai, name: "Scan_Task", target: taskTarget)
 
         do {
             let allPages = (try? await knowledgeRepository.fetchAll()) ?? []
-            let samplePages = Array(allPages.prefix(10))
-            let suggestions = try await llmService.analyzeForRefactoring(pages: samplePages)
-
-            let activePages = allPages.sorted(by: { $0.updatedAt > $1.updatedAt }).prefix(5)
             let existingTitles = allPages.map { $0.title }
+
+            let pagesToScan: [KnowledgePage]
+            if let spec = specificPage {
+                pagesToScan = [spec]
+            } else {
+                pagesToScan = Array(allPages.sorted(by: { $0.updatedAt > $1.updatedAt }).prefix(5))
+            }
 
             var tempLinks: [PotentialLinkSuggestion] = []
             var seenLinks = Set<String>()
-            for page in activePages {
+            for page in pagesToScan {
                 let found = try await llmService.discoverPotentialLinks(content: page.content, existingTitles: existingTitles)
                 for title in Set(found) {
                     let linkKey = "\(page.id.uuidString)-\(title)"
@@ -128,12 +132,23 @@ public final class AIWorkflowStore: AIWorkflowCapabilities {
                 }
             }
 
-            refactorSuggestions = suggestions
-            potentialLinks = tempLinks
+            if let spec = specificPage {
+                // 如果是针对特定单页的扫描，只增量合并
+                var currentLinks = potentialLinks
+                currentLinks.removeAll { $0.sourcePageID == spec.id }
+                potentialLinks = currentLinks + tempLinks
+            } else {
+                // 全局扫描
+                let samplePages = Array(allPages.prefix(10))
+                let suggestions = try await llmService.analyzeForRefactoring(pages: samplePages)
+                refactorSuggestions = suggestions
+                potentialLinks = tempLinks
+            }
+
             isScanningAI = false
             TaskCenter.shared.updateTask(taskID, status: .completed)
         } catch {
-            logger.addLog(action: .aiscanFailed, target: "System", details: error.localizedDescription)
+            logger.addLog(action: .aiscanFailed, target: taskTarget, details: error.localizedDescription)
             isScanningAI = false
             TaskCenter.shared.updateTask(taskID, status: .failed(error: error.localizedDescription))
         }

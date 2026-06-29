@@ -954,6 +954,57 @@
         }
       }
     },
+    "page.ai.potentialLinksTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Potential Links"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "潜在关联"
+          }
+        }
+      }
+    },
+    "page.ai.potentialLinksEmpty": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No potential links found"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未发现潜在关联"
+          }
+        }
+      }
+    },
+    "page.ai.potentialLinksScanning": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scanning potential links..."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "智能扫描潜在关联中..."
+          }
+        }
+      }
+    },
     "page.ai.summary": {
       "extractionState": "manual",
       "localizations": {
@@ -2517,6 +2568,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "介绍一下这个笔记本..."
+          }
+        }
+      }
+    },
+    "vault.deleteNotebook": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete Notebook"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "删除笔记本"
           }
         }
       }

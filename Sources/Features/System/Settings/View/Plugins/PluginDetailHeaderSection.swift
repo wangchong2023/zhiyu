@@ -27,6 +27,41 @@ extension PluginDetailView {
                     .clipShape(RoundedRectangle(cornerRadius: DesignSystem.chipRadius + Spacing.atomic, style: .continuous))
                     .overlay(RoundedRectangle(cornerRadius: DesignSystem.chipRadius + Spacing.atomic, style: .continuous).stroke(Color.appBorder.opacity(DesignSystem.subtleOpacity * 1.66), lineWidth: 0.5))
                     .shadow(color: Color.theme.black.opacity(DesignSystem.subtleOpacity), radius: 12, x: 0, y: 6)
+            } else if let iconURL = URL(string: plugin.icon), iconURL.scheme?.hasPrefix("http") == true {
+                CachedAsyncImage(url: iconURL) { phase in
+                    switch phase {
+                    case .success(let image):
+                        image
+                            .resizable().scaledToFit()
+                    case .empty:
+                        AppSkeleton(width: DesignSystem.Gallery.itemSize, height: DesignSystem.Gallery.itemSize, cornerRadius: DesignSystem.chipRadius + Spacing.atomic)
+                            .overlay(
+                                ProgressView()
+                                    .controlSize(.small)
+                            )
+                    case .failure:
+                        // 远程图标拉取失败时，fallback 到带渐变底的拼图块默认图标
+                        Image(systemName: "puzzlepiece.extension.fill")
+                            .font(.system(size: DesignSystem.Gallery.mainIconSize * 0.9))
+                            .foregroundStyle(.white)
+                            .frame(width: DesignSystem.Gallery.itemSize, height: DesignSystem.Gallery.itemSize)
+                            .background(
+                                LinearGradient(colors: [Color.appAccent, Color.appAccent.opacity(DesignSystem.subtleOpacity * 6.25)],
+                                               startPoint: .topLeading, endPoint: .bottomTrailing))
+                    @unknown default:
+                        Image(systemName: "puzzlepiece.extension.fill")
+                            .font(.system(size: DesignSystem.Gallery.mainIconSize * 0.9))
+                            .foregroundStyle(.white)
+                            .frame(width: DesignSystem.Gallery.itemSize, height: DesignSystem.Gallery.itemSize)
+                            .background(
+                                LinearGradient(colors: [Color.appAccent, Color.appAccent.opacity(DesignSystem.subtleOpacity * 6.25)],
+                                               startPoint: .topLeading, endPoint: .bottomTrailing))
+                    }
+                }
+                .frame(width: DesignSystem.Gallery.itemSize, height: DesignSystem.Gallery.itemSize)
+                .clipShape(RoundedRectangle(cornerRadius: DesignSystem.chipRadius + Spacing.atomic, style: .continuous))
+                .overlay(RoundedRectangle(cornerRadius: DesignSystem.chipRadius + Spacing.atomic, style: .continuous).stroke(Color.appBorder.opacity(DesignSystem.subtleOpacity * 1.66), lineWidth: 0.5))
+                .shadow(color: Color.theme.black.opacity(DesignSystem.subtleOpacity), radius: 12, x: 0, y: 6)
             } else {
                 Image(systemName: plugin.icon)
                     .font(.system(size: DesignSystem.Gallery.mainIconSize * 0.9))
@@ -36,8 +71,8 @@ extension PluginDetailView {
                         LinearGradient(colors: [Color.appAccent, Color.appAccent.opacity(DesignSystem.subtleOpacity * 6.25)],
                                        startPoint: .topLeading, endPoint: .bottomTrailing))
                     .clipShape(RoundedRectangle(cornerRadius: DesignSystem.chipRadius + Spacing.atomic, style: .continuous))
-                    .overlay(RoundedRectangle(cornerRadius: DesignSystem.chipRadius + Spacing.atomic, style: .continuous).stroke(Color.theme.white.opacity(DesignSystem.subtleOpacity * 1.25), lineWidth: 0.5))
-                    .shadow(color: Color.appAccent.opacity(DesignSystem.subtleOpacity * 1.66), radius: 12, x: 0, y: 6)
+                    .overlay(RoundedRectangle(cornerRadius: DesignSystem.chipRadius + Spacing.atomic, style: .continuous).stroke(Color.appBorder.opacity(DesignSystem.subtleOpacity * 1.66), lineWidth: 0.5))
+                    .shadow(color: Color.theme.black.opacity(DesignSystem.subtleOpacity), radius: 12, x: 0, y: 6)
             }
 
             VStack(alignment: .leading, spacing: DesignSystem.small) {

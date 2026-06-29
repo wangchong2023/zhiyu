@@ -50,6 +50,7 @@ extension IngestCoordinator {
             Task { @MainActor in
                 ToastManager.shared.show(type: .error, message: L10n.Ingest.fileTooLarge)
             }
+            TaskCenter.shared.updateTask(taskID, status: .failed(error: L10n.Ingest.fileTooLarge))
             return
         }
 
@@ -59,9 +60,17 @@ extension IngestCoordinator {
             return try? String(contentsOf: url, encoding: .utf8)
         }()
 
-        let savedPath = fileStore.copyFile(at: url, category: .file)
-        let actualPath = savedPath ?? url.path
-        let sandboxURL = savedPath.map { URL(fileURLWithPath: $0) } ?? url
+        guard let savedPath = fileStore.copyFile(at: url, category: .file) else {
+            lastImportTime = .distantPast
+            Task { @MainActor in
+                ToastManager.shared.show(type: .error, message: L10n.Ingest.importFailed)
+            }
+            TaskCenter.shared.updateTask(taskID, status: .failed(error: L10n.Ingest.importFailed))
+            return
+        }
+        
+        let actualPath = savedPath
+        let sandboxURL = URL(fileURLWithPath: savedPath)
 
         let record = ImportRecord(
             id: recordID, category: ImportCategory.file.rawValue,
@@ -71,17 +80,45 @@ extension IngestCoordinator {
             vaultID: VaultService.shared.selectedVaultID?.uuidString
         )
 
+        let targetType = newType
+        let forceDeepScan = useSmartIngest
+
+        saveRecordAndExecute(
+            record: record,
+            sandboxURL: sandboxURL,
+            taskID: taskID,
+            targetType: targetType,
+            forceDeepScan: forceDeepScan
+        )
+    }
+
+    /// 保存导入记录并触发异步后台任务
+    private func saveRecordAndExecute(
+        record: ImportRecord,
+        sandboxURL: URL,
+        taskID: UUID,
+        targetType: PageType,
+        forceDeepScan: Bool
+    ) {
         Task {
             let existing = (try? await importRecordRepo.fetchAll(category: ImportCategory.file.rawValue, limit: 1000)) ?? []
-            if existing.contains(where: { $0.filePath == actualPath && $0.status == ImportRecordStatus.done }) {
+            if existing.contains(where: { $0.filePath == record.filePath && $0.status == ImportRecordStatus.done }) {
                 await MainActor.run {
-                    ToastManager.shared.show(type: .info, message: L10n.Ingest.duplicateFile(fileName))
+                    ToastManager.shared.show(type: .info, message: L10n.Ingest.duplicateFile(record.title))
                 }
+                TaskCenter.shared.updateTask(taskID, status: .failed(error: L10n.Ingest.duplicateFile(record.title)))
                 return
             }
             try? await importRecordRepo.save(record)
 
-            executeImportTask(at: sandboxURL, recordID: recordID, textContent: textContent, taskID: taskID)
+            executeImportTask(
+                at: sandboxURL,
+                recordID: record.id,
+                textContent: record.rawText,
+                taskID: taskID,
+                type: targetType,
+                forceDeepScan: forceDeepScan
+            )
         }
     }
 
@@ -90,7 +127,9 @@ extension IngestCoordinator {
         at url: URL,
         recordID: String,
         textContent: String?,
-        taskID: UUID
+        taskID: UUID,
+        type: PageType,
+        forceDeepScan: Bool
     ) {
         Task {
             let ocrText = await self.extractImagesFromFile(url: url)
@@ -98,7 +137,7 @@ extension IngestCoordinator {
                 existingText += ocrText
                 try? await importRecordRepo.updateRawText(id: recordID, rawText: existingText)
             }
-            let page = await store.ingestService.ingestDocument(at: url, pageStore: store)
+            let page = await store.ingestService.ingestDocument(at: url, type: type, forceDeepScan: forceDeepScan, pageStore: store)
             await MainActor.run {
                 if let page = page {
                     Task { @MainActor in

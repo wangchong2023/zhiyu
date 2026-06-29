@@ -83,7 +83,7 @@ public struct NotebookHubView: View {
         .sheet(isPresented: $viewModel.isShowingEditSheet) {
             EditNotebookSheet(viewModel: viewModel)
         }
-        .alert(L10n.Vault.rename, isPresented: $viewModel.isShowingRenameAlert) {
+        .alert(L10n.Common.rename, isPresented: $viewModel.isShowingRenameAlert) {
             TextField(L10n.Vault.namePlaceholder, text: $viewModel.editingName)
             Button(L10n.Common.cancel, role: .cancel) { }
             Button(L10n.Common.ok) {
@@ -148,7 +148,7 @@ public struct NotebookHubView: View {
                     icon: DesignSystem.Icons.folderBadgePlus,
                     title: L10n.Vault.homeTitle,
                     description: nil,
-                    actionLabel: L10n.Vault.create,
+                    actionLabel: L10n.Common.create,
                     actionRole: .primary
                 ) {
                     viewModel.isShowingCreateSheet = true

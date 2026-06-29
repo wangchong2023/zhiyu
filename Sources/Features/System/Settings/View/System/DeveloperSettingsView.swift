@@ -26,29 +26,52 @@ struct DeveloperSettingsView: View {
 
             // MARK: - 性能测试 (Performance Testing)
             Section {
-                Picker(selection: $stressTestTargetCount) {
-                    Text("100").tag(100)
-                    Text("500").tag(500)
-                    Text("1000").tag(1000)
-                    Text("5000").tag(5000)
-                    Text("10000").tag(10000)
-                } label: {
-                    Label(L10n.Settings.developer.stressTest.count, systemImage: "number.circle")
-                }
-
-                Button(action: { showStressTestConfirmation = true }) {
+                // 性能测试卡片：将数量选择与压测按钮整合入单个卡片容器中，优化人机交互效率
+                VStack(alignment: .leading, spacing: 14) {
                     HStack {
-                        Label(L10n.Settings.developer.stressTest.run, systemImage: "gauge.with.dots.needle.bottom.100percent")
+                        Label(L10n.Settings.developer.stressTest.count, systemImage: "number.circle")
+                            .font(.body)
                         Spacer()
+                        // 节点数量展示：动态读取本地化表达
                         Text(L10n.Settings.developer.stressTest.nodes(stressTestTargetCount))
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                        if isStressTesting {
-                            ProgressView()
-                        }
+                            .bold()
+                            .foregroundStyle(Color.theme.accent)
                     }
+                    
+                    // 使用 Stepper 作为内联调节器，支持 100 到 10000 范围，步长 100
+                    Stepper(value: $stressTestTargetCount, in: 100...10000, step: 100) {
+                        Text(L10n.Settings.developer.stressTest.sliderLabel)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
+                    .disabled(isStressTesting)
+                    
+                    Divider()
+                    
+                    // 下方横跨卡片的一体化压力测试按钮，采用高对比度的蓝色主题，带 gauge.with.needle 仪表盘图标
+                    Button(action: { showStressTestConfirmation = true }) {
+                        HStack(spacing: 8) {
+                            Spacer()
+                            Image(systemName: "gauge.with.needle")
+                                .font(.headline)
+                            Text(L10n.Settings.developer.stressTest.run)
+                                .bold()
+                            if isStressTesting {
+                                ProgressView()
+                                    .padding(.leading, 4)
+                            }
+                            Spacer()
+                        }
+                        .padding(.vertical, 10)
+                        .frame(maxWidth: .infinity)
+                        .background(isStressTesting ? Color.secondary.opacity(DesignSystem.Opacity.disabled) : Color.theme.accent)
+                        .foregroundColor(Color.theme.white)
+                        .cornerRadius(DesignSystem.cardRadius)
+                    }
+                    .disabled(isStressTesting)
+                    .buttonStyle(.plain) // 避免嵌套点击污染
                 }
-                .disabled(isStressTesting)
+                .padding(.vertical, 8)
             } header: {
                 Text(L10n.Settings.developer.section.performance_test)
             } footer: {
@@ -75,10 +98,11 @@ struct DeveloperSettingsView: View {
                 }
 
                 NavigationLink {
-                    RawStorageListView()
+                    TaskRoutingRulesView()
                 } label: {
-                    Label(L10n.Dashboard.stats.viewRawPages, systemImage: "doc.plaintext")
+                    Label(L10n.ModelManager.Routing.taskRules, systemImage: "network")
                 }
+
             } header: {
                 Text(L10n.Dashboard.stats.evaluation)
             }

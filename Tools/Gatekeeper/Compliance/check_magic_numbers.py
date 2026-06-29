@@ -94,32 +94,22 @@ for scan_dir in scan_dirs:
             path = os.path.join(root, fname)
             results.extend(scan_file(path, ext))
 
-from collections import defaultdict
-by_file = defaultdict(list)
+# 引入统一报告管理器
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from gatekeeper_reporter import GatekeeperReporter
+
+reporter = GatekeeperReporter("Magic Number Audit")
+
 for typ, path, line_no, code in results:
-    rel = os.path.relpath(path)
-    by_file[rel].append((typ, line_no, code))
-
-print(f"实际需要修复的文件: {len(by_file)} 个\n")
-
-priority_files = {}
-for fpath, issues in sorted(by_file.items()):
+    fpath = os.path.relpath(path)
     if 'Widget' in fpath or 'Widgets' in fpath:
         continue
-    priority_files[fpath] = issues
+    reporter.add_issue(
+        filepath=fpath,
+        line_no=line_no,
+        message=f"发现硬编码魔鬼参数 ({typ})，建议替换为 DesignSystem token。",
+        level="ERROR",
+        content=code
+    )
 
-print(f"高优先级文件（非 Widget）: {len(priority_files)} 个\n")
-for fpath, issues in sorted(priority_files.items()):
-    count = len(issues)
-    print(f"  {fpath} ({count} 处)")
-    for typ, line_no, code in issues[:MAX_DISPLAY_LIMIT]:
-        print(f"     L{line_no}: [{typ}] {code}")
-    if count > MAX_DISPLAY_LIMIT:
-        print(f"     ... 还有 {count - MAX_DISPLAY_LIMIT} 处")
-    print()
-
-if priority_files:
-    print(f"❌ 发现 {len(priority_files)} 个文件包含魔鬼数字，请替换为 DesignSystem token。")
-    sys.exit(1)
-else:
-    print("✅ 未发现魔鬼数字/字符串。")
+reporter.report()

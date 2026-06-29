@@ -272,11 +272,10 @@ public actor ModelDownloadManager: ModelDownloadCapabilities {
     nonisolated fileprivate func verifySHA256(of fileURL: URL, expectedHash: String) -> Bool {
         guard !expectedHash.isEmpty else { return true } // 如果白名单未配置哈希，视为跳过校验
         
-        // 🛡️ 防御性容灾判定：标准的 SHA-256 十六进制哈希串必然是 64 字符。
-        // 若配置的是占位指纹（如 "gemma4e2b12345"），直接跳过哈希硬性约束以免用户因占位配置导致可用模型下载失败。
+        // 强制约束：标准的 SHA-256 十六进制哈希串必然是 64 字符。如果提供了非 64 位的占位符，直接判定校验失败，绝不放行不完整的大模型权重。
         guard expectedHash.count == Self.sha256HexLength else {
-            Logger.shared.warning("[ModelDownloadManager] 检测到非标准长度的 SHA256 占位校验和: '\(expectedHash)'，将跳过哈希完好性校验。")
-            return true
+            Logger.shared.error("[ModelDownloadManager] 检测到非标准长度的 SHA256 校验和: '\(expectedHash)'。拒绝跳过校验，判定为完整性校验失败。")
+            return false
         }
         
         guard let file = FileHandle(forReadingAtPath: fileURL.path) else { return false }
@@ -340,6 +339,15 @@ private final class ModelDownloadDelegateHelper: NSObject, URLSessionDownloadDel
         didFinishDownloadingTo location: URL
     ) {
         guard let modelId = downloadTask.taskDescription else { return }
+        
+        // 1. 严格校验 HTTP 状态码，拦截 404/500 等异常请求，防止将错误页面当做模型权重保存
+        if let httpResponse = downloadTask.response as? HTTPURLResponse, !(200...299).contains(httpResponse.statusCode) {
+            Task {
+                await manager.updateState(for: modelId, to: .failed(error: "Network error: HTTP \(httpResponse.statusCode)"))
+                await manager.clearActiveTask(for: modelId)
+            }
+            return
+        }
         
         // 创建沙盒下的临时安全副本，防止系统委托在退出 didFinishDownloading 瞬间删除文件
         let tempDirectory = FileManager.default.temporaryDirectory

@@ -22,6 +22,7 @@ struct ContentView: View {
     @Environment(VaultService.self) var vaultService
     @Environment(AppEnvironment.self) var appEnvironment
     @Environment(SettingsStore.self) var settingsStore
+    @Environment(\.colorScheme) var colorScheme
     
     @StateObject internal var tooltipManager = TooltipManager.shared
     @State internal var showCommandPalette = false
@@ -80,7 +81,7 @@ struct ContentView: View {
                     .zIndex(DesignSystem.ZIndex.lockOverlay)
             }
         }
-        .sheet(isPresented: $router.isShowingSettingsSheet) {
+        .fullScreenCover(isPresented: $router.isShowingSettingsSheet) {
             SettingsView()
                 .environment(store)
                 .environment(router)
@@ -90,7 +91,16 @@ struct ContentView: View {
                 .environmentObject(themeManager)
                 .environment(\.locale, router.currentLocale)
                 .preferredColorScheme(themeManager.colorSchemeMode.preferredColorScheme)
-                .applySettingsPresentationSizing(screenClass: appEnv.screenClass)
+        }
+        .fullScreenCover(isPresented: $router.isShowingAISettingsSheet) {
+            NavigationStack {
+                AISettingsView()
+            }
+            .environment(store)
+            .environment(router)
+            .environmentObject(themeManager)
+            .preferredColorScheme(themeManager.colorSchemeMode.preferredColorScheme)
+            .applyPagePresentationSizing()
         }
         .animation(DesignSystem.Animation.Config.prominentSpring, value: authSession.isLoggedIn || authSession.isGuest)
         .animation(DesignSystem.Animation.Config.prominentSpring, value: vaultService.selectedVaultID)

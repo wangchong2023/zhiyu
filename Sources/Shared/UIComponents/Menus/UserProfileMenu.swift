@@ -81,8 +81,8 @@ final class CatalystFloatingMenuManager: NSObject {
         // 监听 app 窗口 frame 变化：用户拖拽/缩放窗口时自动关闭菜单
         let capturedFrame = appWindowFrame
         windowFrameTimer = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: true) { [weak self] _ in
+            guard let self = self else { return }
             runOnMainSync {
-                guard let self = self else { return }
                 let currentFrame = UIApplication.shared.connectedScenes
                     .compactMap({ $0 as? UIWindowScene }).first?
                     .windows.first(where: { !$0.isHidden && $0.windowLevel == .normal })?.frame ?? .zero
@@ -177,7 +177,6 @@ struct UserProfileMenu: View {
 
     @State private var showPlugins = false
 
-    @State private var showDeveloper = false
     @State private var showMenuPopover = false
     @State private var showPlan = false
     @State private var showAISettings = false // AI 大模型快捷设置展示状态
@@ -189,7 +188,7 @@ struct UserProfileMenu: View {
     @State private var pendingMenuAction: MenuAction?
 
     fileprivate enum MenuAction {
-        case settings, profile, plan, plugins, developer, aiSettings
+        case settings, profile, plan, plugins, aiSettings
     }
     
     var body: some View {
@@ -218,7 +217,7 @@ struct UserProfileMenu: View {
         }
         #else
         nonWatchBody
-        .sheet(isPresented: $showProfile) {
+        .fullScreenCover(isPresented: $showProfile) {
             NavigationStack {
                 UserProfileView()
             }
@@ -226,7 +225,7 @@ struct UserProfileMenu: View {
             .environmentObject(themeManager)
             .applyPresentationSizing() // 适配大屏弹窗尺寸规范
         }
-        .sheet(isPresented: $showPlan) {
+        .fullScreenCover(isPresented: $showPlan) {
             NavigationStack {
                 SubscriptionPlanView()
             }
@@ -235,14 +234,14 @@ struct UserProfileMenu: View {
             // 套餐管理含配额大盘+套餐对比+购买功能，内容丰富，使用 .page 级别大尺寸
             .applyPagePresentationSizing()
         }
-        .sheet(isPresented: $showAbout) {
+        .fullScreenCover(isPresented: $showAbout) {
             aboutStack
                 .environment(store)
                 .environmentObject(themeManager)
                 .applyPresentationSizing() // 适配大屏弹窗尺寸规范
         }
 
-        .sheet(isPresented: $showPlugins) {
+        .fullScreenCover(isPresented: $showPlugins) {
             NavigationStack {
                 PluginCenterView()
             }
@@ -250,26 +249,6 @@ struct UserProfileMenu: View {
             .applyPagePresentationSizing()
         }
 
-        .sheet(isPresented: $showAISettings) {
-            NavigationStack {
-                AISettingsView()
-            }
-            .environment(store)
-            .environmentObject(themeManager)
-            .applyPagePresentationSizing() // 适配大屏弹窗尺寸规范
-        }
-
-        .sheet(isPresented: $showDeveloper) {
-            NavigationStack {
-                DeveloperSettingsView()
-            }
-            .environment(store)
-            .environment(store.knowledgeStore)
-            .environment(store.settingsStore)
-            .environmentObject(onboardingService)
-            // 开发者设置内容丰富，使用 .page 级别大尺寸，充分利用 iPad/Mac 屏幕空间
-            .applyPagePresentationSizing()
-        }
         #endif
     }
 
@@ -281,8 +260,7 @@ struct UserProfileMenu: View {
         case .profile: showProfile = true
         case .plan: showPlan = true
         case .plugins: showPlugins = true
-        case .developer: showDeveloper = true
-        case .aiSettings: showAISettings = true
+        case .aiSettings: router.isShowingAISettingsSheet = true
         }
     }
     
@@ -341,7 +319,7 @@ struct UserProfileMenu: View {
             }
         }
         #else
-        // iOS / iPadOS: 使用原生 popover
+        // iOS/iPadOS：统一使用 popover 气泡，并强制 iPhone 不降级为 sheet，以保证菜单完美指向右上角头像位置
         Button(action: {
             HapticFeedback.shared.trigger(.selection)
             showMenuPopover = true
@@ -350,27 +328,41 @@ struct UserProfileMenu: View {
         }
         .buttonStyle(.plain)
         .accessibilityIdentifier("userProfileMenuButton")
-        .popover(isPresented: $showMenuPopover, attachmentAnchor: .point(.bottom), arrowEdge: .top) {
-            CustomProfilePopover(
-                showMenuPopover: $showMenuPopover,
-                onAction: { pendingMenuAction = $0 }
-            )
-            .environment(authService)
-            .environment(store)
-            .environment(router)
-            .environmentObject(themeManager)
-            .environmentObject(onboardingService)
-            .presentationCompactAdaptation(.popover)
-            .onDisappear {
-                if let action = pendingMenuAction {
-                    pendingMenuAction = nil
-                    DispatchQueue.main.async {
-                        executeMenuAction(action)
-                    }
+        .popover(isPresented: $showMenuPopover) {
+            menuPopoverContent
+                .frame(
+                    width: CustomProfilePopover.Constants.menuWidth,
+                    height: UIDevice.current.userInterfaceIdiom == .pad ? 360 : 340
+                )
+                .presentationCompactAdaptation(.popover)
+        }
+        #endif
+    }
+}
+
+// MARK: - UserProfileMenu 内部扩展
+private extension UserProfileMenu {
+    /// 菜单弹窗内容（iPhone sheet / iPad popover 共用）
+    @MainActor
+    var menuPopoverContent: some View {
+        CustomProfilePopover(
+            showMenuPopover: $showMenuPopover,
+            onAction: { pendingMenuAction = $0 }
+        )
+        .environment(authService)
+        .environment(store)
+        .environment(router)
+        .environmentObject(themeManager)
+        .environmentObject(onboardingService)
+        .onDisappear {
+            if let action = pendingMenuAction {
+                pendingMenuAction = nil
+                // 延迟 0.25s 执行，彻底避开 UIKit Dismiss/Present 周期冲突
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                    executeMenuAction(action)
                 }
             }
         }
-        #endif
     }
 }
 
@@ -386,9 +378,9 @@ struct CustomProfilePopover: View {
         static let menuWidth: CGFloat = 320
         #elseif os(iOS)
         /// iPad 大屏：菜单宽度 300pt
-        static let menuWidth: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 300 : 260
+        static let menuWidth: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 300 : 240
         #else
-        static let menuWidth: CGFloat = 260
+        static let menuWidth: CGFloat = 240
         #endif
         static let iconBoxSize: CGFloat = 30
     }
@@ -441,6 +433,7 @@ struct CustomProfilePopover: View {
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
+            .frame(maxWidth: .infinity, alignment: .leading)
 
             AppDivider()
 
@@ -452,7 +445,7 @@ struct CustomProfilePopover: View {
                         showMenuPopover = false
                     }
                     
-                    menuRow(icon: DesignSystem.Icons.crown, color: .yellow, title: L10n.Auth.subscription) {
+                    menuRow(icon: "creditcard.fill", color: Color(hue: 0.62, saturation: 0.65, brightness: 0.82), title: L10n.Auth.subscription) {
                         onAction?(.plan)
                         showMenuPopover = false
                     }
@@ -463,17 +456,10 @@ struct CustomProfilePopover: View {
                     }
                     .accessibilityIdentifier("aiSettingsMenuButton")
                     
-                    menuRow(icon: "puzzlepiece.extension.fill", color: .orange, title: L10n.Plugin.title) {
+                    menuRow(icon: "puzzlepiece.extension.fill", color: .indigo, title: L10n.Plugin.title) {
                         onAction?(.plugins)
                         showMenuPopover = false
                     }
-                    
-                    #if DEBUG
-                    menuRow(icon: "hammer.fill", color: .gray, title: L10n.Settings.Section.developer) {
-                        onAction?(.developer)
-                        showMenuPopover = false
-                    }
-                    #endif
                     
                     Divider()
                         .padding(.vertical, DesignSystem.tiny)
@@ -488,7 +474,7 @@ struct CustomProfilePopover: View {
                 .padding(DesignSystem.small)
             }
         }
-        .frame(width: Constants.menuWidth)
+        .frame(maxWidth: .infinity)
         .background(
             themeManager.pageBackground().ignoresSafeArea()
         )
@@ -506,6 +492,7 @@ struct CustomProfilePopover: View {
                         .frame(width: Constants.iconBoxSize, height: Constants.iconBoxSize)
                     Image(systemName: icon)
                         .font(.system(size: 14, weight: .semibold)) // Dynamic Type
+                        .symbolRenderingMode(.monochrome)
                         .foregroundStyle(color)
                 }
                 
@@ -520,5 +507,6 @@ struct CustomProfilePopover: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }

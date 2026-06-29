@@ -1,17 +1,13 @@
 name: ZhiYu
 packages:
   SnapshotTesting:
-    url: https://github.com/pointfreeco/swift-snapshot-testing
-    from: 1.17.2
+    path: /Users/constantine/Documents/work/code/opensrc/swift/swift-snapshot-testing
   GRDB:
-    url: https://github.com/groue/GRDB.swift.git
-    from: 6.29.1
+    path: /Users/constantine/Documents/work/code/opensrc/swift/GRDB.swift
   Lottie:
-    url: https://github.com/airbnb/lottie-ios.git
-    from: 4.4.3
+    path: /Users/constantine/Documents/work/code/opensrc/swift/lottie-ios
   ZIPFoundation:
-    url: https://github.com/weichsel/ZIPFoundation.git
-    from: 0.9.19
+    path: /Users/constantine/Documents/work/code/opensrc/swift/ZIPFoundation
 
 options:
   bundleIdPrefix: com.zhiyu.app

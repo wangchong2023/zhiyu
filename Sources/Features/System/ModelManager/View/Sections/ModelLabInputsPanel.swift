@@ -31,7 +31,7 @@ extension ModelLabView {
                             .foregroundStyle(.cyan)
                         Text("workspace_bench.jpg")
                             .font(.caption)
-                            .foregroundStyle(.white)
+                            .foregroundStyle(.appText)
                     } else {
                         Image(systemName: "plus.viewfinder")
                             .font(.largeTitle)
@@ -42,11 +42,11 @@ extension ModelLabView {
                     }
                 }
                 .frame(width: DesignSystem.Metrics.sourceCardWidth + DesignSystem.tiny, height: DesignSystem.Metrics.boxHeight)
-                .background(Color.theme.white.opacity(DesignSystem.Opacity.ghost))
+                .background(Color.appCard.opacity(DesignSystem.Opacity.subtle))
                 .cornerRadius(DesignSystem.smallRadius)
                 .overlay(
                     RoundedRectangle(cornerRadius: DesignSystem.smallRadius)
-                        .stroke(Color.theme.white.opacity(DesignSystem.Opacity.subtle), lineWidth: 1)
+                        .stroke(Color.appBorder.opacity(DesignSystem.Opacity.subtle), lineWidth: 1)
                 )
             }
             .buttonStyle(.plain)
@@ -87,7 +87,7 @@ extension ModelLabView {
                     }
                     .padding(.horizontal, DesignSystem.standardPadding + 8)
                     .padding(.vertical, DesignSystem.standardPadding + 2)
-                    .background(Color.theme.white.opacity(DesignSystem.Opacity.light))
+                    .background(Color.appCard.opacity(DesignSystem.Opacity.subtle))
                     .cornerRadius(DesignSystem.smallRadius)
                 }
                 .buttonStyle(.plain)

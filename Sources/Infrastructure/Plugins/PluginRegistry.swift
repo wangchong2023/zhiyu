@@ -75,6 +75,11 @@ final class PluginRegistry: ObservableObject {
         runtime.objectWillChange.sink { [weak self] _ in
             self?.objectWillChange.send()
         }.store(in: &cancellables)
+
+        // 异步扫描加载本地已安装的插件，保证重启后状态与已发现插件能被自动唤醒和展示
+        Task {
+            self.scanAndLoadLocalPlugins()
+        }
     }
 
     // MARK: - 重置

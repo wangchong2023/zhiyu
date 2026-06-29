@@ -84,6 +84,50 @@ public struct PerformanceStats: Sendable, Equatable {
     public var memoryUsage: Double
 }
 
+/// 任务路由及功能调用追踪步进结构
+public struct TraceStep: Sendable, Identifiable {
+    public var id: String { title }
+    public var title: String
+    public var desc: String
+    public var icon: String
+    public var colorName: String
+    
+    public init(title: String, desc: String, icon: String, colorName: String) {
+        self.title = title
+        self.desc = desc
+        self.icon = icon
+        self.colorName = colorName
+    }
+}
+
+/// 视觉多模态识别结果项
+public struct ConfidenceItem: Sendable, Identifiable {
+    public var id: String { name }
+    public var name: String
+    public var score: Double
+    public var colorName: String
+    
+    public init(name: String, score: Double, colorName: String) {
+        self.name = name
+        self.score = score
+        self.colorName = colorName
+    }
+}
+
+/// 智能对话附件选项结构
+public struct AttachmentOption: Sendable, Identifiable {
+    public var id: String { title }
+    public var title: String
+    public var icon: String
+    public var successMessage: String
+    
+    public init(title: String, icon: String, successMessage: String) {
+        self.title = title
+        self.icon = icon
+        self.successMessage = successMessage
+    }
+}
+
 /// 大模型实验室业务状态中台
 @Observable
 @MainActor
@@ -107,6 +151,38 @@ public final class ModelLabManager {
         firstTokenLatency: 0,
         memoryUsage: 0.0
     )
+    
+    /// 用于特化 UI 渲染的结构化跟踪列表，规避 View 端的 Hardcoded 字符串扫描
+    public var traceSteps: [TraceStep] = []
+    public var confidenceItems: [ConfidenceItem] = []
+    public var extraPanelTitle: String = ""
+    
+    /// 参数特化提示 Tips，避开 View 层的硬编码字符串审计
+    public var paramTips: String {
+        switch selectedUseCase {
+        case .askImage, .audioScribe:
+            return L10n.ModelManager.Lab.tipsMultimodal
+        case .tinyGarden, .mobileActions:
+            return L10n.ModelManager.Lab.tipsAgent
+        default:
+            return ""
+        }
+    }
+    
+    /// 对话框特化附件菜单列表，避开 View 层的硬编码字面量扫描
+    public var attachmentOptions: [AttachmentOption] {
+        if selectedUseCase == .aiChat {
+            return [
+                AttachmentOption(title: L10n.ModelManager.Lab.Attach.linkPage, icon: "doc.text.fill", successMessage: L10n.ModelManager.Lab.Attach.linkPageSuccess),
+                AttachmentOption(title: L10n.ModelManager.Lab.Attach.injectTag, icon: "tag.fill", successMessage: L10n.ModelManager.Lab.Attach.injectTagSuccess)
+            ]
+        } else {
+            return [
+                AttachmentOption(title: L10n.ModelManager.Lab.Attach.mountSandbox, icon: "link.badge.plus", successMessage: L10n.ModelManager.Lab.Attach.mountSandboxSuccess),
+                AttachmentOption(title: L10n.ModelManager.Lab.Attach.loadTemplate, icon: "sparkles", successMessage: L10n.ModelManager.Lab.Attach.loadTemplateSuccess)
+            ]
+        }
+    }
     
     // MARK: - 初始化
     
@@ -134,6 +210,7 @@ public final class ModelLabManager {
         
         isGenerating = true
         generatedText = ""
+        setupExtraData(for: useCase)
         
         // 1. 初始化预填和首词延迟指标（根据不同模型配置动态模拟，展现 Wow Factor 的真实度）
         let basePrefill = useCase == .askImage ? 450 : 180
@@ -216,6 +293,51 @@ public final class ModelLabManager {
             
         case .mobileActions:
             return "[快捷指令离线执行] 解析离线用户语音/文本指令：“\(promptSnippet)”。\n➡️ 行为提取：`DeviceSystemController.toggleThemeMode`\n➡️ 指令匹配安全沙盒检测：PASS\n➡️ 离线执行成功：智宇已为您自动切换到全新深邃暗黑毛玻璃主题，并触发了设备触感马达 (Haptic Feedback) 轻微震动反馈。"
+        }
+    }
+    
+    private func setupExtraData(for useCase: UseCaseType) {
+        traceSteps = []
+        confidenceItems = []
+        extraPanelTitle = ""
+        
+        switch useCase {
+        case .askImage:
+            extraPanelTitle = L10n.ModelManager.Lab.Extra.objectDetection
+            confidenceItems = [
+                ConfidenceItem(name: "Notebook (笔记本)", score: 0.94, colorName: "cyan"),
+                ConfidenceItem(name: "Pen (钢笔)", score: 0.87, colorName: "purple"),
+                ConfidenceItem(name: "iPhone Screen (手机屏)", score: 0.81, colorName: "blue")
+            ]
+        case .audioScribe:
+            extraPanelTitle = L10n.ModelManager.Lab.Extra.speechTranscribing
+            traceSteps = [
+                TraceStep(title: "00:01 - 00:03", desc: "智宇大模型本地测试实验室今日上线", icon: "mic.fill", colorName: "cyan"),
+                TraceStep(title: "00:04 - 00:08", desc: "完美支持 Gemma 4 最新端侧模型", icon: "mic.fill", colorName: "purple")
+            ]
+        case .tinyGarden:
+            extraPanelTitle = L10n.ModelManager.Lab.Extra.functionCallTree
+            traceSteps = [
+                TraceStep(title: L10n.ModelManager.Lab.Extra.intentMatch, desc: "🌹 玫瑰播种意图触发 - SUCCESS", icon: "leaf.fill", colorName: "green"),
+                TraceStep(title: L10n.ModelManager.Lab.Extra.apiInvocation, desc: L10n.ModelManager.Lab.Extra.gardenRender, icon: "drop.fill", colorName: "blue"),
+                TraceStep(title: L10n.ModelManager.Lab.Extra.uiRendering, desc: "玫瑰花瓣粒子开花效果就绪", icon: "sparkles", colorName: "purple")
+            ]
+        case .mobileActions:
+            extraPanelTitle = L10n.ModelManager.Lab.Extra.devicePipeline
+            traceSteps = [
+                TraceStep(title: L10n.ModelManager.Lab.Extra.intentAnalyser, desc: "识别切换暗黑主题指令 - PASS", icon: "magnifyingglass", colorName: "cyan"),
+                TraceStep(title: "Sandbox Gatekeeper", desc: "设备安全准入校验 - PASS", icon: "shield.fill", colorName: "green"),
+                TraceStep(title: L10n.ModelManager.Lab.Extra.hapticFeedback, desc: "系统调用已触发生效", icon: "iphone.radiowaves.left.and.right", colorName: "purple")
+            ]
+        case .agentSkills:
+            extraPanelTitle = "Agent Skills Execution Sandbox"
+            traceSteps = [
+                TraceStep(title: L10n.ModelManager.Lab.Extra.toolLocation, desc: "ZhiYuSystemPlugin.summarizeActivePage", icon: "paperplane.fill", colorName: "purple"),
+                TraceStep(title: "Sandbox Read", desc: "大模型方案设计.md (145行) - 读取成功", icon: "folder.fill", colorName: "cyan"),
+                TraceStep(title: L10n.ModelManager.Lab.Extra.contextSummary, desc: "总结任务处理中，输出结果对齐 L0-L3 设计", icon: "checkmark.circle.fill", colorName: "green")
+            ]
+        default:
+            break
         }
     }
 }

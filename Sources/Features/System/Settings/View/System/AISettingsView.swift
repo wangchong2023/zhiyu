@@ -28,10 +28,11 @@ struct AISettingsView: View {
             
             VStack(spacing: 0) {
                 // 使用系统 Picker(.segmented) 保证 hit testing 稳定可靠
-                // 采用类型安全的索引循环 0..<tabLabels.count，规避元组解构时的类型推断冲突
+                // 引入 SF Symbols 选项卡图标，补充视觉引导
                 Picker("", selection: $selectedTab) {
                     ForEach(0..<tabLabels.count, id: \.self) { index in
-                        Text(tabLabels[index]).tag(index)
+                        Label(tabLabels[index], systemImage: tabIcons[index])
+                            .tag(index)
                     }
                 }
                 #if !os(watchOS)
@@ -39,14 +40,13 @@ struct AISettingsView: View {
                 #endif
                 .padding(.horizontal)
                 .padding(.vertical, Spacing.small)
-
+ 
                 // 核心状态切换区域，根据 selectedTab 动态渲染对应子模块配置视图
                 Group {
                     switch selectedTab {
                     case 0: SmartRoutingView()
                     case 1: LLMSettingsView()
                     case 2: LocalModelManagerView()
-                    case 3: PromptWorkshopView()
                     default: EmptyView()
                     }
                 }
@@ -67,6 +67,11 @@ struct AISettingsView: View {
     
     /// 获取当前设置界面的选项卡标签文本数组
     private var tabLabels: [String] {
-        [L10n.Settings.smartRouting, L10n.Settings.llmSettings, L10n.Settings.localModelManager, L10n.Settings.promptSettings]
+        [L10n.Settings.smartRouting, L10n.Settings.llmSettings, L10n.Settings.localModelManager]
+    }
+
+    /// 获取当前设置选项卡的图标数组，与 tabLabels 按索引一一对齐
+    private var tabIcons: [String] {
+        ["arrow.triangle.merge", "cloud.fill", "cpu.fill"]
     }
 }

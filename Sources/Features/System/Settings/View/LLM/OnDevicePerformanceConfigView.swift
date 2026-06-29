@@ -84,11 +84,17 @@ struct OnDevicePerformanceConfigView: View {
                 .appListRowBackground()
 
                 Section {
-                    Toggle(L10n.AI.OnDevice.enableAutoScan, isOn: $config.autoScan)
-                        .tint(.appAccent)
-                    
-                    Toggle(L10n.AI.OnDevice.autoRefactor, isOn: $config.autoRefactor)
-                        .tint(.appAccent)
+                    Toggle(isOn: Binding(
+                        get: { config.autoScan && config.autoRefactor },
+                        set: { newValue in
+                            config.autoScan = newValue
+                            config.autoRefactor = newValue
+                        }
+                    )) {
+                        Text(L10n.AI.OnDevice.assistMode)
+                            .foregroundStyle(.appText)
+                    }
+                    .tint(.appAccent)
                 } header: {
                     Text(L10n.Settings.advancedMaintenance)
                 } footer: {

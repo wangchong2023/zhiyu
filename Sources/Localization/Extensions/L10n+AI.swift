@@ -44,6 +44,8 @@ extension L10n {
             public static var apiKey: String { AI.tr("llm.apiKey") }
             public static var model: String { AI.tr("llm.model") }
             public static var status: String { AI.tr("llm.status") }
+            public static var serviceStatus: String { AI.tr("llm.serviceStatus") }
+            public static var providerConfig: String { AI.tr("llm.providerConfig") }
             public static var testConnection: String { AI.tr("llm.testConnection") }
             public static var testing: String { AI.tr("llm.testing") }
             public static var connectionSuccess: String { AI.tr("llm.connectionSuccess") }

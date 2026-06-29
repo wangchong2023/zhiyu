@@ -327,6 +327,23 @@ struct SystemStatsView: View {
                 }
             }
             
+            // 2.6 原始文件列表查看入口
+            StandardSection(title: L10n.Dashboard.stats.rawStorageTitle) {
+                NavigationLink {
+                    RawStorageListView()
+                } label: {
+                    HStack {
+                        Label(L10n.Dashboard.stats.viewRawPages, systemImage: "doc.plaintext")
+                        Spacer()
+                        Image(systemName: DesignSystem.Icons.forward)
+                            .font(.caption)
+                            .foregroundStyle(.appSecondary)
+                    }
+                    .padding(Spacing.medium)
+                }
+                .buttonStyle(.plain)
+            }
+
             // 3. 治理与维护
             StandardSection(title: L10n.Dashboard.maintenance) {
                 VStack(alignment: .leading, spacing: DesignSystem.medium) {

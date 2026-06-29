@@ -131,4 +131,65 @@ final class ModelLabManagerTests: XCTestCase {
             XCTAssertFalse(manager.isGenerating)
         }
     }
+    
+    // MARK: - 4. 验证新增的参数特化与附件选项逻辑
+    
+    /// 验证参数设置针对多模态与智能体场景的超参说明 Tips 是否正确返回
+    func testParamTipsForDifferentUseCases() {
+        // 1. 常规 Chat 不应有 Param Tips
+        manager.selectedUseCase = .aiChat
+        XCTAssertEqual(manager.paramTips, "")
+        
+        // 2. 多模态视觉和音频返回 Multimodal 专用提示
+        manager.selectedUseCase = .askImage
+        XCTAssertTrue(manager.paramTips.contains("Multimodal"))
+        manager.selectedUseCase = .audioScribe
+        XCTAssertTrue(manager.paramTips.contains("Multimodal"))
+        
+        // 3. 智能体与快捷指令返回 Temperature 锁定为 0.0 的只读安全提示
+        manager.selectedUseCase = .tinyGarden
+        XCTAssertTrue(manager.paramTips.contains("Temperature locked"))
+        manager.selectedUseCase = .mobileActions
+        XCTAssertTrue(manager.paramTips.contains("Temperature locked"))
+    }
+    
+    /// 验证多轮对话中，Chat 和 Agent 分发的附件选项是否特化匹配
+    func testAttachmentOptionsForChatAndAgent() {
+        // 1. aiChat 应该分发“Link Knowledge Page”与“Inject Semantic Tags”
+        manager.selectedUseCase = .aiChat
+        let chatOptions = manager.attachmentOptions
+        XCTAssertEqual(chatOptions.count, 2)
+        XCTAssertEqual(chatOptions[0].title, "Link Knowledge Page")
+        XCTAssertEqual(chatOptions[1].title, "Inject Semantic Tags")
+        
+        // 2. 非 aiChat (如 agentSkills 等) 应该分发“Mount Sandbox API”与“Load Agent Template”
+        manager.selectedUseCase = .agentSkills
+        let agentOptions = manager.attachmentOptions
+        XCTAssertEqual(agentOptions.count, 2)
+        XCTAssertEqual(agentOptions[0].title, "Mount Sandbox API")
+        XCTAssertEqual(agentOptions[1].title, "Load Agent Template")
+    }
+    
+    /// 验证运行模拟时，是否会自动构造和填充专属于当前用例的特化数据结构，以驱动 View 层的高保真卡片渲染
+    func testSimulationPopulatesSpecializedUIPipelines() async {
+        // 以图像问答为例
+        XCTAssertTrue(manager.traceSteps.isEmpty)
+        XCTAssertTrue(manager.confidenceItems.isEmpty)
+        
+        let runTask = Task {
+            await manager.runSimulation(for: .askImage, model: mockMultimodalModel, prompt: "检测图像")
+        }
+        
+        // 稍微等待仿真填充
+        try? await Task.sleep(nanoseconds: 10_000_000)
+        
+        // 验证特化数据已被完美填充
+        XCTAssertEqual(manager.extraPanelTitle, "MediaPipe Object Detection")
+        XCTAssertEqual(manager.confidenceItems.count, 3)
+        XCTAssertEqual(manager.confidenceItems[0].name, "Notebook (笔记本)")
+        
+        // 停止仿真并清理
+        manager.stopSimulation()
+        await runTask.value
+    }
 }

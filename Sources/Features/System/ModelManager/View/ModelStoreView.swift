@@ -33,32 +33,32 @@ public struct ModelStoreView: View {
     /// 展开详情的模型 ID
     @State private var expandedModelId: String?
 
-    public init(onGoToLab: @escaping () -> Void) {
+    /// 是否需要外层 ScrollView 包装，用于扁平化整合单页滚动
+    public var embedInScrollView: Bool = true
+
+    public init(embedInScrollView: Bool = true, onGoToLab: @escaping () -> Void) {
+        self.embedInScrollView = embedInScrollView
         self.onGoToLab = onGoToLab
     }
 
     public var body: some View {
         ZStack {
             VStack(spacing: 0) {
-                ScrollView {
-                    LazyVStack(spacing: DesignSystem.medium) {
-                        ForEach(modelManager.remoteManifests) { manifest in
-                            ModelCardView(
-                                manifest: manifest,
-                                modelManager: modelManager,
-                                alertManifest: $alertManifest,
-                                expandedModelId: $expandedModelId,
-                                onGoToLab: onGoToLab
-                            )
-                        }
+                if embedInScrollView {
+                    ScrollView {
+                        contentList
                     }
-                    .padding(DesignSystem.medium)
-                }
-                .task {
-                    await modelManager.reload()
-                }
-                .refreshable {
-                    await modelManager.reload()
+                    .task {
+                        await modelManager.reload()
+                    }
+                    .refreshable {
+                        await modelManager.reload()
+                    }
+                } else {
+                    contentList
+                        .task {
+                            await modelManager.reload()
+                        }
                 }
             }
         }
@@ -67,11 +67,29 @@ public struct ModelStoreView: View {
         .navigationBarTitleDisplayMode(.inline)
         #endif
         .alert(item: $alertManifest) { manifest in
-            Alert(
-                title: Text(" "),
-                message: Text("\(manifest.displayName) \(String(format: "%.1f", manifest.minDeviceMemoryInGb)) GB \n\n\(String(format: "%.1f", Double(modelManager.physicalMemory) / (1024 * 1024 * 1024)))_GB_OOM"),
-                dismissButton: .default(Text(""))
+            let requiredGb = String(format: "%.1f", manifest.minDeviceMemoryInGb)
+            let currentGb = String(format: "%.1f", Double(modelManager.physicalMemory) / (1024 * 1024 * 1024))
+            return Alert(
+                title: Text(L10n.ModelManager.Alert.oomTitle),
+                message: Text(L10n.ModelManager.Alert.oomMessage(manifest.displayName, requiredGb, currentGb)),
+                dismissButton: .default(Text(L10n.Common.ok))
             )
         }
+    }
+
+    @ViewBuilder
+    private var contentList: some View {
+        LazyVStack(spacing: DesignSystem.medium) {
+            ForEach(modelManager.remoteManifests) { manifest in
+                ModelCardView(
+                    manifest: manifest,
+                    modelManager: modelManager,
+                    alertManifest: $alertManifest,
+                    expandedModelId: $expandedModelId,
+                    onGoToLab: onGoToLab
+                )
+            }
+        }
+        .padding(DesignSystem.medium)
     }
 }

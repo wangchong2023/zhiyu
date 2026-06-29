@@ -34,6 +34,7 @@ public struct SubscriptionPlanView: View {
     private enum Constants {
         static let barHeight: CGFloat = 6
         static let featureIconSize: CGFloat = 80
+        static let popoverWidth: CGFloat = 280
     }
 
     // MARK: - 状态变量
@@ -74,8 +75,6 @@ public struct SubscriptionPlanView: View {
 
             ScrollView {
                 VStack(spacing: DesignSystem.large) {
-                    quotaCardsSection
-
                     if authService.currentUser?.planKey != "pro" && !isUpgradeSuccess {
                         // 标题
                         VStack(alignment: .leading, spacing: DesignSystem.atomic) {
@@ -127,60 +126,53 @@ public struct SubscriptionPlanView: View {
         .navigationTitle(L10n.Auth.subscription)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button(action: { isQuotaExpanded.toggle() }) {
+                    Image(systemName: "chart.bar.doc.horizontal")
+                        .font(.body.bold())
+                }
+                .popover(isPresented: $isQuotaExpanded) {
+                    quotaPopoverContent
+                        .presentationCompactAdaptation(.popover)
+                }
+            }
             ToolbarItem(placement: .confirmationAction) {
                 Button(L10n.Common.done) { dismiss() }
             }
         }
     }
 
-    // MARK: - 配额监控卡片
+    // MARK: - 配额监控弹窗 (Popover)
 
-    private var quotaCardsSection: some View {
-        VStack(spacing: DesignSystem.small) {
-            Button(action: {
-                withAnimation(.spring()) {
-                    isQuotaExpanded.toggle()
-                }
-            }) {
-                HStack {
-                    Text(L10n.Common.usage)
-                        .font(.headline.bold())
-                        .foregroundStyle(.appText)
+    private var quotaPopoverContent: some View {
+        VStack(spacing: DesignSystem.medium) {
+            Text(L10n.Common.usage)
+                .font(.headline.bold())
+                .foregroundStyle(.appText)
+            
+            VStack(spacing: DesignSystem.medium) {
+                let vaultsCount = VaultService.shared.vaults.count
+                let vaultsMax = authService.currentUser?.maxVaults ?? 2
+                glassQuotaCard(title: L10n.Auth.vaultUsage, icon: "books.vertical", current: vaultsCount, max: vaultsMax)
 
-                    Spacer()
+                let pagesCount = VaultService.shared.vaults.reduce(0) { $0 + $1.pageCount }
+                let pagesMax = authService.currentUser?.maxPages ?? 1000
+                glassQuotaCard(title: L10n.Auth.pagesUsage, icon: "doc.text", current: pagesCount, max: pagesMax)
 
-                    Image(systemName: isQuotaExpanded ? "chevron.up" : "chevron.down")
-                        .font(.caption)
-                        .foregroundStyle(.appSecondary)
-                }
-                .contentShape(Rectangle())
+                let pluginsCount = PluginRegistry.shared.plugins.count
+                let pluginsMax = authService.currentUser?.maxPlugins ?? 3
+                glassQuotaCard(title: L10n.Auth.pluginsUsage, icon: "puzzlepiece", current: pluginsCount, max: pluginsMax)
             }
-            .buttonStyle(.plain)
-
-            if isQuotaExpanded {
-                VStack(spacing: DesignSystem.medium) {
-                    let vaultsCount = VaultService.shared.vaults.count
-                    let vaultsMax = authService.currentUser?.maxVaults ?? 2
-                    glassQuotaCard(title: L10n.Auth.vaultUsage, icon: "books.vertical", current: vaultsCount, max: vaultsMax)
-
-                    let pagesCount = VaultService.shared.vaults.reduce(0) { $0 + $1.pageCount }
-                    let pagesMax = authService.currentUser?.maxPages ?? 1000
-                    glassQuotaCard(title: L10n.Auth.pagesUsage, icon: "doc.text", current: pagesCount, max: pagesMax)
-
-                    let pluginsCount = PluginRegistry.shared.plugins.count
-                    let pluginsMax = authService.currentUser?.maxPlugins ?? 3
-                    glassQuotaCard(title: L10n.Auth.pluginsUsage, icon: "puzzlepiece", current: pluginsCount, max: pluginsMax)
-                }
-                .padding(DesignSystem.medium)
-                .background(Color.appCard.opacity(DesignSystem.glassOpacity * 2))
-                .clipShape(RoundedRectangle(cornerRadius: DesignSystem.Radius.large))
-                .overlay(
-                    RoundedRectangle(cornerRadius: DesignSystem.Radius.large)
-                        .stroke(Color.appBorder.opacity(DesignSystem.Opacity.light), lineWidth: 1)
-                )
-                .transition(.opacity)
-            }
+            .padding(DesignSystem.medium)
+            .background(Color.appCard.opacity(DesignSystem.glassOpacity * 2))
+            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.Radius.large))
+            .overlay(
+                RoundedRectangle(cornerRadius: DesignSystem.Radius.large)
+                    .stroke(Color.appBorder.opacity(DesignSystem.Opacity.light), lineWidth: 1)
+            )
         }
+        .padding()
+        .frame(width: Constants.popoverWidth)
     }
 
     private func glassQuotaCard(title: String, icon: String, current: Int, max: Int) -> some View {

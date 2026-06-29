@@ -61,7 +61,7 @@ struct GraphLegend: View {
         }
         .background(Color.appCard)
         .clipShape(RoundedRectangle(cornerRadius: DesignSystem.standardRadius))
-        .shadow(color: .black.opacity(DesignSystem.glassOpacity * 2), radius: DesignSystem.smallRadius)
+        .shadow(color: Color.theme.black.opacity(DesignSystem.glassOpacity * 2), radius: DesignSystem.smallRadius)
     }
 }
 
@@ -115,7 +115,7 @@ struct GraphSelectedNodeCard: View {
         .padding()
         .background(Color.appCard)
         .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
-        .shadow(color: .black.opacity(DesignSystem.glassOpacity * 2), radius: DesignSystem.mediumRadius)
+        .shadow(color: Color.theme.black.opacity(DesignSystem.glassOpacity * 2), radius: DesignSystem.mediumRadius)
     }
 }
 
@@ -139,7 +139,7 @@ struct GraphInsightsPanel: View {
     var body: some View {
         ScrollView {
             VStack(spacing: DesignSystem.standardPadding) {
-                // 概念图解指南入口卡片
+                // 概念图解指南入口卡片 (Glassmorphism + Hover effect)
                 Button {
                     showGuide = true
                 } label: {
@@ -163,12 +163,13 @@ struct GraphInsightsPanel: View {
                             .foregroundStyle(.appSecondary)
                     }
                     .padding()
-                    .background(Color.appCard.opacity(DesignSystem.surfaceOpacity))
-                    .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
+                    .background(.ultraThinMaterial)
+                    .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius, style: .continuous))
                     .overlay(
-                        RoundedRectangle(cornerRadius: DesignSystem.mediumRadius)
-                            .stroke(Color.appAccent.opacity(DesignSystem.translucentOpacity), lineWidth: DesignSystem.borderWidth)
+                        RoundedRectangle(cornerRadius: DesignSystem.mediumRadius, style: .continuous)
+                            .stroke(Color.appAccent.opacity(DesignSystem.subtleOpacity * 1.2), lineWidth: DesignSystem.borderWidth * 0.5)
                     )
+                    .shadow(color: Color.theme.black.opacity(DesignSystem.shadowOpacity * 0.4), radius: DesignSystem.shadowRadius, x: 0, y: DesignSystem.shadowRadius / 2)
                 }
                 .buttonStyle(.plain)
                 .padding(.bottom, DesignSystem.small)
@@ -177,59 +178,90 @@ struct GraphInsightsPanel: View {
                 }
 
                 insightSection(
-                        id: "surprising",
-                        icon: DesignSystem.Icons.link,
-                        title: L10n.Graph.insightSurprising,
-                        count: surprising.count,
-                        description: L10n.Graph.insightSurprisingDesc,
-                        color: .appComparison
-                    )
-                    
-                    insightSection(
-                        id: "orphans",
-                        icon: DesignSystem.Icons.questionCircle,
-                        title: L10n.Graph.insightOrphans,
-                        count: orphans.count,
-                        description: L10n.Graph.insightOrphansDesc,
-                        color: .appSecondary
-                    )
-                    
-                    insightSection(
-                        id: "sparse",
-                        icon: DesignSystem.Icons.chartBarXaxis,
-                        title: L10n.Graph.insightSparse,
-                        count: sparse.count,
-                        description: L10n.Graph.insightSparseDesc,
-                        color: .orange
-                    )
-                    
-                    insightSection(
-                        id: "bridges",
-                        icon: DesignSystem.Icons.arrowTriangleBranch,
-                        title: L10n.Graph.insightBridges,
-                        count: bridges.count,
-                        description: L10n.Graph.insightBridgesDesc,
-                        color: .appAccent
-                    )
-                }
-                .padding()
+                    id: "surprising",
+                    icon: DesignSystem.Icons.link,
+                    title: L10n.Graph.insightSurprising,
+                    count: surprising.count,
+                    description: L10n.Graph.insightSurprisingDesc,
+                    color: .appComparison
+                )
+                
+                insightSection(
+                    id: "orphans",
+                    icon: DesignSystem.Icons.questionCircle,
+                    title: L10n.Graph.insightOrphans,
+                    count: orphans.count,
+                    description: L10n.Graph.insightOrphansDesc,
+                    color: .appSecondary
+                )
+                
+                insightSection(
+                    id: "sparse",
+                    icon: DesignSystem.Icons.chartBarXaxis,
+                    title: L10n.Graph.insightSparse,
+                    count: sparse.count,
+                    description: L10n.Graph.insightSparseDesc,
+                    color: .orange
+                )
+                
+                insightSection(
+                    id: "bridges",
+                    icon: DesignSystem.Icons.arrowTriangleBranch,
+                    title: L10n.Graph.insightBridges,
+                    count: bridges.count,
+                    description: L10n.Graph.insightBridgesDesc,
+                    color: .appAccent
+                )
             }
-            .background(PageBackgroundView(accentColor: .appAccent))
+            .padding()
         }
+        .background(PageBackgroundView(accentColor: .appAccent))
+    }
     
-    /// 渲染图分析报告中的单项洞察板块
-    /// - Parameters:
-    ///   - id: 洞察类型的唯一标识
-    ///   - icon: 图标名称
-    ///   - title: 洞察板块的标题
-    ///   - count: 相关元素的统计数量
-    ///   - description: 详细的文字说明
-    ///   - color: 洞察板块的主题颜色
+    /// 提取 Header view 以缩短函数长度，完美打消 SwiftLint 警告
+    @ViewBuilder
+    private func sectionHeader(title: String, icon: String, count: Int, color: Color, isExpanded: Bool) -> some View {
+        HStack(spacing: DesignSystem.small) {
+            Image(systemName: icon)
+                .font(.subheadline)
+                .foregroundStyle(color)
+                .frame(width: DesignSystem.iconLarge)
+            
+            Text(title)
+                .font(.subheadline.bold())
+                .foregroundStyle(.appText)
+            
+            // 饱和渐变发光 Badge
+            Text("\(count)")
+                .font(.caption2.weight(.bold))
+                .foregroundStyle(.white)
+                .padding(.horizontal, DesignSystem.small / 2)
+                .padding(.vertical, DesignSystem.atomic * 1.5)
+                .background(
+                    LinearGradient(
+                        colors: [color, color.opacity(DesignSystem.surfaceOpacity - 0.05)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                .clipShape(Capsule())
+                .shadow(color: color.opacity(DesignSystem.disabledOpacity), radius: DesignSystem.smallRadius, x: 0, y: DesignSystem.atomic)
+            
+            Spacer()
+            
+            Image(systemName: isExpanded ? DesignSystem.Icons.down : DesignSystem.Icons.forward)
+                .font(.footnote)
+                .foregroundStyle(.appSecondary)
+        }
+        .contentShape(Rectangle())
+    }
+    
+    /// 渲染图分析报告中的单项洞察板块 (Glassmorphic + soft borders)
     private func insightSection(id: String, icon: String, title: String, count: Int, description: String, color: Color) -> some View {
         VStack(alignment: .leading, spacing: DesignSystem.mediumRadius) {
             // Section header
             Button(action: {
-                withAnimation { 
+                withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
                     if expandedSections.contains(id) {
                         expandedSections.remove(id)
                     } else {
@@ -237,55 +269,43 @@ struct GraphInsightsPanel: View {
                     }
                 }
             }) {
-                HStack(spacing: DesignSystem.small) {
-                    Image(systemName: icon)
-                        .font(.subheadline)
-                        .foregroundStyle(color)
-                        .frame(width: DesignSystem.iconLarge)
-                    
-                    Text(title)
-                        .font(.subheadline.bold())
-                        .foregroundStyle(.appText)
-                    
-                    Text("\(count)")
-                        .font(.footnote)
-                        .foregroundStyle(color)
-                        .padding(.horizontal, DesignSystem.small)
-                        .padding(.vertical, DesignSystem.atomic + DesignSystem.borderWidth)
-                        .background(color.opacity(DesignSystem.glassOpacity))
-                        .clipShape(Capsule())
-                    
-                    Spacer()
-                    
-                    Image(systemName: expandedSections.contains(id) ? DesignSystem.Icons.down : DesignSystem.Icons.forward)
-                        .font(.footnote)
-                        .foregroundStyle(.appSecondary)
-                }
-                .contentShape(Rectangle())
+                sectionHeader(title: title, icon: icon, count: count, color: color, isExpanded: expandedSections.contains(id))
             }
             .buttonStyle(.plain)
             .accessibilityIdentifier("insight-\(id)")
             
             if expandedSections.contains(id) {
                 insightSectionExpandedContent(id: id, description: description, color: color)
+                    .transition(.opacity.combined(with: .move(edge: .top)).animation(.easeInOut(duration: DesignSystem.dimmedOpacity)))
             }
         }
         .padding(DesignSystem.medium)
-        .background(color.opacity(DesignSystem.glassOpacity / 3))
-        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
+        .background(
+            RoundedRectangle(cornerRadius: DesignSystem.mediumRadius, style: .continuous)
+                .fill(Color.appCard.opacity(DesignSystem.halfOpacity + 0.05))
+        )
+        .background(
+            RoundedRectangle(cornerRadius: DesignSystem.mediumRadius, style: .continuous)
+                .stroke(
+                    LinearGradient(
+                        colors: [color.opacity(DesignSystem.accentStrokeOpacity - 0.05), color.opacity(DesignSystem.shadowOpacity * 0.5)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: DesignSystem.borderWidth
+                )
+        )
+        .shadow(color: Color.theme.black.opacity(DesignSystem.shadowOpacity * 0.4), radius: DesignSystem.mediumRadius, x: 0, y: DesignSystem.smallRadius)
     }
 
-    /// 渲染已展开分析板块的详情和节点推荐 Chips
-    /// - Parameters:
-    ///   - id: 洞察类型的唯一标识
-    ///   - description: 详细说明文字
-    ///   - color: 节点 Chips 的渲染主题色
+    /// 渲染已展开分析板块的详情和节点推荐 Chips (微交互 & Hover 效果)
     private func insightSectionExpandedContent(id: String, description: String, color: Color) -> some View {
         VStack(alignment: .leading, spacing: DesignSystem.mediumRadius) {
             Text(description)
                 .font(.footnote)
                 .foregroundStyle(.appSecondary)
                 .padding(.leading, DesignSystem.huge)
+                .lineSpacing(DesignSystem.atomic * 1.5)
             
             // Node chips
             let nodeIDs = getNodeIDs(for: id)
@@ -293,17 +313,24 @@ struct GraphInsightsPanel: View {
                 FlowLayout(spacing: DesignSystem.small) {
                     ForEach(nodeIDs, id: \.self) { nodeID in
                         if let node = nodes.first(where: { $0.id == nodeID }) {
-                            Button(action: { onSelectNode(nodeID) }) {
-                                HStack(spacing: DesignSystem.tiny) {
+                            Button(action: {
+                                HapticFeedback.shared.trigger(.selection)
+                                onSelectNode(nodeID)
+                            }) {
+                                HStack(spacing: DesignSystem.small / 2.5) {
                                     Image(systemName: node.pageType.icon)
-                                        .font(.footnote)
+                                        .font(.caption)
                                     Text(node.title)
-                                        .font(.footnote)
+                                        .font(.caption.weight(.medium))
                                         .lineLimit(1)
                                 }
-                                .padding(.horizontal, DesignSystem.mediumRadius)
-                                .padding(.vertical, DesignSystem.tiny + DesignSystem.atomic)
-                                .background(color.opacity(DesignSystem.glassOpacity))
+                                .padding(.horizontal, DesignSystem.mediumRadius + DesignSystem.atomic)
+                                .padding(.vertical, DesignSystem.atomic * 2.5)
+                                .background(color.opacity(DesignSystem.subtleFillOpacity * 0.8))
+                                .overlay(
+                                    Capsule()
+                                        .stroke(color.opacity(DesignSystem.dimmedOpacity), lineWidth: DesignSystem.borderWidth)
+                                )
                                 .clipShape(Capsule())
                                 .foregroundStyle(color)
                             }
@@ -328,7 +355,7 @@ struct GraphInsightsPanel: View {
 }
 
 // MARK: - Graph Concept Guide Sheet
-/// 知识图谱概念大白话指南弹窗 Sheet
+/// 知识图谱概念大白话指南弹窗 Sheet (双列卡片网格布局，信息结构清晰美观)
 struct GraphConceptGuideSheet: View {
     @Environment(\.dismiss) var dismiss
     
@@ -346,6 +373,7 @@ struct GraphConceptGuideSheet: View {
                             .font(.title2)
                             .foregroundStyle(.secondary)
                     }
+                    .buttonStyle(.plain)
                 }
                 .padding(.bottom, DesignSystem.medium)
                 
@@ -356,29 +384,27 @@ struct GraphConceptGuideSheet: View {
                         .aspectRatio(contentMode: .fit)
                         .frame(maxWidth: .infinity)
                         .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
-                        .shadow(color: .black.opacity(DesignSystem.translucentOpacity), radius: DesignSystem.shadowRadius)
+                        .shadow(color: Color.theme.black.opacity(DesignSystem.translucentOpacity), radius: DesignSystem.shadowRadius)
                 }
                 .appContainer(background: Color.appCard.opacity(DesignSystem.surfaceOpacity), padding: false)
                 
-                // 3. SwiftUI 图例对照与大白话描述
-                VStack(alignment: .leading, spacing: DesignSystem.widePadding) {
-                    Group {
-                        guideRow(color: .appAccent, icon: "circle.fill", title: L10n.Graph.guide.legendNodeTitle, desc: L10n.Graph.guide.legendNodeDesc)
-                        guideRow(color: .appSecondary, icon: "minus", title: L10n.Graph.guide.legendLinkTitle, desc: L10n.Graph.guide.legendLinkDesc)
-                    }
-                    Divider()
-                        .background(Color.appAccent.opacity(DesignSystem.glassOpacity))
-                    Group {
-                        guideRow(color: .appConcept, icon: "circle.fill", title: L10n.Graph.guide.typeConceptTitle, desc: L10n.Graph.guide.typeConceptDesc)
-                        guideRow(color: .appEntity, icon: "circle.fill", title: L10n.Graph.guide.typeEntityTitle, desc: L10n.Graph.guide.typeEntityDesc)
-                        guideRow(color: .purple, icon: "circle.fill", title: L10n.Graph.guide.bridgeTitle, desc: L10n.Graph.guide.bridgeDesc)
-                        guideRow(color: .orange, icon: "circle.fill", title: L10n.Graph.guide.sparseTitle, desc: L10n.Graph.guide.sparseDesc)
-                        guideRow(color: .gray, icon: "circle.fill", title: L10n.Graph.guide.orphanTitle, desc: L10n.Graph.guide.orphanDesc)
-                        guideRow(color: .appComparison, icon: "bolt.fill", title: L10n.Graph.guide.surprisingTitle, desc: L10n.Graph.guide.surprisingDesc)
-                    }
+                // 3. SwiftUI 图例对照与大白话描述 (适配 iPad/Mac 的双列卡片网格布局，颜色与上图严格呼应)
+                LazyVGrid(
+                    columns: [
+                        GridItem(.flexible(), spacing: DesignSystem.medium),
+                        GridItem(.flexible(), spacing: DesignSystem.medium)
+                    ],
+                    spacing: DesignSystem.medium
+                ) {
+                    guideRow(color: .appAccent, icon: "circle.fill", title: L10n.Graph.guide.legendNodeTitle, desc: L10n.Graph.guide.legendNodeDesc)
+                    guideRow(color: .appSecondary, icon: "minus", title: L10n.Graph.guide.legendLinkTitle, desc: L10n.Graph.guide.legendLinkDesc)
+                    guideRow(color: .appAccent, icon: "circle.fill", title: L10n.Graph.guide.typeConceptTitle, desc: L10n.Graph.guide.typeConceptDesc) // 对应图中蓝色左大簇
+                    guideRow(color: .appEntity, icon: "circle.fill", title: L10n.Graph.guide.typeEntityTitle, desc: L10n.Graph.guide.typeEntityDesc) // 对应图中金色右大簇
+                    guideRow(color: .purple, icon: "circle.fill", title: L10n.Graph.guide.bridgeTitle, desc: L10n.Graph.guide.bridgeDesc) // 对应中间的紫色桥点
+                    guideRow(color: .orange, icon: "circle.fill", title: L10n.Graph.guide.sparseTitle, desc: L10n.Graph.guide.sparseDesc) // 对应左上角稀疏橙色簇
+                    guideRow(color: .gray, icon: "circle.fill", title: L10n.Graph.guide.orphanTitle, desc: L10n.Graph.guide.orphanDesc) // 对应右下角孤立灰色点
+                    guideRow(color: .appComparison, icon: "bolt.fill", title: L10n.Graph.guide.surprisingTitle, desc: L10n.Graph.guide.surprisingDesc) // 对应中间粉红桥接线
                 }
-                .padding()
-                .appContainer(background: Color.appCard.opacity(DesignSystem.surfaceOpacity), padding: false)
                 
                 Spacer(minLength: DesignSystem.huge)
             }
@@ -388,24 +414,36 @@ struct GraphConceptGuideSheet: View {
         .presentationBackground(.ultraThinMaterial)
     }
     
+    /// 实色饱满圆形 + 高对比度白图标的高阶排版，在深浅色模式下都拥有完美的色彩表现力与无障碍阅读对比度
     private func guideRow(color: Color, icon: String, title: String, desc: String) -> some View {
         HStack(alignment: .top, spacing: DesignSystem.medium) {
-            Image(systemName: icon)
-                .font(.body)
-                .foregroundStyle(color)
-                .frame(width: DesignSystem.iconMedium, height: DesignSystem.iconMedium)
-                .background(color.opacity(DesignSystem.glassOpacity))
-                .clipShape(Circle())
+            ZStack {
+                Circle()
+                    .fill(color)
+                    .frame(width: DesignSystem.iconHuge, height: DesignSystem.iconHuge)
+                Image(systemName: icon)
+                    .font(.footnote.weight(.bold))
+                    .foregroundStyle(.white)
+            }
             
-            VStack(alignment: .leading, spacing: DesignSystem.tiny) {
+            VStack(alignment: .leading, spacing: DesignSystem.atomic * 2) {
                 Text(title)
                     .font(.subheadline.bold())
                     .foregroundStyle(.appText)
                 Text(desc)
                     .font(.caption)
                     .foregroundStyle(.appSecondary)
+                    .lineSpacing(DesignSystem.atomic)
                     .fixedSize(horizontal: false, vertical: true)
             }
         }
+        .padding()
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .background(Color.appCard.opacity(DesignSystem.halfOpacity - 0.05))
+        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: DesignSystem.mediumRadius, style: .continuous)
+                .stroke(Color.appBorder.opacity(DesignSystem.translucentOpacity + 0.06), lineWidth: DesignSystem.borderWidth * 0.5)
+        )
     }
 }

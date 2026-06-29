@@ -170,12 +170,12 @@ public final class GlobalModelManager {
                 do {
                     // 获取文件物理属性以提取大小
                     let attributes = try FileManager.default.attributesOfItem(atPath: fileURL.path)
-                    if let fileSize = attributes[.size] as? Int64, fileSize > 0 {
+                    if let fileSize = attributes[.size] as? Int64, fileSize == manifest.fileSizeInBytes {
                         isFileValid = true
                     } else {
-                        // 物理大小为 0 或者是损坏的残留，执行物理删除
+                        // 物理大小不匹配，认定为损坏的或测试残留文件，执行物理删除
                         try FileManager.default.removeItem(at: fileURL)
-                        Logger.shared.warning("[GlobalModelManager] 检测到模型权重文件为0字节或损坏: \(modelId)，已执行物理清理")
+                        Logger.shared.warning("[GlobalModelManager] 检测到模型权重文件大小不匹配或损坏: \(modelId)，已执行物理清理")
                     }
                 } catch {
                     // 属性读取失败也视为异常，执行安全物理删除

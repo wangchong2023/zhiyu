@@ -13,11 +13,12 @@ import SwiftUI
 struct ImportRecordCard: View {
     let record: ImportRecord
     var onTap: (() -> Void)?
-    var onViewPage: (() -> Void)?
+    var onPreview: (() -> Void)?
     var onOpenWith: (() -> Void)?
-    var onAITag: (() -> Void)?
+    var onEdit: (() -> Void)?
 
     private var categoryValue: ImportCategory? { ImportCategory(rawValue: record.category) }
+    private var canPreview: Bool { record.filePath != nil || record.rawText != nil || record.sourceURL != nil }
     private var canViewPage: Bool { record.pageID != nil && record.status == ImportRecordStatus.done }
     private var canOpenFile: Bool { record.filePath != nil }
     private var tagList: [String] {
@@ -67,36 +68,17 @@ struct ImportRecordCard: View {
                 timeLine
             }
             Spacer()
-            HStack(spacing: DesignSystem.small) {
-                statusBadge
-                Image(systemName: "chevron.right")
-                    .font(.footnote)
-                    .foregroundStyle(.tertiary)
-            }
+            statusBadge
         }
         .padding(DesignSystem.medium)
         .background(Color.appCard)
         .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
         .contentShape(Rectangle())
         .onTapGesture { onTap?() }
-        .swipeActions(edge: .trailing) {
-            if canViewPage {
-                Button(action: { onViewPage?() }) {
-                    Label(L10n.Ingest.viewPage, systemImage: "doc.text")
-                }
-                .tint(.appAccent)
-            }
+        .contextMenu {
             if canOpenFile {
                 Button(action: { onOpenWith?() }) {
                     Label(L10n.Ingest.openWith, systemImage: "square.and.arrow.up")
-                }
-                .tint(.green)
-            }
-        }
-        .contextMenu {
-            if record.rawText != nil {
-                Button(action: { onAITag?() }) {
-                    Label(L10n.Ingest.aiTag, systemImage: "sparkles")
                 }
             }
         }

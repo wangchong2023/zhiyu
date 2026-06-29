@@ -26,6 +26,7 @@ final class ChatCoordinator {
     var isExporting = false
     var errorMessage: String?
     var showError = false
+    var showLLMAlert = false
     var isGeneratingAIQuestions = false
     var showPrompts = false
     var exportURL: IdentifiableURL?
@@ -132,14 +133,12 @@ final class ChatCoordinator {
         } catch {
             if !Task.isCancelled {
                 // 提供明确的错误反馈，包括 notConfigured 场景不再静默吞噬
-                let message: String = {
-                    if case LLMError.notConfigured = error {
-                        return L10n.Chat.configureFirst
-                    }
-                    return error.localizedDescription
-                }()
-                self.errorMessage = message
-                self.showError = true
+                if case LLMError.notConfigured = error {
+                    self.showLLMAlert = true
+                } else {
+                    self.errorMessage = error.localizedDescription
+                    self.showError = true
+                }
                 self.logger.error(" [ChatCoordinator] 流式响应出错 ", error: error)
             }
         }

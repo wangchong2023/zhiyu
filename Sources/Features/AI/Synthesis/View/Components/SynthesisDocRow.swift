@@ -109,7 +109,7 @@ struct SynthesisDocRow: View {
             Button {
                 onRename()
             } label: {
-                Label(L10n.Tag.Action.rename, systemImage: DesignSystem.Icons.edit)
+                Label(L10n.Common.rename, systemImage: DesignSystem.Icons.edit)
             }
             .tint(.orange)
         }
@@ -117,7 +117,7 @@ struct SynthesisDocRow: View {
             Button {
                 onRename()
             } label: {
-                Label(L10n.Tag.Action.rename, systemImage: DesignSystem.Icons.edit)
+                Label(L10n.Common.rename, systemImage: DesignSystem.Icons.edit)
             }
             
             Button(role: .destructive) {

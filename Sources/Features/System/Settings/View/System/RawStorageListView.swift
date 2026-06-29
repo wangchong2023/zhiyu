@@ -215,7 +215,7 @@ struct RawStorageListView: View {
     
     /// 筛选并排序后的原始页面列表
     private var filteredRawPages: [KnowledgePage] {
-        let raws = store.pages.filter { $0.pageType == .raw }
+        let raws = store.pages.filter { $0.sourceURL != nil }
         if searchText.isEmpty {
             return raws.sorted { $0.updatedAt > $1.updatedAt }
         } else {
@@ -305,7 +305,7 @@ struct RawStorageListView: View {
         .onChange(of: searchText) { newValue, _ in
             if !newValue.isEmpty {
                 // 自动展开包含匹配项的父级分类目录
-                let matches = store.pages.filter { $0.pageType == .raw }
+                let matches = store.pages.filter { $0.sourceURL != nil }
                     .filter { $0.title.localizedCaseInsensitiveContains(newValue) || ($0.sourceType?.localizedCaseInsensitiveContains(newValue) ?? false) }
                 for page in matches {
                     let cat = getCategory(for: page)

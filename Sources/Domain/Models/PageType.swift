@@ -12,8 +12,9 @@ import Foundation
 
 // MARK: - Page Type
 public enum PageType: String, Codable, CaseIterable, Identifiable, Sendable {
-    case entity
+    // 调整顺序：使概念 (主题) 排在实体 (词条) 前面，符合知识层级上主题优先的规律
     case concept
+    case entity
     case source
     case comparison
     case raw
@@ -22,7 +23,8 @@ public enum PageType: String, Codable, CaseIterable, Identifiable, Sendable {
     
     /// 用户可见的页面类型列表（不含内部用的 raw 类型）
     public static var allVisibleCases: [PageType] {
-        return [.entity, .concept, .source, .comparison]
+        // 对调排列顺序，使主题 (.concept) 排在词条 (.entity) 之前
+        return [.concept, .entity, .source]
     }
     
     public var displayName: String {

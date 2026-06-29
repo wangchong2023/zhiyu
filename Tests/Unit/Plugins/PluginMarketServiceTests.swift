@@ -98,6 +98,40 @@ final class PluginMarketServiceTests: XCTestCase {
         XCTAssertNil(service.errorMessage)
     }
     
+    func testFetchPluginsSuccessWithCategory() async throws {
+        // Mock JSON Data with category
+        let jsonString = """
+        [
+            {
+                "id": "com.test.efficiency.plugin",
+                "version": "1.0.0",
+                "author": "Test Author",
+                "downloads": "100",
+                "rating": 5.0,
+                "icon": "star",
+                "downloadURL": "https://example.com/plugin.js",
+                "category": "efficiency",
+                "names": { "en": "Efficiency Plugin", "zh-Hans": "效率插件" },
+                "descriptions": { "en": "Desc" }
+            }
+        ]
+        """
+        
+        // swiftlint:disable:next force_unwrapping
+        let responseData = jsonString.data(using: .utf8)!
+        
+        MockURLProtocol.requestHandler = { request in
+            // swiftlint:disable:next force_unwrapping
+            let response = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!
+            return (response, responseData)
+        }
+
+        await service.fetchPlugins()
+        
+        XCTAssertFalse(service.availablePlugins.isEmpty)
+        XCTAssertEqual(service.availablePlugins.first?.category, "efficiency", "插件解析得到的分类应当为 efficiency")
+    }
+    
     /// 验证当网络抓取失败时，availablePlugins 应清空，不进行本地 Fallback 插件填充，且 errorMessage 正确被赋值
     func testFetchPluginsFailureNoFallback() async throws {
         MockURLProtocol.requestHandler = { _ in
@@ -124,8 +158,10 @@ final class PluginMarketServiceTests: XCTestCase {
                 description: "Desc",
                 repo: "wangchong2023/zhiyu-releases",
                 version: nil,
+                icon: nil,
                 names: nil,
-                descriptions: nil
+                descriptions: nil,
+                category: nil
             ),
             downloadBase: URL(string: "https://raw.githubusercontent.com/wangchong2023/zhiyu-releases/master/plugins")!
         )

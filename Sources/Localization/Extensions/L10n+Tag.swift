@@ -31,8 +31,8 @@ extension L10n {
         public static var collapse: String { Tag.tr("tag.collapse") }
 
         public enum Action {
-            public static var rename: String { Tag.tr("tag.rename") }
-            public static var delete: String { Tag.tr("tag.delete") }
+            public static var rename: String { L10n.Common.rename }
+            public static var delete: String { L10n.Common.delete }
             public static var renameTag: String { Tag.tr("tag.renameTag") }
             public static var newName: String { Tag.tr("tag.newName") }
             public static var deleteTag: String { Tag.tr("tag.deleteTag") }

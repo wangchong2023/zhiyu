@@ -110,6 +110,13 @@ extension L10n {
         public static var uploadSuccess: String { tr("auth.uploadSuccess") }
         public static var uploadFailed: String { tr("auth.uploadFailed") }
 
+        // MARK: - 活跃度与大盘统计
+        public static var statsBoard: String { tr("auth.statsBoard") }
+        public static var statsNotebooks: String { tr("auth.statsNotebooks") }
+        public static var statsPages: String { tr("auth.statsPages") }
+        public static var statsSynthesis: String { tr("auth.statsSynthesis") }
+        public static var statsActiveDays: String { tr("auth.statsActiveDays") }
+
         // MARK: - 配额展示
         public static var vaultUsage: String { tr("auth.quota.vaultUsage") }
         public static var pagesUsage: String { tr("auth.quota.pagesUsage") }

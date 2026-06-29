@@ -37,13 +37,9 @@ struct ChatViewContent: View {
     var body: some View {
         ZStack {
             PageBackgroundView(accentColor: .appAccent)
-                .ignoresSafeArea(edges: .top)
-            
+                .ignoresSafeArea()
+                
             VStack(spacing: 0) {
-                if !llmService.isEnabled || llmService.apiKey.isEmpty {
-                    notConfiguredBanner
-                }
-
                 chatMessageList
 
                 chatInputBar
@@ -61,6 +57,15 @@ struct ChatViewContent: View {
             Button(L10n.Common.ok) { coordinator.errorMessage = nil }
         } message: {
             Text(coordinator.errorMessage ?? "")
+        }
+        .alert(L10n.Common.configureAI, isPresented: $coordinator.showLLMAlert) {
+            Button(L10n.ModelManager.Lab.configurations) {
+                HapticFeedback.shared.trigger(.selection)
+                router.isShowingAISettingsSheet = true
+            }
+            Button(L10n.Common.cancel, role: .cancel) {}
+        } message: {
+            Text(L10n.Common.configureAI)
         }
         .confirmationDialog(
             L10n.Chat.clearHistoryConfirmTitle,
@@ -92,6 +97,7 @@ struct ChatViewContent: View {
                 await coordinator.sendMessage(pages: store.pages)
             }
         }
+        .toolbarBackground(.hidden, for: .navigationBar)
     }
     
     @ViewBuilder
@@ -108,6 +114,12 @@ struct ChatViewContent: View {
                     coordinator.showClearConfirmation = true
                 }) {
                     Label(L10n.AI.LLM.clearHistory, systemImage: DesignSystem.Icons.delete)
+                }
+            }
+            
+            Section {
+                NavigationLink(destination: PromptWorkshopView()) {
+                    Label(L10n.Settings.promptSettings, systemImage: "sparkles.rectangle.stack")
                 }
             }
             
@@ -133,23 +145,6 @@ struct ChatViewContent: View {
         }
         .buttonStyle(.plain)  // 消除 Toolbar 中 Menu 的 bordered 白色背景
         #endif
-    }
-    
-    private var notConfiguredBanner: some View {
-        // 使用 Button 触发全局路由设置 Sheet 弹窗，防止在分栏布局中 NavigationLink 发生环境丢失及黑屏警告。
-        Button {
-            HapticFeedback.shared.trigger(.selection)
-            router.isShowingSettingsSheet = true
-        } label: {
-            HStack(spacing: DesignSystem.small + DesignSystem.atomic) {
-                Image(systemName: DesignSystem.Icons.warning).foregroundStyle(Color.theme.orange)
-                Text(L10n.Chat.configureFirst).font(.subheadline).foregroundStyle(.appText)
-                Spacer()
-                Image(systemName: DesignSystem.Icons.forward).font(.caption).foregroundStyle(.appSecondary)
-            }
-            .padding().background(Color.theme.orange.opacity(DesignSystem.Opacity.glass))
-        }
-        .buttonStyle(.plain)
     }
     
     private var chatMessageList: some View {

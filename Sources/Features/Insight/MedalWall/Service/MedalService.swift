@@ -51,7 +51,8 @@ final class MedalService: ObservableObject {
         // 3. 连接奖章 (链接数)
         Medal(id: "links_5", titleKey: "medal.links_5.title", descKey: "medal.links_5.desc", icon: "link", colorHex: "#F093FB", threshold: 5, category: .connection),
         Medal(id: "links_10", titleKey: "medal.links_10.title", descKey: "medal.links_10.desc", icon: "link.badge.plus", colorHex: "#F5576C", threshold: 10, category: .connection),
-        Medal(id: "links_100", titleKey: "medal.links_100.title", descKey: "medal.links_100.desc", icon: "hubball.fill", colorHex: "#8EC5FC", threshold: 100, category: .connection)
+        // 修正：将非法的系统图标 'hubball.fill' 替换为苹果原生支持的 'network'，以防勋章在界面上显示为隐形
+        Medal(id: "links_100", titleKey: "medal.links_100.title", descKey: "medal.links_100.desc", icon: "network", colorHex: "#8EC5FC", threshold: 100, category: .connection)
     ]
 
     private init() {

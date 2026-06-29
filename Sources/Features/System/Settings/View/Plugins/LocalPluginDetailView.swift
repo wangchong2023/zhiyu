@@ -24,6 +24,30 @@ struct LocalPluginDetailView: View {
         PluginRegistry.shared.plugins.contains(where: { $0.manifest.id == manifest.id })
     }
 
+    /// 根据插件 ID 智能映射默认 of SF Symbol 兜底图标，防止在未解压或无本地物理图片时各插件展示单一的拼图块
+    private var fallbackIcon: String {
+        let id = manifest.id
+        if id.contains("toc-generator") {
+            return "list.bullet.rectangle.portrait"
+        } else if id.contains("word-counter") {
+            return "character.textbox"
+        } else if id.contains("smart-cleaner") {
+            return "wand.and.stars"
+        } else if id.contains("ai-summary") {
+            return "brain.head.profile"
+        } else if id.contains("code-highlighter") {
+            return "curlybraces"
+        } else if id.contains("link-preview") {
+            return "link"
+        } else if id.contains("ai-translator") {
+            return "translate"
+        } else if id.contains("markdown-beautifier") {
+            return "doc.text.magnifyingglass"
+        } else {
+            return "puzzlepiece.extension.fill"
+        }
+    }
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: DesignSystem.giant) {
@@ -38,7 +62,7 @@ struct LocalPluginDetailView: View {
                             .frame(width: DesignSystem.Gallery.itemSize, height: DesignSystem.Gallery.itemSize)
                             .clipShape(RoundedRectangle(cornerRadius: DesignSystem.largeRadius))
                     } else {
-                        Image(systemName: "puzzlepiece.extension.fill")
+                        Image(systemName: fallbackIcon)
                             .font(.system(size: DesignSystem.Gallery.mainIconSize * 0.9))
                             .foregroundStyle(.white)
                             .frame(width: DesignSystem.Gallery.itemSize, height: DesignSystem.Gallery.itemSize)
@@ -133,7 +157,7 @@ struct LocalPluginDetailView: View {
     private func detailRow(icon: String, label: String, value: String) -> some View {
         HStack(spacing: DesignSystem.medium) {
             Image(systemName: icon).font(.subheadline).foregroundStyle(.appAccent).frame(width: DesignSystem.IconSize.small)
-            Text(label).font(.subheadline).foregroundStyle(.appSecondary).frame(width: DesignSystem.Metrics.progressHeight, alignment: .leading)
+            Text(label).font(.subheadline).foregroundStyle(.appSecondary).fixedSize(horizontal: true, vertical: false)
             Spacer()
             Text(value).font(.subheadline.weight(.medium)).foregroundStyle(.appText)
         }

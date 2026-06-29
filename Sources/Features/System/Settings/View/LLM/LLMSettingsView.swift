@@ -22,6 +22,7 @@ struct LLMSettingsView: View {
     @State private var testResult: TestResult?
     @State private var showAPIKey = false
     @State private var isConfigExpanded = true // 默认展开，方便用户发现
+    @State private var isProvidersExpanded = false // 默认折叠，减少首屏空间占用
     
     enum TestResult {
         case success(latency: Int, streamOK: Bool, streamTested: Bool)
@@ -32,84 +33,82 @@ struct LLMSettingsView: View {
         @Bindable var config = config
         // 直接返回 Form，利用父视图统一的渐变背景，解决多层 ignoresSafeArea 导致的点击命中测试拦截问题
         Form {
-            // Enable/Disable
+            // Enable/Disable & Background options combined in 1 Section
             Section {
                 Toggle(isOn: $config.isEnabled) {
                     Label(L10n.AI.LLM.enableAssistant, systemImage: DesignSystem.Icons.sparkles)
                         .foregroundStyle(.appText)
                 }
                 .tint(.appAccent)
-            } header: {
-                Text(L10n.AI.LLM.status)
-            }
-            .appListRowBackground()
-            
-            Section {
-                VStack(alignment: .leading, spacing: DesignSystem.small) {
-                    Text(L10n.AI.OnDevice.assistMode)
-                        .font(.headline)
-                        .foregroundStyle(.appText)
-                    Text(L10n.AI.OnDevice.assistDesc)
-                        .font(.caption)
-                        .foregroundStyle(.appSecondary)
+                
+                Toggle(isOn: Binding(
+                    get: { config.autoScan && config.autoRefactor },
+                    set: { newValue in
+                        config.autoScan = newValue
+                        config.autoRefactor = newValue
+                    }
+                )) {
+                    VStack(alignment: .leading, spacing: DesignSystem.tiny) {
+                        Text(L10n.AI.OnDevice.assistMode)
+                            .font(.body.bold())
+                            .foregroundStyle(.appText)
+                        Text(L10n.AI.OnDevice.assistDesc)
+                            .font(.caption)
+                            .foregroundStyle(.appText.opacity(DesignSystem.subtleOpacity))
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    .padding(.vertical, DesignSystem.tiny)
                 }
-                .padding(.vertical, DesignSystem.tiny)
-                
-                Toggle(L10n.AI.OnDevice.enableAutoScan, isOn: $config.autoScan)
-                    .tint(.appAccent)
-                
-                Toggle(L10n.AI.OnDevice.autoRefactor, isOn: $config.autoRefactor)
-                    .tint(.appAccent)
+                .tint(.appAccent)
             } header: {
-                Text(L10n.Settings.advancedMaintenance)
+                Text(L10n.AI.LLM.serviceStatus)
             }
             .appListRowBackground()
             
+            // Provider & Config combined to form a single continuous block, default collapsed
             Section {
-                ForEach(LLMProvider.allCases) { provider in
-                    Button(action: {
-                        let selectedProvider = provider
-                        testResult = nil
-                        config.provider = selectedProvider
-                        if !selectedProvider.defaultBaseURL.isEmpty {
-                            config.baseURL = selectedProvider.defaultBaseURL
-                        }
-                        if !selectedProvider.defaultModel.isEmpty {
-                            config.model = selectedProvider.defaultModel
-                        }
-                        withAnimation {
-                            isConfigExpanded = true
-                        }
-                    }) {
-                        HStack {
-                            Image(systemName: provider.icon)
-                                .foregroundStyle(.appAccent)
-                            Text(provider.displayName)
-                                .foregroundStyle(.appText)
-                            Spacer()
-                            if config.provider == provider {
-                                Image(systemName: DesignSystem.Icons.check)
-                                    .foregroundStyle(.appAccent)
+                // 1. 模型提供商默认折叠
+                DisclosureGroup(isExpanded: $isProvidersExpanded) {
+                    VStack(alignment: .leading, spacing: DesignSystem.medium) {
+                        ForEach(LLMProvider.allCases) { provider in
+                            Button(action: {
+                                let selectedProvider = provider
+                                testResult = nil
+                                config.provider = selectedProvider
+                                if !selectedProvider.defaultBaseURL.isEmpty {
+                                    config.baseURL = selectedProvider.defaultBaseURL
+                                }
+                                if !selectedProvider.defaultModel.isEmpty {
+                                    config.model = selectedProvider.defaultModel
+                                }
+                            }) {
+                                HStack {
+                                    Image(systemName: provider.icon)
+                                        .foregroundStyle(.appAccent)
+                                    Text(provider.displayName)
+                                        .foregroundStyle(.appText)
+                                    Spacer()
+                                    if config.provider == provider {
+                                        Image(systemName: DesignSystem.Icons.check)
+                                            .foregroundStyle(.appAccent)
+                                    }
+                                }
                             }
                         }
+                        
+                        Divider()
+                            .padding(.vertical, DesignSystem.small)
+                        
+                        // 2. 模型配置
+                        configurationContent
                     }
-                }
-            } header: {
-                Text(L10n.AI.LLM.Provider.title)
-            }
-            .appListRowBackground()
-            
-            Section {
-                #if !os(watchOS)
-                DisclosureGroup(isExpanded: $isConfigExpanded) {
-                    configurationContent
+                    .padding(.top, DesignSystem.small)
                 } label: {
-                    Label(L10n.AI.LLM.configuration, systemImage: "slider.horizontal.3")
+                    Label(L10n.AI.LLM.Provider.title, systemImage: "cpu")
                         .foregroundStyle(.appText)
                 }
-                #else
-                configurationContent
-                #endif
+            } header: {
+                Text(L10n.AI.LLM.providerConfig)
             }
             .appListRowBackground()
             
@@ -170,16 +169,6 @@ struct LLMSettingsView: View {
                 }
             } header: {
                 Text(L10n.AI.LLM.validation)
-            } footer: {
-                VStack(alignment: .leading, spacing: DesignSystem.tightPadding) {
-                    InfoRow(icon: "lock.shield", text: L10n.AI.LLM.info.localKey)
-                    InfoRow(icon: "doc.text", text: L10n.AI.LLM.info.contextSent)
-                    InfoRow(icon: "network", text: L10n.AI.LLM.info.openAICompatible)
-                    InfoRow(icon: "arrow.down.doc", text: L10n.AI.LLM.info.smartIngest)
-                }
-                .padding(.top, DesignSystem.small)
-                Text(L10n.AI.LLM.infoString)
-                    .padding(.top, DesignSystem.small)
             }
             .appListRowBackground()
         }
