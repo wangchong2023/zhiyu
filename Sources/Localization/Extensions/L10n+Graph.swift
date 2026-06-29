@@ -62,7 +62,7 @@ extension L10n {
         /// - Parameter args: args
         /// - Returns: 返回值
         public static func trf(_ key: String, _ args: CVarArg...) -> String { Localized.trf("graph." + key, table: t, args) }
-        public static var insightOrphans: String { Localized.tr("graph.guide.orphanTitle", table: t) }
+        public static var insightOrphans: String { Localized.tr("graph.insightOrphans", table: t) }
         public static var insightOrphansDesc: String { Localized.tr("graph.insightOrphansDesc", table: t) }
         public static var insightSparse: String { Localized.tr("graph.guide.sparseTitle", table: t) }
         public static var insightSparseDesc: String { Localized.tr("graph.insightSparseDesc", table: t) }

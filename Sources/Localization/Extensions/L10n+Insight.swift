@@ -53,7 +53,7 @@ extension L10n {
 
         public enum Report {
             public static var title: String { Insight.tr("report.title") }
-            public static var appName: String { L10n.Common.tr("app.name") }
+            public static var appName: String { Insight.tr("report.appName") }
             public static var footer: String { Insight.tr("report.footer") }
 
             /// node计数

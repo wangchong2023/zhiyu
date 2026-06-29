@@ -107,7 +107,7 @@ extension L10n {
             public static var newPages: String { Common.tr("stats.newPages") }
             public static var growth: String { Common.tr("stats.growth") }
             public static var title: String { Common.tr("stats.title") }
-            public static var totalWords: String { Common.tr("accessibility.words") }
+            public static var totalWords: String { Common.tr("stat.totalWords") }
         }
         
         public enum Stats {
@@ -123,24 +123,24 @@ extension L10n {
             public static var allPages: String { Common.tr("sidebar.allPages") }
             public static var tags: String { Common.tr("accessibility.tags") }
             public static var trash: String { Common.tr("sidebar.trash") }
-            public static var synthesis: String { L10n.Common.tr("sidebar.synthesis") }
+            public static var synthesis: String { Common.tr("tab.synthesis") }
             public static var system: String { Common.tr("sidebar.system") }
-            public static var tools: String { Common.tr("sidebar.tools") }
+            public static var tools: String { Common.tr("tags.tools") }
             public static var capabilities: String { Common.tr("iconPicker.common") }
             public static var healthCheck: String { Common.tr("sidebar.healthCheck") }
-            public static var knowledge: String { Common.tr("sidebar.knowledge") }
-            public static var pageList: String { Common.tr("sidebar.allPages") }
+            public static var knowledge: String { Common.tr("tab.knowledge") }
+            public static var pageList: String { Common.tr("sidebar.pageList") }
             public static var universe: String { Common.tr("sidebar.universe") }
-            public static var tagManager: String { Common.tr("accessibility.tags") }
+            public static var tagManager: String { Common.tr("sidebar.tagManager") }
             public static var plugins: String { Common.tr("sidebar.plugins") }
             public static var collaboration: String { Common.tr("sidebar.collaboration") }
         }
 
         public enum Tab {
-            public static var knowledge: String { Common.tr("app.name") }
+            public static var knowledge: String { Common.tr("tab.knowledge") }
             public static var chat: String { Common.tr("tab.chat") }
             public static var graph: String { Common.tr("perf.summary.graph") }
-            public static var synthesis: String { Common.tr("sidebar.synthesis") }
+            public static var synthesis: String { Common.tr("tab.synthesis") }
             public static var ingest: String { Common.tr("sources") }
             public static var settings: String { Common.tr("tab.settings") }
             public static var voice: String { Common.tr("tab.voice") }
@@ -174,9 +174,9 @@ extension L10n {
         public enum Perf {
             public static var title: String { Common.tr("perf.title") }
             public static var lastUpdated: String { Common.tr("perf.lastUpdated") }
-            public static var memory: String { Common.tr("perf.memory") }
+            public static var memory: String { Common.tr("tags.memory") }
             public static var timing: String { Common.tr("perf.timing") }
-            public static var pages: String { Common.tr("perf.pages") }
+                public static var pages: String { Common.tr("perf.summary.pages") }
             public static var words: String { Common.tr("perf.words") }
             public static var nodes: String { Common.tr("perf.nodes") }
             public static var load: String { Common.tr("perf.load") }
@@ -192,7 +192,7 @@ extension L10n {
             public enum summary {
                 public static var title: String { Common.tr("perf.summary.title") }
                 public static var search: String { Common.tr("components.search") }
-                public static var pages: String { Common.tr("perf.pages") }
+                public static var pages: String { Common.tr("perf.summary.pages") }
                 public static var words: String { Common.tr("perf.summary.words") }
                 public static var nodes: String { Common.tr("perf.summary.nodes") }
                 public static var edges: String { Common.tr("perf.summary.edges") }
@@ -356,16 +356,16 @@ extension L10n {
         public enum Tags {
             public static var ai: String { Common.tr("tags.ai") }
             public static var agent: String { Common.tr("tags.agent") }
-            public static var planning: String { Common.tr("demo.planning.title") }
+            public static var planning: String { Localized.tr("tags.planning", table: t) }
             public static var memory: String { Common.tr("demo.memory.title") }
             public static var rag: String { Common.tr("tags.rag") }
-            public static var toolUse: String { Common.tr("demo.toolUse.title") }
+            public static var toolUse: String { Common.tr("tags.toolUse") }
             public static var llm: String { Common.tr("tags.llm") }
             public static var architecture: String { Common.tr("tags.architecture") }
-            public static var tools: String { Common.tr("sidebar.tools") }
+            public static var tools: String { Common.tr("tags.tools") }
             public static var nlp: String { Common.tr("tags.nlp") }
             public static var storage: String { Common.tr("tags.storage") }
-            public static var security: String { Common.tr("security") }
+            public static var security: String { Common.tr("tags.security") }
             public static var theory: String { Common.tr("tags.theory") }
             public static var network: String { Common.tr("tags.network") }
             public static var `protocol`: String { Common.tr("tags.protocol") }

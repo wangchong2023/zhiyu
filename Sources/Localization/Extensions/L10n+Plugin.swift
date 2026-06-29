@@ -88,7 +88,7 @@ extension L10n {
             public static var pluginSettings: String { Plugin.tr("section.pluginSettings") }
             public static var permissions: String { Plugin.tr("plugin.section.permissions") }
             public static var about: String { Plugin.tr("plugin.section.about") }
-            public static var ribbon: String { L10n.Common.tr("action.cmd.quickActions") }
+            public static var ribbon: String { Plugin.tr("plugin.section.ribbon") }
         }
 
         public enum Status {
@@ -137,7 +137,7 @@ extension L10n {
             public static var all: String { Plugin.tr("plugin.category.all") }
             public static var efficiency: String { L10n.Common.tr("tags.efficiency") }
             public static var social: String { Plugin.tr("plugin.category.social") }
-            public static var reading: String { L10n.Common.tr("tags.readingMethod") }
+            public static var reading: String { Plugin.tr("plugin.category.reading") }
             public static var other: String { Plugin.tr("plugin.category.other") }
         }
 

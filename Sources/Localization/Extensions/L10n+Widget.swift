@@ -18,8 +18,8 @@ extension L10n {
         /// - Parameter key: key
         /// - Returns: 返回值
         public static var title: String { Localized.tr("widget.title", table: t) }
-        public static var pages: String { L10n.Common.tr("perf.pages") }
-        public static var words: String { L10n.Common.tr("accessibility.words") }
+        public static var pages: String { Localized.tr("widget.pages", table: t) }
+        public static var words: String { Localized.tr("widget.words", table: t) }
         public static var active: String { L10n.Common.tr("status.active") }
         public static var characters: String { Localized.tr("widget.characters", table: t) }
         public static var recentUpdates: String { L10n.Common.tr("recentUpdates") }

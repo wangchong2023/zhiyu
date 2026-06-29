@@ -43,7 +43,7 @@ extension L10n {
             public static var confirmAndEdit: String { Voice.tr("speech.confirmAndEdit") }
 
             public enum Status {
-                public static var ready: String { Voice.tr("aitask.status.ready") }
+                public static var ready: String { Voice.tr("speech.status.ready") }
                 public static var recording: String { Voice.tr("speech.status.recording") }
                 public static var complete: String { Voice.tr("speech.status.complete") }
                 public static var denied: String { Voice.tr("speech.status.denied") }

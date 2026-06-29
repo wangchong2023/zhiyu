@@ -36,16 +36,16 @@ extension L10n {
         /// - Returns: 本地化格式化文案
         public static func iCloudLastSyncFormat(_ date: String) -> String { Settings.trf("icloud.lastSyncFormat", date) }
 
-        public static var title: String { L10n.Common.tr("settings") }
+            public static var title: String { Localized.tr("settings.resetOnboarding.title", table: t) }
         public static var systemTheme: String { tr("settings.systemTheme") }
         public static var languageEnglish: String { tr("language.english") }
         public static var languageChinese: String { tr("language.chinese") }
         public static var systemLanguage: String { tr("settings.systemLanguage") }
-        public static var languageSystem: String { L10n.Common.tr("sidebar.system") }
+        public static var languageSystem: String { tr("language.system") }
         public static var llmSettings: String { tr("llmSettings") }
         public static var smartRouting: String { tr("settings.smartRouting") }
         public static var promptSettings: String { tr("settings.promptSettings") }
-        public static var onDeviceLLM: String { tr("settings.localModelManager") }
+        public static var onDeviceLLM: String { tr("settings.onDeviceLLM") }
         public static var localModelManager: String { tr("settings.localModelManager") }
         public static var iCloudSync: String { Localized.tr("settings.iCloudSync", table: t) }
         public static var backupRestore: String { Localized.tr("backup.restore", table: "Transfer") }
@@ -56,10 +56,10 @@ extension L10n {
         public static var biometricProtectionDesc: String { Localized.tr("settings.biometricProtection.desc", table: t) }
         /// 隐私与生物识别合并后的描述文案
         public static var privacyCombinedDesc: String { Localized.tr("settings.privacyCombined.desc", table: t) }
-        public static var rebuildInitialNotebooks: String { Localized.tr("settings.injectConfirm.title", table: t) }
+        public static var rebuildInitialNotebooks: String { Localized.tr("settings.rebuildInitialNotebooks", table: t) }
         public static var advancedMaintenance: String { Localized.tr("settings.advancedMaintenance", table: t) }
         public static var about: String { tr("aboutApp") }
-        public static var version: String { tr("settings.about.version") }
+        public static var version: String { tr("version") }
         /// 选择设置大类的占位提示文本
         public static var selectCategoryTip: String { tr("settings.selectCategoryTip") }
 
@@ -71,7 +71,7 @@ extension L10n {
 
         public struct clearAll {
             public static var action: String { Localized.tr("settings.clearAll.action", table: t) }
-            public static var confirmTitle: String { Localized.tr("settings.clearAll", table: t) }
+            public static var confirmTitle: String { Localized.tr("settings.clearAll.confirmTitle", table: t) }
             public static var message: String { Localized.tr("settings.clearAll.message", table: t) }
             public static var label: String { Localized.tr("settings.clearAll", table: t) }
         }
@@ -96,7 +96,7 @@ extension L10n {
 
             public struct stressTest {
                 public static var count: String { Localized.tr("settings.developer.stressTest.count", table: t) }
-                public static var run: String { Localized.tr("settings.developer.stressTest.confirmTitle", table: t) }
+                public static var run: String { Localized.tr("settings.developer.stressTest.run", table: t) }
                 public static func nodes(_ n: Int) -> String { Localized.trf("settings.developer.stressTest.nodes", table: t, n) }
                 public static var confirmTitle: String { Localized.tr("settings.developer.stressTest.confirmTitle", table: t) }
                 public static var confirmMessage: String { Localized.tr("settings.developer.stressTest.confirmMessage", table: t) }
@@ -118,13 +118,13 @@ extension L10n {
             public static var appearance: String { Settings.tr("section.appearance") }
             public static var ai: String { Settings.tr("section.ai") }
             public static var data: String { Settings.tr("section.data") }
-            public static var security: String { L10n.Common.tr("security") }
+            public static var security: String { Settings.tr("section.security") }
             public static var maintenance: String { Settings.tr("section.maintenance") }
             public static var about: String { Settings.tr("section.about") }
             public static var developer: String { Settings.tr("section.developer") }
             public static var plugins: String { Settings.tr("section.plugins") }
-            public static var tabData: String { Localized.tr("section.data", table: t) }
-            public static var tabQuality: String { L10n.Common.tr("tags.quality") }
+            public static var tabData: String { Localized.tr("settings.developer.section.tabData", table: t) }
+            public static var tabQuality: String { Localized.tr("settings.developer.section.tabQuality", table: t) }
         }
 
         public struct InjectDemo {
@@ -181,7 +181,7 @@ extension L10n {
         public struct theme {
             public static var dark: String { Localized.tr("settings.theme.dark", table: t) }
             public static var light: String { Localized.tr("settings.theme.light", table: t) }
-            public static var system: String { L10n.Common.tr("sidebar.system") }
+            public static var system: String { Localized.tr("settings.theme.system", table: t) }
         }
 
         public struct OnDevice {

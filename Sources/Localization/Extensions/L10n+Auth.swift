@@ -113,14 +113,14 @@ extension L10n {
         // MARK: - 活跃度与大盘统计
         public static var statsBoard: String { tr("auth.statsBoard") }
         public static var statsNotebooks: String { tr("auth.statsNotebooks") }
-        public static var statsPages: String { L10n.Common.tr("perf.pages") }
+        public static var statsPages: String { tr("auth.statsPages") }
         public static var statsSynthesis: String { tr("auth.statsSynthesis") }
         public static var statsActiveDays: String { tr("auth.statsActiveDays") }
 
         // MARK: - 配额展示
-        public static var vaultUsage: String { tr("auth.feature.vaults") }
-        public static var pagesUsage: String { L10n.Common.tr("perf.pages") }
-        public static var pluginsUsage: String { L10n.Common.tr("sidebar.plugins") }
+        public static var vaultUsage: String { tr("auth.quota.vaultUsage") }
+        public static var pagesUsage: String { tr("auth.quota.pagesUsage") }
+        public static var pluginsUsage: String { tr("auth.quota.pluginsUsage") }
 
         // MARK: - 升级收银台
         public static var purchasing: String { tr("auth.purchasing") }
@@ -165,7 +165,7 @@ extension L10n {
         public struct Feature {
             public static var vaults: String { Localized.tr("auth.feature.vaults", table: Auth.t) }
             public static var pages: String { Localized.tr("auth.feature.pages", table: Auth.t) }
-            public static var plugins: String { L10n.Common.Sidebar.plugins }
+            public static var plugins: String { Localized.tr("auth.feature.plugins", table: Auth.t) }
             public static var aiSynth: String { Localized.tr("auth.feature.aiSynth", table: Auth.t) }
             public static var privacySecurity: String { Localized.tr("auth.feature.privacySecurity", table: Auth.t) }
             public static var vaultsLiteValue: String { Localized.tr("auth.feature.vaultsLiteValue", table: Auth.t) }

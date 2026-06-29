@@ -22,7 +22,7 @@ extension L10n {
         /// - Parameter args: args
         /// - Returns: 返回值
         public enum Page {
-            public static var title: String { L10n.Common.tr("pageTitle") }
+                public static var title: String { Knowledge.tr("page.source.title") }
             public static var edit: String { Knowledge.tr("page.edit") }
             public static var doneEditing: String { Knowledge.tr("page.doneEditing") }
             public static var deletePage: String { Knowledge.tr("page.deletePage") }
@@ -32,7 +32,7 @@ extension L10n {
             public static func batchDeleteTitle(_ count: Int) -> String { Knowledge.trf("page.batchDeleteTitle", count) }
             public static func batchDeleteMessage(_ count: Int) -> String { Knowledge.trf("page.batchDeleteMessage", count) }
             public static var icon: String { Knowledge.tr("page.icon") }
-            public static var knowledge: String { L10n.Common.tr("app.name") }
+            public static var knowledge: String { Knowledge.tr("page.knowledge") }
             public static var empty: String { Knowledge.tr("page.empty") }
             public static var emptyHint: String { Knowledge.tr("page.emptyHint") }
             public static var content: String { Knowledge.tr("page.content") }
@@ -121,7 +121,7 @@ extension L10n {
             public static var aiInsights: AIInsightsVal { AIInsightsVal(title: Knowledge.tr("page.aiInsights")) }
 
             public enum Source {
-                public static var title: String { L10n.Common.tr("type.source") }
+                public static var title: String { Knowledge.tr("page.source.title") }
                 public static var open: String { Knowledge.tr("page.source.open") }
                 public static var content: String { Knowledge.tr("page.source.content") }
                 public static var empty: String { Knowledge.tr("page.source.empty") }

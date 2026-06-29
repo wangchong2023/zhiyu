@@ -42,7 +42,7 @@ extension L10n {
         /// - Returns: 本地化格式化文案
         public static func contextLimitWarning(_ limit: Int) -> String { Localized.trf("chat.contextLimitWarning", table: t, limit) }
 
-        public static var title: String { L10n.Common.tr("tab.chat") }
+        public static var title: String { tr("chat.title") }
         public static var welcomeDesc: String { tr("chat.welcomeDesc") }
 
         public struct group {
@@ -72,7 +72,7 @@ extension L10n {
         public static func deepExplorePrompt(_ topic: String) -> String { Localized.trf("chat.deepExplorePrompt", table: t, topic) }
 
         public struct ai {
-            public static var thinking: String { L10n.Common.tr("aiThinking") }
+            public static var thinking: String { Chat.tr("chat.ai.thinking") }
         }
 
         /// AI 增强型骨架屏状态本地化定义

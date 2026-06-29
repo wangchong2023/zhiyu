@@ -27,11 +27,11 @@ extension L10n {
         /// 默认笔记本名称
         public static var defaultName: String { tr("vault.defaultName") }
         public static var defaultNameZh: String { tr("vault.defaultName.zh") }
-        public static var defaultNameEn: String { tr("vault.defaultName") }
+        public static var defaultNameEn: String { tr("vault.defaultName.en") }
         /// 项目调研默认笔记本名称
         public static var researchName: String { L10n.Common.tr("demo.log.projectResearch") }
         public static var researchNameZh: String { tr("vault.researchName.zh") }
-        public static var researchNameEn: String { L10n.Common.tr("demo.log.projectResearch") }
+        public static var researchNameEn: String { tr("vault.researchName.en") }
         public static var subtitle: String { Localized.tr("vault.subtitle", table: t) }
         public static var noSelection: String { tr("vault.noSelection") }
         public static var new: String { Localized.tr("vault.new", table: t) }
@@ -41,7 +41,7 @@ extension L10n {
         public static var deleteNotebook: String { tr("vault.deleteNotebook") }
         public static var edit: String { Localized.tr("vault.edit", table: t) }
         public static var iconLabel: String { Localized.tr("page.icon", table: t) }
-        public static var namePlaceholder: String { Localized.tr("vault.nameLabel", table: t) }
+        public static var namePlaceholder: String { Localized.tr("vault.namePlaceholder", table: t) }
         public static var renameMessage: String { Localized.tr("vault.renameMessage", table: t) }
         /// 默认笔记本描述信息
         public static var defaultDescription: String { Localized.tr("vault.defaultDescription", table: t) }
@@ -76,7 +76,7 @@ extension L10n {
         }
 
         public struct Page {
-            public static var knowledge: String { L10n.Common.tr("app.name") }
+            public static var knowledge: String { Localized.tr("page.knowledge", table: "Knowledge") }
             public static var deletePage: String { Localized.tr("page.deletePage", table: "Knowledge") }
 
             /// 删除PageTitle

@@ -114,7 +114,7 @@ extension L10n {
         public enum Spec {
             public static var memory: String { ModelManager.tr("model_manager.spec.memory") }
             public static var downloadSize: String { ModelManager.tr("model_manager.spec.downloadSize") }
-            public static var parameters: String { ModelManager.tr("model_manager.parameters.title") }
+            public static var parameters: String { ModelManager.tr("model_manager.spec.parameters") }
             public static var checksum: String { ModelManager.tr("model_manager.spec.checksum") }
             public static var tasks: String { ModelManager.tr("model_manager.spec.tasks") }
         }
@@ -516,7 +516,7 @@ extension L10n {
             // 用例名称
             public static var useCaseAskImage: String { ModelManager.tr("model_manager.lab.use_case.ask_image") }
             public static var useCaseAudioScribe: String { ModelManager.tr("model_manager.lab.use_case.audio_scribe") }
-            public static var useCaseChat: String { L10n.Common.tr("tab.chat") }
+            public static var useCaseChat: String { ModelManager.tr("model_manager.lab.use_case.chat") }
             public static var useCaseAgentSkills: String { ModelManager.tr("model_manager.lab.use_case.agent_skills") }
             public static var useCasePromptLab: String { ModelManager.tr("model_manager.lab.use_case.prompt_lab") }
             public static var useCaseTinyGarden: String { ModelManager.tr("model_manager.lab.use_case.tiny_garden") }

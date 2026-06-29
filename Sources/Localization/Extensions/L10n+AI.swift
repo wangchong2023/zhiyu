@@ -25,7 +25,7 @@ extension L10n {
             public static var scanning: String { AI.tr("ai.status.scanning") }
             public static var structuring: String { AI.tr("ai.status.structuring") }
             public static var synthesizing: String { AI.tr("ai.status.synthesizing") }
-            public static var thinking: String { AI.tr("ai.status.skeleton.thinking") }
+            public static var thinking: String { AI.tr("ai.status.thinking") }
             public static var visualizing: String { AI.tr("ai.status.visualizing") }
 
             /// indexing
@@ -154,7 +154,7 @@ extension L10n {
             public static var available: String { AI.tr("ondevice.available") }
             public static var unavailable: String { AI.tr("ondevice.unavailable") }
             public static var connected: String { AI.tr("ondevice.connected") }
-            public static var statusReady: String { AI.tr("aitask.status.ready") }
+            public static var statusReady: String { AI.tr("ondevice.status.ready") }
             public static var statusLoading: String { L10n.Common.tr("loading") }
             public static var appleIntelligence: String { AI.tr("ondevice.appleIntelligence") }
             public static var enableAutoScan: String { AI.tr("ondevice.enableAutoScan") }
@@ -410,10 +410,10 @@ extension L10n {
             
             public static var running: String { Localized.tr("aitask.status.running", table: t) }
             public static var processing: String { Localized.tr("aitask.processing", table: t) }
-            public static var typeIngest: String { L10n.Common.tr("logAction.ingest") }
+            public static var typeIngest: String { Localized.tr("aitask.type.ingest", table: t) }
             public static var typeHealthCheck: String { Localized.tr("aitask.type.healthCheck", table: t) }
             public static var typeAIScan: String { Localized.tr("aitask.guide.aiscan", table: t) }
-            public static var typeSynthesis: String { L10n.Common.tr("sidebar.synthesis") }
+            public static var typeSynthesis: String { Localized.tr("aitask.type.synthesis", table: t) }
             
             public static var categories: String { Localized.tr("aitask.categories", table: t) }
             public static var noHistory: String { Localized.tr("aitask.noHistory", table: t) }

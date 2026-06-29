@@ -29,7 +29,7 @@ extension L10n {
             return localized
         }
 
-        public static var pageListPages: String { L10n.Common.tr("perf.pages") }
+        public static var pageListPages: String { Localized.tr("dashboard.pageList.pages", table: t) }
         public static var pageListLinks: String { Localized.tr("dashboard.pageList.links", table: t) }
         public static var density: String { Localized.tr("dashboard.density", table: t) }
         public static var dailyInsights: String { Localized.tr("dashboard.dailyInsights", table: t) }
@@ -81,15 +81,15 @@ extension L10n {
             }
 
             public struct tips {
-                public static var title: String { Localized.tr("dashboard.insight.tips.title", table: t) }
+        public static var title: String { tr("title") }
                 public static var content: String { Localized.tr("dashboard.insight.tips.content", table: t) }
             }
         }
 
         public struct pageList {
-            public static var tags: String { L10n.Common.Sidebar.tags }
+            public static var tags: String { Localized.tr("dashboard.pageList.tags", table: t) }
             public static var sources: String { L10n.Common.Tab.ingest }
-            public static var overview: String { Localized.tr("dashboard.index.overview", table: t) }
+            public static var overview: String { Localized.tr("dashboard.stats.overview", table: t) }
             public static var concepts: String { Localized.tr("dashboard.pageList.concepts", table: t) }
             public static var entities: String { Localized.tr("dashboard.pageList.entities", table: t) }
             public static var wordCount: String { Localized.tr("dashboard.pageList.wordCount", table: t) }
@@ -147,7 +147,7 @@ extension L10n {
         public static var totalLinks: String { Dashboard.tr("totalLinks") }
         public static var apiRequests: String { Dashboard.tr("apiRequests") }
         public static var totalStorage: String { Dashboard.tr("totalStorage") }
-        public static var tokens: String { Dashboard.tr("dashboard.stats.tabPerf") }
+        public static var tokens: String { Dashboard.tr("tokens") }
         public static var chartDate: String { Localized.tr("dashboard.stats.chartDate", table: t) }
         public static var chartSelected: String { Localized.tr("dashboard.stats.chartSelected", table: t) }
         public static var chartValue: String { Localized.tr("dashboard.stats.chartValue", table: t) }
@@ -202,12 +202,12 @@ extension L10n {
             public static var avgTokensPerQuery: String { Localized.tr("dashboard.stats.avgTokensPerQuery", table: t) }
             public static var estimatedCost: String { Localized.tr("dashboard.stats.estimatedCost", table: t) }
             public static var queryCount: String { Localized.tr("dashboard.stats.queryCount", table: t) }
-            public static var tabRetrieval: String { L10n.Common.tr("tags.retrievalTech") }
+            public static var tabRetrieval: String { Localized.tr("dashboard.stats.tab.retrieval", table: t) }
             public static var tabGeneration: String { Localized.tr("dashboard.stats.tab.generation", table: t) }
             public static var tabSatisfaction: String { Localized.tr("dashboard.stats.tab.satisfaction", table: t) }
             public static var tabHistory: String { Localized.tr("dashboard.stats.tab.history", table: t) }
             public static var tabSatisfactionAndEval: String { Localized.tr("dashboard.stats.tab.satisfactionAndEval", table: t) }
-            public static var tabPlugins: String { L10n.Common.tr("sidebar.plugins") }
+            public static var tabPlugins: String { Localized.tr("dashboard.stats.tab.plugins", table: t) }
 
             // MARK: - Tooltip 说明文案
 
@@ -266,7 +266,7 @@ extension L10n {
             public static var storageImport: String { Localized.tr("dashboard.stats.storageImport", table: t) }
             public static var storageExport: String { Localized.tr("dashboard.stats.storageExport", table: t) }
             public static var tabPerf: String { Localized.tr("dashboard.stats.tabPerf", table: t) }
-            public static var tabStorage: String { L10n.Common.tr("tags.storage") }
+            public static var tabStorage: String { Localized.tr("dashboard.stats.tabStorage", table: t) }
             public static var rangeThirtyDays: String { Localized.tr("dashboard.stats.rangeThirtyDays", table: t) }
             public static var requestsUsage: String { Localized.tr("dashboard.stats.requestsUsage", table: t) }
             public static var tokenUsage: String { Localized.tr("common.tokenUsage", table: t) }
@@ -323,11 +323,11 @@ extension L10n {
 
             public struct short {
                 public static var entity: String { Dashboard.tr("stats.short.entity") }
-                public static var concept: String { L10n.Common.tr("type.concept") }
-                public static var source: String { L10n.Common.tr("type.source") }
+                public static var concept: String { Dashboard.tr("stats.short.concept") }
+                public static var source: String { Dashboard.tr("stats.short.source") }
                 public static var comparison: String { Dashboard.tr("stats.short.comparison") }
                 public static var raw: String { Dashboard.tr("stats.short.raw") }
-                public static var pages: String { L10n.Common.tr("perf.pages") }
+                public static var pages: String { Dashboard.tr("stats.short.pages") }
                 public static var new: String { Dashboard.tr("stats.short.new") }
                 public static var ref: String { Dashboard.tr("stats.short.ref") }
             }
