@@ -30,7 +30,7 @@ extension L10n {
         }
 
         public static var routingTitle: String {
-            ModelManager.tr("model_manager.routing.title")
+            ModelManager.tr("model_manager.routing.strategy.smart_routing")
         }
 
         // MARK: - 卡片组件
@@ -114,7 +114,7 @@ extension L10n {
         public enum Spec {
             public static var memory: String { ModelManager.tr("model_manager.spec.memory") }
             public static var downloadSize: String { ModelManager.tr("model_manager.spec.downloadSize") }
-            public static var parameters: String { ModelManager.tr("model_manager.spec.parameters") }
+            public static var parameters: String { ModelManager.tr("model_manager.parameters.title") }
             public static var checksum: String { ModelManager.tr("model_manager.spec.checksum") }
             public static var tasks: String { ModelManager.tr("model_manager.spec.tasks") }
         }
@@ -153,11 +153,11 @@ extension L10n {
             public static var custom: String { ModelManager.tr("model_manager.params.custom") }
 
             public static var resetToDefaults: String {
-                ModelManager.tr("model_manager.params.reset_to_defaults")
+                ModelManager.tr("model_manager.params.reset")
             }
 
             public static var saveConfiguration: String {
-                ModelManager.tr("model_manager.params.save_configuration")
+                ModelManager.tr("model_manager.params.save")
             }
 
             public static var currentModel: String {
@@ -185,7 +185,7 @@ extension L10n {
             }
 
             public static var selectModel: String {
-                ModelManager.tr("model_manager.params.select_model")
+                ModelManager.tr("model_manager.lab.select_model")
             }
 
             public static var reset: String {
@@ -236,11 +236,11 @@ extension L10n {
             }
 
             public static var serverName: String {
-                ModelManager.tr("model_manager.server.name")
+                ModelManager.tr("model_manager.server.form.name_label")
             }
 
             public static var serverURL: String {
-                ModelManager.tr("model_manager.server.url")
+                ModelManager.tr("model_manager.server.form.url_label")
             }
 
             public static var apiKey: String {
@@ -298,11 +298,11 @@ extension L10n {
             }
 
             public static var formAddTitle: String {
-                ModelManager.tr("model_manager.server.form.add_title")
+                ModelManager.tr("model_manager.server.add")
             }
 
             public static var formEditTitle: String {
-                ModelManager.tr("model_manager.server.form.edit_title")
+                ModelManager.tr("model_manager.server.edit")
             }
 
             public static var formCancel: String {
@@ -346,15 +346,15 @@ extension L10n {
             }
 
             public static var networkStatus: String {
-                ModelManager.tr("model_manager.routing.network_status")
+                ModelManager.tr("model_manager.routing.network_monitoring")
             }
 
             public static var advancedSettings: String {
-                ModelManager.tr("model_manager.routing.advanced_settings")
+                ModelManager.tr("model_manager.routing.advanced")
             }
 
             public static var cloudEscalationTitle: String {
-                ModelManager.tr("model_manager.routing.cloud_escalation_title")
+                ModelManager.tr("model_manager.routing.cloud_escalation")
             }
 
             public static var cloudEscalationToggle: String {
@@ -366,7 +366,7 @@ extension L10n {
             }
 
             public static var cloudModelSelection: String {
-                ModelManager.tr("model_manager.routing.cloud_model_selection")
+                ModelManager.tr("model_manager.routing.cloud_model")
             }
 
             /// 当前云端模型
@@ -377,11 +377,11 @@ extension L10n {
             }
 
             public static var taskRules: String {
-                ModelManager.tr("model_manager.routing.task_rules")
+                ModelManager.tr("model_manager.routing.rules")
             }
 
             public static var taskSemanticChunking: String {
-                ModelManager.tr("model_manager.routing.task.semantic_chunking")
+                L10n.Common.tr("demo.chunking.title")
             }
 
             public static var taskLinkDiscovery: String {
@@ -389,7 +389,7 @@ extension L10n {
             }
 
             public static var taskSynthesis: String {
-                ModelManager.tr("model_manager.routing.task.synthesis")
+                L10n.Common.tr("sidebar.synthesis")
             }
 
             public static var taskChat: String {
@@ -516,7 +516,7 @@ extension L10n {
             // 用例名称
             public static var useCaseAskImage: String { ModelManager.tr("model_manager.lab.use_case.ask_image") }
             public static var useCaseAudioScribe: String { ModelManager.tr("model_manager.lab.use_case.audio_scribe") }
-            public static var useCaseChat: String { ModelManager.tr("model_manager.lab.use_case.chat") }
+            public static var useCaseChat: String { L10n.Common.tr("tab.chat") }
             public static var useCaseAgentSkills: String { ModelManager.tr("model_manager.lab.use_case.agent_skills") }
             public static var useCasePromptLab: String { ModelManager.tr("model_manager.lab.use_case.prompt_lab") }
             public static var useCaseTinyGarden: String { ModelManager.tr("model_manager.lab.use_case.tiny_garden") }

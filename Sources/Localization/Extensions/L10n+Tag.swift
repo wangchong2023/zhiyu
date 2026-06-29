@@ -23,9 +23,9 @@ extension L10n {
         /// - Returns: 返回值
         public static var title: String { tr("tag.title") }
         public static var allTags: String { tr("tag.allTags") }
-        public static var relatedPagesTitle: String { tr("tag.relatedPagesTitle") }
+        public static var relatedPagesTitle: String { tr("create.template.entity.related") }
         public static func tagCount(_ n: Int) -> String { trf("tag.count", n) }
-        public static var layoutList: String { Tag.tr("tag.layoutList") }
+        public static var layoutList: String { Tag.tr("editor.list") }
         public static var layoutBubble: String { Tag.tr("tag.layoutBubble") }
         public static var expandAll: String { Tag.tr("tag.expandAll") }
         public static var collapse: String { Tag.tr("tag.collapse") }

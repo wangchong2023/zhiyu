@@ -22,8 +22,8 @@ extension L10n {
         public static var createNow: String { tr("backup.createNow") }
         public static var exportCurrent: String { tr("backup.exportCurrent") }
         public static var pages: String { tr("backup.pages") }
-        public static var words: String { tr("backup.words") }
-        public static var restoreTitle: String { tr("backup.restoreTitle") }
+        public static var words: String { L10n.Common.tr("perf.summary.words") }
+        public static var restoreTitle: String { tr("backup.restore") }
         public static var deleteConfirmTitle: String { tr("backup.deleteConfirmTitle") }
         public static var lastBackup: String { tr("backup.lastBackup") }
         public static var restore: String { tr("backup.restore") }

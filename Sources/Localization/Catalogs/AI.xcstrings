@@ -171,23 +171,6 @@
         }
       }
     },
-    "ai.status.thinking": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "AI is thinking..."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "AI 正在思考..."
-          }
-        }
-      }
-    },
     "ai.status.skeleton.thinking": {
       "extractionState": "manual",
       "localizations": {
@@ -290,23 +273,6 @@
         }
       }
     },
-    "aitask.active": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Active"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "进行中"
-          }
-        }
-      }
-    },
     "aitask.categories": {
       "extractionState": "manual",
       "localizations": {
@@ -337,23 +303,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "任务中心"
-          }
-        }
-      }
-    },
-    "aitask.clearAll": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Clear All"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "全部清除"
           }
         }
       }
@@ -868,40 +817,6 @@
         }
       }
     },
-    "aitask.type.ai": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "AI Task"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "AI 任务"
-          }
-        }
-      }
-    },
-    "aitask.type.aiScan": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "AI Scan"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "智能扫描"
-          }
-        }
-      }
-    },
     "aitask.type.healthCheck": {
       "extractionState": "manual",
       "localizations": {
@@ -915,57 +830,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "健康检查"
-          }
-        }
-      }
-    },
-    "aitask.type.ingest": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ingest"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "知识导入"
-          }
-        }
-      }
-    },
-    "aitask.type.synthesis": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Synthesis"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "知识合成"
-          }
-        }
-      }
-    },
-    "chat.ai.thinking": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "AI Thinking..."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "AI 正在思考..."
           }
         }
       }
@@ -1242,23 +1106,6 @@
         }
       }
     },
-    "chat.referencesExpanded": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "References"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "引用来源"
-          }
-        }
-      }
-    },
     "chat.selectToExport": {
       "extractionState": "manual",
       "localizations": {
@@ -1272,23 +1119,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "选择聊天内容"
-          }
-        }
-      }
-    },
-    "chat.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "AI Assistant"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "AI 对话"
           }
         }
       }
@@ -2347,23 +2177,6 @@
         }
       }
     },
-    "llm.prompt.pageTitle": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Page Title"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "页面标题"
-          }
-        }
-      }
-    },
     "llm.prompt.recentUpdates": {
       "extractionState": "manual",
       "localizations": {
@@ -2568,23 +2381,6 @@
         }
       }
     },
-    "llm.prompt.typeLabel": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Type"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "类型"
-          }
-        }
-      }
-    },
     "llm.providerConfig": {
       "extractionState": "manual",
       "localizations": {
@@ -2671,23 +2467,6 @@
       }
     },
     "llm.provider.deepSeek": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "DeepSeek"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "DeepSeek"
-          }
-        }
-      }
-    },
-    "llm.provider.deepseek": {
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -2819,23 +2598,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "智谱 GLM"
-          }
-        }
-      }
-    },
-    "llm.status": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Status"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "状态"
           }
         }
       }
@@ -3265,23 +3027,6 @@
         }
       }
     },
-    "ondevice.info": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Info"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "说明"
-          }
-        }
-      }
-    },
     "ondevice.info.memory": {
       "extractionState": "manual",
       "localizations": {
@@ -3397,23 +3142,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "用 [[页面标题]] 链接已有页面。输出 Markdown 格式。"
-          }
-        }
-      }
-    },
-    "ondevice.ingest.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Title"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "标题"
           }
         }
       }
@@ -3554,40 +3282,6 @@
         }
       }
     },
-    "ondevice.status.loading": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Loading..."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "加载中..."
-          }
-        }
-      }
-    },
-    "ondevice.status.ready": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ready"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "就绪"
-          }
-        }
-      }
-    },
     "ondevice.subtitle": {
       "extractionState": "manual",
       "localizations": {
@@ -3635,23 +3329,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "支持 Apple Foundation Models"
-          }
-        }
-      }
-    },
-    "ondevice.system": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "System"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "系统"
           }
         }
       }
@@ -3754,23 +3431,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "卸载"
-          }
-        }
-      }
-    },
-    "processing": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Processing..."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "处理中..."
           }
         }
       }
@@ -4319,23 +3979,6 @@
         }
       }
     },
-    "prompt.quiz.defaultTitle": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Knowledge Quiz"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "知识测验"
-          }
-        }
-      }
-    },
     "prompt.quiz.explanation": {
       "extractionState": "manual",
       "localizations": {
@@ -4366,23 +4009,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "选项"
-          }
-        }
-      }
-    },
-    "prompt.quiz.question": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Question"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "问题"
           }
         }
       }
@@ -4587,23 +4213,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "定制 AI 的核心处理逻辑，修改系统指令来掌控生成内容的深度与风格，管理个性化快捷指令。"
-          }
-        }
-      }
-    },
-    "prompt.workshop.intro.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Prompt Settings"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "提示词设置"
           }
         }
       }
@@ -5084,23 +4693,6 @@
         }
       }
     },
-    "speech.status.audioError": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Audio engine error"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "音频引擎错误"
-          }
-        }
-      }
-    },
     "speech.status.complete": {
       "extractionState": "manual",
       "localizations": {
@@ -5152,23 +4744,6 @@
         }
       }
     },
-    "speech.status.localeNotSupported": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Language not supported"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "不支持该语言"
-          }
-        }
-      }
-    },
     "speech.status.notDetermined": {
       "extractionState": "manual",
       "localizations": {
@@ -5182,23 +4757,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "等待授权"
-          }
-        }
-      }
-    },
-    "speech.status.ready": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ready"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "就绪"
           }
         }
       }
@@ -5323,23 +4881,6 @@
       }
     },
     "speech.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Voice Note"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "语音笔记"
-          }
-        }
-      }
-    },
-    "speech.voiceNote": {
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -5509,23 +5050,6 @@
         }
       }
     },
-    "synthesis.mindmap.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mindmap"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "思维导图"
-          }
-        }
-      }
-    },
     "synthesis.noDocs": {
       "extractionState": "manual",
       "localizations": {
@@ -5539,23 +5063,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "暂无此类合成文档"
-          }
-        }
-      }
-    },
-    "synthesis.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Knowledge Synthesis"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "知识合成"
           }
         }
       }
@@ -5879,57 +5386,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "你是知识管理助手。组织和结构化摄入的知识内容。"
-          }
-        }
-      }
-    },
-    "pageTitle": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Page Title"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "页面标题"
-          }
-        }
-      }
-    },
-    "ondevice.errorFormat": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Connection Failed: %@"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "连接失败: %@"
-          }
-        }
-      }
-    },
-    "sidebar.synthesis": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Synthesis"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "合成实验室"
           }
         }
       }

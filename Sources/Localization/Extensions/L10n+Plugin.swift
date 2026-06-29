@@ -15,7 +15,7 @@ extension L10n {
         public static let tableName = "Plugin"
         public static var t: String { tableName }
         // MARK: - 通用
-        public static var title: String { Plugin.tr("plugin.title") }
+        public static var title: String { Plugin.tr("plugin.center") }
 
         /// permTitle — 全显式 case，杜绝动态拼接，所有 key 都可被静态分析检测
         /// - Returns: 本地化权限名称
@@ -26,7 +26,7 @@ extension L10n {
             case "readContent":
                 return Localized.tr("plugin.perm.readContent", table: t)
             case "network":
-                return Localized.tr("plugin.perm.network", table: t)
+                return L10n.Common.tr("tags.network")
             case "aiAccess":
                 return Localized.tr("plugin.perm.aiAccess", table: t)
             case "log":
@@ -88,7 +88,7 @@ extension L10n {
             public static var pluginSettings: String { Plugin.tr("section.pluginSettings") }
             public static var permissions: String { Plugin.tr("plugin.section.permissions") }
             public static var about: String { Plugin.tr("plugin.section.about") }
-            public static var ribbon: String { Plugin.tr("plugin.section.ribbon") }
+            public static var ribbon: String { L10n.Common.tr("action.cmd.quickActions") }
         }
 
         public enum Status {
@@ -135,9 +135,9 @@ extension L10n {
 
         public enum Category {
             public static var all: String { Plugin.tr("plugin.category.all") }
-            public static var efficiency: String { Plugin.tr("plugin.category.efficiency") }
+            public static var efficiency: String { L10n.Common.tr("tags.efficiency") }
             public static var social: String { Plugin.tr("plugin.category.social") }
-            public static var reading: String { Plugin.tr("plugin.category.reading") }
+            public static var reading: String { L10n.Common.tr("tags.readingMethod") }
             public static var other: String { Plugin.tr("plugin.category.other") }
         }
 

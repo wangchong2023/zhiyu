@@ -21,8 +21,8 @@ extension L10n {
         /// - Parameter key: key
         /// - Parameter args: args
         /// - Returns: 返回值
-        public static var base: String { Search.tr("search") }
-        public static var title: String { Search.tr("search.title") }
+        public static var base: String { Search.tr("components.search") }
+        public static var title: String { Search.tr("components.search") }
         public static var all: String { Search.tr("search.all") }
         public static var noResults: String { Search.tr("search.noResults") }
         public static var noResultsHint: String { Search.tr("search.noResultsHint") }

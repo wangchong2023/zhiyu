@@ -137,23 +137,6 @@
         }
       }
     },
-    "plugin.category.efficiency": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Efficiency"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "效率"
-          }
-        }
-      }
-    },
     "plugin.category.social": {
       "extractionState": "manual",
       "localizations": {
@@ -167,23 +150,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "社交"
-          }
-        }
-      }
-    },
-    "plugin.category.reading": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reading"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "阅读"
           }
         }
       }
@@ -545,23 +511,6 @@
         }
       }
     },
-    "collab.room": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ZhiYu Room"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "知识库 Room"
-          }
-        }
-      }
-    },
     "collab.roomName": {
       "extractionState": "manual",
       "localizations": {
@@ -864,23 +813,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "通过本地网络与他人实时协作编辑知识库"
-          }
-        }
-      }
-    },
-    "collab.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Collaboration"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "协作中心"
           }
         }
       }
@@ -1208,23 +1140,6 @@
         }
       }
     },
-    "plugin.perm.network": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Network"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "网络访问"
-          }
-        }
-      }
-    },
     "plugin.perm.none": {
       "extractionState": "manual",
       "localizations": {
@@ -1391,23 +1306,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "所需权限"
-          }
-        }
-      }
-    },
-    "plugin.section.ribbon": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Quick Actions"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "快捷功能区"
           }
         }
       }
@@ -2377,23 +2275,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "此插件请求权限：%@"
-          }
-        }
-      }
-    },
-    "plugin.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Plugin Center"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "插件中心"
           }
         }
       }

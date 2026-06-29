@@ -28,10 +28,10 @@ extension L10n {
         public enum InsightSection {
             public enum Daily {
                 public static var noUpdate: String { Insight.tr("insight.daily.noUpdate") }
-                public static var systemPrompt: String { Insight.tr("insight.daily.systemPrompt") }
+                public static var systemPrompt: String { Insight.tr("dashboard.insight.daily.systemPrompt") }
             }
             public enum Weekly {
-                public static var systemPrompt: String { Insight.tr("insight.weekly.systemPrompt") }
+                public static var systemPrompt: String { Insight.tr("dashboard.insight.weekly.systemPrompt") }
             }
         }
 
@@ -53,7 +53,7 @@ extension L10n {
 
         public enum Report {
             public static var title: String { Insight.tr("report.title") }
-            public static var appName: String { Insight.tr("report.appName") }
+            public static var appName: String { L10n.Common.tr("app.name") }
             public static var footer: String { Insight.tr("report.footer") }
 
             /// node计数

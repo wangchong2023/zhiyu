@@ -42,7 +42,7 @@ extension L10n {
         /// - Returns: 本地化格式化文案
         public static func contextLimitWarning(_ limit: Int) -> String { Localized.trf("chat.contextLimitWarning", table: t, limit) }
 
-        public static var title: String { tr("chat.title") }
+        public static var title: String { L10n.Common.tr("tab.chat") }
         public static var welcomeDesc: String { tr("chat.welcomeDesc") }
 
         public struct group {
@@ -52,7 +52,7 @@ extension L10n {
         }
 
         public static var aiAssistantName: String { tr("chat.aiAssistantName") }
-        public static var referencesExpanded: String { tr("chat.referencesExpanded") }
+        public static var referencesExpanded: String { tr("chat.referencesCollapsed") }
         public static var referencesCollapsed: String { tr("chat.referencesCollapsed") }
         public static var clearHistoryConfirmTitle: String { tr("chat.clearHistory.confirm.title") }
         public static var clearHistoryConfirmMessage: String { tr("chat.clearHistory.confirm.message") }
@@ -72,7 +72,7 @@ extension L10n {
         public static func deepExplorePrompt(_ topic: String) -> String { Localized.trf("chat.deepExplorePrompt", table: t, topic) }
 
         public struct ai {
-            public static var thinking: String { Chat.tr("chat.ai.thinking") }
+            public static var thinking: String { L10n.Common.tr("aiThinking") }
         }
 
         /// AI 增强型骨架屏状态本地化定义

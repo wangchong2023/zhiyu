@@ -26,9 +26,9 @@ extension L10n {
         public static var conceptTemplate: String { tr("template.concept") }
         public static var comparisonTemplate: String { tr("template.comparison") }
         public static var customIcon: String { tr("customIcon") }
-        public static var newPage: String { tr("newPage") }
+        public static var newPage: String { L10n.Common.tr("action.cmd.newKnowledgePage") }
         public static var basicInfo: String { tr("basicInfo") }
-        public static var pageTitle: String { tr("pageTitle") }
+        public static var pageTitle: String { L10n.Common.tr("pageTitle") }
         public static var pageType: String { tr("pageType") }
 
         public static var title: String { tr("create.title") }
@@ -63,7 +63,7 @@ extension L10n {
             }
             public struct comparison {
                 public static var desc: String { Creation.tr("creation.template.comparison.desc") }
-                public static var suffix: String { Creation.tr("create.template.comparison.suffix") }
+                public static var suffix: String { L10n.Common.tr("type.comparison") }
                 public static var dimensions: String { Creation.tr("create.template.comparison.dimensions") }
                 public static var dimensionsPlaceholder: String { Creation.tr("create.template.comparison.dimensionsPlaceholder") }
                 public static var conclusion: String { Creation.tr("create.template.comparison.conclusion") }

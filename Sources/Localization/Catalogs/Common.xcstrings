@@ -1055,23 +1055,6 @@
         }
       }
     },
-    "demo.welcome.tag2": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ZhiYu"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "智宇"
-          }
-        }
-      }
-    },
     "demo.welcome.tag3": {
       "extractionState": "manual",
       "localizations": {
@@ -1956,23 +1939,6 @@
         }
       }
     },
-    "misc.create": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Create"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "创建"
-          }
-        }
-      }
-    },
     "misc.delete": {
       "extractionState": "manual",
       "localizations": {
@@ -2330,23 +2296,6 @@
         }
       }
     },
-    "perf.search": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Search"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "搜索"
-          }
-        }
-      }
-    },
     "perf.summary.edges": {
       "extractionState": "manual",
       "localizations": {
@@ -2381,57 +2330,6 @@
         }
       }
     },
-    "perf.summary.graphLayout": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Graph Layout"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "图谱布局"
-          }
-        }
-      }
-    },
-    "perf.summary.load": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Load"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "加载"
-          }
-        }
-      }
-    },
-    "perf.summary.memory": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Memory"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "内存"
-          }
-        }
-      }
-    },
     "perf.summary.nodes": {
       "extractionState": "manual",
       "localizations": {
@@ -2449,23 +2347,6 @@
         }
       }
     },
-    "perf.summary.pages": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pages"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "页面"
-          }
-        }
-      }
-    },
     "perf.summary.save": {
       "extractionState": "manual",
       "localizations": {
@@ -2479,23 +2360,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "保存"
-          }
-        }
-      }
-    },
-    "perf.summary.search": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Search"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "搜索"
           }
         }
       }
@@ -2891,23 +2755,6 @@
         }
       }
     },
-    "search": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Search"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "搜索"
-          }
-        }
-      }
-    },
     "search.all": {
       "extractionState": "manual",
       "localizations": {
@@ -3231,23 +3078,6 @@
         }
       }
     },
-    "search.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Search"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "搜索"
-          }
-        }
-      }
-    },
     "searchPlaceholder": {
       "extractionState": "manual",
       "localizations": {
@@ -3435,23 +3265,6 @@
         }
       }
     },
-    "sidebar.capabilities": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Common"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "常用"
-          }
-        }
-      }
-    },
     "sidebar.collaboration": {
       "extractionState": "manual",
       "localizations": {
@@ -3520,23 +3333,6 @@
         }
       }
     },
-    "sidebar.pageList": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "All Pages"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "所有页面"
-          }
-        }
-      }
-    },
     "sidebar.plugins": {
       "extractionState": "manual",
       "localizations": {
@@ -3584,40 +3380,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "系统"
-          }
-        }
-      }
-    },
-    "sidebar.tagManager": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tags"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "标签管理"
-          }
-        }
-      }
-    },
-    "sidebar.tags": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tags"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "标签"
           }
         }
       }
@@ -3962,23 +3724,6 @@
         }
       }
     },
-    "splash.appName": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ZhiYu"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "智宇"
-          }
-        }
-      }
-    },
     "splash.author": {
       "extractionState": "manual",
       "localizations": {
@@ -4026,40 +3771,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "探索真正的 AI 原生知识管理魔法"
-          }
-        }
-      }
-    },
-    "splash.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ZhiYu"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "智宇"
-          }
-        }
-      }
-    },
-    "stat.totalWords": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Words"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "总字数"
           }
         }
       }
@@ -4251,57 +3962,6 @@
         }
       }
     },
-    "tab.graph": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Graph"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "图谱"
-          }
-        }
-      }
-    },
-    "tab.ingest": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sources"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "来源"
-          }
-        }
-      }
-    },
-    "tab.knowledge": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ZhiYu"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "知识库"
-          }
-        }
-      }
-    },
     "tab.pdf": {
       "extractionState": "manual",
       "localizations": {
@@ -4315,23 +3975,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "PDF"
-          }
-        }
-      }
-    },
-    "tab.search": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Search"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "搜索"
           }
         }
       }
@@ -4353,23 +3996,6 @@
         }
       }
     },
-    "tab.synthesis": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Synthesis"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "合成"
-          }
-        }
-      }
-    },
     "tab.voice": {
       "extractionState": "manual",
       "localizations": {
@@ -4383,23 +4009,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "语音"
-          }
-        }
-      }
-    },
-    "title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tags"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "标签管理"
           }
         }
       }
@@ -4659,23 +4268,6 @@
         }
       }
     },
-    "tags.memory": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Memory"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "记忆管理"
-          }
-        }
-      }
-    },
     "demo.topology.content": {
       "extractionState": "manual",
       "localizations": {
@@ -4914,23 +4506,6 @@
         }
       }
     },
-    "tags.tools": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tools"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "工具箱"
-          }
-        }
-      }
-    },
     "tags.agent": {
       "extractionState": "manual",
       "localizations": {
@@ -4995,23 +4570,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "可扩展插件系统，允许 AI 模型通过安全接口与外部工具和服务交互。"
-          }
-        }
-      }
-    },
-    "tags.toolUse": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tool Use"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "工具调用"
           }
         }
       }
@@ -5237,23 +4795,6 @@
         }
       }
     },
-    "tags.planning": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Planning"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "规划"
-          }
-        }
-      }
-    },
     "tags.rag": {
       "extractionState": "manual",
       "localizations": {
@@ -5318,23 +4859,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "数据可视化"
-          }
-        }
-      }
-    },
-    "tags.security": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Security"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "安全隐私"
           }
         }
       }
@@ -6410,23 +5934,6 @@
         }
       }
     },
-    "tags.growth": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Growth"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "增长"
-          }
-        }
-      }
-    },
     "tags.rd": {
       "extractionState": "manual",
       "localizations": {
@@ -6661,23 +6168,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "口头沟通会议记录整理：首批烘焙豆需确保埃塞割亚与哥伦比亚产区配比，以及包材的环保标准认证。"
-          }
-        }
-      }
-    },
-    "demo.snippet.workflow": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Knowledge management workflows: capture, chunk, retrieve, synthesize. Integrate daily tools into a unified knowledge loop."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "知识管理工作流：捕获、分块、检索、合成。将日常工具集成到统一的知识闭环中。"
           }
         }
       }

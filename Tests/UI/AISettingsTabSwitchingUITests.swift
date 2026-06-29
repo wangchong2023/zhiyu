@@ -56,7 +56,7 @@ final class AISettingsTabSwitchingUITests: XCTestCase {
         // 4. 通过 segmented control 定位 Picker
         let segmentedControl = app.segmentedControls.firstMatch
         XCTAssertTrue(segmentedControl.waitForExistence(timeout: 3), "AISettingsView 顶部的分段选择器应当存在")
-        XCTAssertEqual(segmentedControl.buttons.count, 4, "分段选择器应当有 4 个 tab")
+        XCTAssertEqual(segmentedControl.buttons.count, 3, "分段选择器应当有 3 个 tab")
 
         // 5. 点击 "在线大模型" segment (索引 1)
         let tab2 = segmentedControl.buttons.element(boundBy: 1)
@@ -91,18 +91,6 @@ final class AISettingsTabSwitchingUITests: XCTestCase {
         ).firstMatch
         XCTAssertTrue(localText.waitForExistence(timeout: 3),
                       "点击'本地大模型' tab 后应显示相关配置内容（模型市场/测试实验室）")
-
-        // 7. 点击 "提示词设置" tab
-        let tab4 = segmentedControl.buttons.element(boundBy: 3)
-        XCTAssertTrue(tab4.isHittable, "tab '提示词设置' 应当可点击")
-        tab4.tap()
-        try? await Task.sleep(nanoseconds: 1_000_000_000)
-
-        let promptText = app.staticTexts.containing(
-            NSPredicate(format: "label CONTAINS '提示' OR label CONTAINS 'Prompt'")
-        ).firstMatch
-        XCTAssertTrue(promptText.waitForExistence(timeout: 3),
-                      "点击'提示词设置' tab 后应显示相关配置内容")
 
         // 8. 点击 "大模型策略" tab 回到第一项
         let tab1 = segmentedControl.buttons.element(boundBy: 0)

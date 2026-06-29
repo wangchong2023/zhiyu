@@ -505,24 +505,6 @@
         }
       }
     },
-    "auth.feature.plugins": {
-      "comment": "插件数量",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Plugins"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "插件数量"
-          }
-        }
-      }
-    },
     "auth.feature.pluginsLiteValue": {
       "comment": "3 个",
       "extractionState": "manual",
@@ -891,23 +873,6 @@
         }
       }
     },
-    "auth.statsPages": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pages"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "页面数量"
-          }
-        }
-      }
-    },
     "auth.statsSynthesis": {
       "extractionState": "manual",
       "localizations": {
@@ -1044,60 +1009,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "正在处理支付..."
-          }
-        }
-      }
-    },
-    "auth.quota.pagesUsage": {
-      "comment": "知识页",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pages"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "知识页"
-          }
-        }
-      }
-    },
-    "auth.quota.pluginsUsage": {
-      "comment": "插件",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Plugins"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "插件"
-          }
-        }
-      }
-    },
-    "auth.quota.vaultUsage": {
-      "comment": "金库",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Vaults"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "金库"
           }
         }
       }
@@ -2196,23 +2107,6 @@
         }
       }
     },
-    "language.system": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "System"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "跟随系统"
-          }
-        }
-      }
-    },
     "lastCheckNever": {
       "extractionState": "manual",
       "localizations": {
@@ -2740,23 +2634,6 @@
         }
       }
     },
-    "onboarding.path.importData": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Import"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "导入数据"
-          }
-        }
-      }
-    },
     "onboarding.path.importDataDesc": {
       "extractionState": "manual",
       "localizations": {
@@ -2804,23 +2681,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "一键重建知识管理与项目调研初始笔记本，立即感受完整功能"
-          }
-        }
-      }
-    },
-    "onboarding.path.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Get Started"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "开始使用"
           }
         }
       }
@@ -2923,23 +2783,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "开启您的智慧之旅"
-          }
-        }
-      }
-    },
-    "ondevice.errorFormat": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Connection Failed: %@"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "连接失败: %@"
           }
         }
       }
@@ -3097,7 +2940,6 @@
         }
       }
     },
-
     "runAIScan": {
       "extractionState": "manual",
       "localizations": {
@@ -3281,23 +3123,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "插件与拓展"
-          }
-        }
-      }
-    },
-    "section.security": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Security"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "安全与隐私"
           }
         }
       }
@@ -3659,23 +3484,6 @@
         }
       }
     },
-    "settings.clearAll.confirmTitle": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Clear All Data"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "清空所有数据"
-          }
-        }
-      }
-    },
     "settings.clearAll.message": {
       "extractionState": "manual",
       "localizations": {
@@ -3744,23 +3552,6 @@
         }
       }
     },
-    "settings.developer.section.onboarding": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Guide"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "引导"
-          }
-        }
-      }
-    },
     "settings.developer.section.operationInfo": {
       "extractionState": "manual",
       "localizations": {
@@ -3791,40 +3582,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "性能测试"
-          }
-        }
-      }
-    },
-    "settings.developer.section.tabData": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Data"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "数据维护"
-          }
-        }
-      }
-    },
-    "settings.developer.section.tabQuality": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Quality"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "质量评估"
           }
         }
       }
@@ -3961,23 +3718,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "%d 个节点"
-          }
-        }
-      }
-    },
-    "settings.developer.stressTest.run": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Run Stress Test"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "运行压力测试"
           }
         }
       }
@@ -4199,23 +3939,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "macOS"
-          }
-        }
-      }
-    },
-    "settings.feedback.osVersionLabel": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "System"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "系统"
           }
         }
       }
@@ -4543,23 +4266,6 @@
         }
       }
     },
-    "settings.rebuildInitialNotebooks": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Rebuild Initial Notebooks"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "恢复初始数据"
-          }
-        }
-      }
-    },
     "settings.localModelManager": {
       "extractionState": "manual",
       "localizations": {
@@ -4730,23 +4436,6 @@
         }
       }
     },
-    "settings.onDeviceLLM": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Local Model"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "本地大模型"
-          }
-        }
-      }
-    },
     "settings.operationLog": {
       "extractionState": "manual",
       "localizations": {
@@ -4811,40 +4500,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "确定要重新开始新手引导吗？"
-          }
-        }
-      }
-    },
-    "settings.resetOnboarding.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reset Onboarding"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "重置引导"
-          }
-        }
-      }
-    },
-    "settings.section.system": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "System Settings"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "系统设置"
           }
         }
       }
@@ -4947,23 +4602,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "浅色模式"
-          }
-        }
-      }
-    },
-    "settings.theme.system": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "System"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "跟随系统"
           }
         }
       }
@@ -5423,23 +5061,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "%d 个优化建议"
-          }
-        }
-      }
-    },
-    "version": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Version"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "版本"
           }
         }
       }

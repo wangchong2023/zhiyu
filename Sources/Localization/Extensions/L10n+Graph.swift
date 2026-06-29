@@ -53,7 +53,7 @@ extension L10n {
         public static var copyPageLink: String { Localized.tr("graph.copyPageLink", table: t) }
         public static var openInNewWindow: String { Localized.tr("graph.openInNewWindow", table: t) }
 
-        public static var insightSurprising: String { Localized.tr("graph.insightSurprising", table: t) }
+        public static var insightSurprising: String { Localized.tr("graph.guide.surprisingTitle", table: t) }
         public static var insightSurprisingDesc: String { Localized.tr("graph.insightSurprisingDesc", table: t) }
         public static var title: String { Localized.tr("graph.title", table: t) }
 
@@ -62,11 +62,11 @@ extension L10n {
         /// - Parameter args: args
         /// - Returns: 返回值
         public static func trf(_ key: String, _ args: CVarArg...) -> String { Localized.trf("graph." + key, table: t, args) }
-        public static var insightOrphans: String { Localized.tr("graph.insightOrphans", table: t) }
+        public static var insightOrphans: String { Localized.tr("graph.guide.orphanTitle", table: t) }
         public static var insightOrphansDesc: String { Localized.tr("graph.insightOrphansDesc", table: t) }
-        public static var insightSparse: String { Localized.tr("graph.insightSparse", table: t) }
+        public static var insightSparse: String { Localized.tr("graph.guide.sparseTitle", table: t) }
         public static var insightSparseDesc: String { Localized.tr("graph.insightSparseDesc", table: t) }
-        public static var insightBridges: String { Localized.tr("graph.insightBridges", table: t) }
+        public static var insightBridges: String { Localized.tr("graph.guide.bridgeTitle", table: t) }
         public static var insightBridgesDesc: String { Localized.tr("graph.insightBridgesDesc", table: t) }
         public static var nodesLimitDegradeHint: String { Localized.tr("graph.nodesLimitDegradeHint", table: t) }
 
@@ -127,7 +127,7 @@ extension L10n {
             public static func tr(_ key: String) -> String {
                 Localized.tr("graph3d." + key, table: t)
             }
-            public static var title: String { Localized.tr("graph3d.title", table: t) }
+            public static var title: String { Localized.tr("graph3d.", table: t) }
         }
 
         public struct guide {

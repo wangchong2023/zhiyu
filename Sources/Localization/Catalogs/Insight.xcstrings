@@ -341,23 +341,6 @@
         }
       }
     },
-    "dashboard.insight.weeklyTitle": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Weekly Insight"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "知识周报"
-          }
-        }
-      }
-    },
     "dashboard.insights.empty": {
       "extractionState": "manual",
       "localizations": {
@@ -511,40 +494,6 @@
         }
       }
     },
-    "dashboard.pageList.overview": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Overview"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "概览"
-          }
-        }
-      }
-    },
-    "dashboard.pageList.pages": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pages"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "页面"
-          }
-        }
-      }
-    },
     "dashboard.pageList.sourceCount": {
       "extractionState": "manual",
       "localizations": {
@@ -558,40 +507,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "%d 个来源"
-          }
-        }
-      }
-    },
-    "dashboard.pageList.sources": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sources"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "来源"
-          }
-        }
-      }
-    },
-    "dashboard.pageList.tags": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tags"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "标签分类"
           }
         }
       }
@@ -1072,23 +987,6 @@
         }
       }
     },
-    "dashboard.stats.tabStorage": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Storage"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "存储"
-          }
-        }
-      }
-    },
     "dashboard.stats.tokensUsage": {
       "extractionState": "manual",
       "localizations": {
@@ -1327,23 +1225,6 @@
         }
       }
     },
-    "graph.insightBridges": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cross-domain Hub"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "跨领域笔记枢纽"
-          }
-        }
-      }
-    },
     "graph.insightBridgesDesc": {
       "extractionState": "manual",
       "localizations": {
@@ -1357,23 +1238,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "连接不同知识领域的枢纽节点。"
-          }
-        }
-      }
-    },
-    "graph.insightOrphans": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Unlinked Notes"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "未关联笔记"
           }
         }
       }
@@ -1395,23 +1259,6 @@
         }
       }
     },
-    "graph.insightSparse": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Isolated Concepts"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "孤立主题"
-          }
-        }
-      }
-    },
     "graph.insightSparseDesc": {
       "extractionState": "manual",
       "localizations": {
@@ -1425,23 +1272,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "连接较弱的主题区域，建议补充内容。"
-          }
-        }
-      }
-    },
-    "graph.insightSurprising": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cross-domain Connection"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "跨领域关联"
           }
         }
       }
@@ -1633,23 +1463,6 @@
         }
       }
     },
-    "insight.daily.systemPrompt": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "You are a caring knowledge review companion, helping users discover connections between knowledge in a warm and natural tone."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "你是一个贴心的知识复习伙伴，用温暖自然的口吻帮助用户发现知识间的联系。"
-          }
-        }
-      }
-    },
     "insight.weekly.prompt": {
       "extractionState": "manual",
       "localizations": {
@@ -1663,23 +1476,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "# Role: 资深知识架构师\n# Context: 用户添加了节点：[%@]。\n# Task: 生成周度报告，包含认知锚点、关联密度等。要求 250 字以内。"
-          }
-        }
-      }
-    },
-    "insight.weekly.systemPrompt": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "You are a senior knowledge architect, skilled at summarizing knowledge systems."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "你是一个资深知识架构师，擅长总结知识体系。"
           }
         }
       }
@@ -2058,23 +1854,6 @@
         }
       }
     },
-    "report.appName": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ZhiYu"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "智宇 (ZhiYu)"
-          }
-        }
-      }
-    },
     "report.footer": {
       "extractionState": "manual",
       "localizations": {
@@ -2211,23 +1990,6 @@
         }
       }
     },
-    "stats.short.concept": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Concept"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "概念"
-          }
-        }
-      }
-    },
     "stats.short.entity": {
       "extractionState": "manual",
       "localizations": {
@@ -2262,23 +2024,6 @@
         }
       }
     },
-    "stats.short.pages": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pages"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "条目"
-          }
-        }
-      }
-    },
     "stats.short.ref": {
       "extractionState": "manual",
       "localizations": {
@@ -2292,40 +2037,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "引用"
-          }
-        }
-      }
-    },
-    "stats.short.source": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Source"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "信源"
-          }
-        }
-      }
-    },
-    "tokens": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Token"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Token 消耗"
           }
         }
       }
@@ -2738,108 +2449,6 @@
         }
       }
     },
-    "title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tags"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "标签管理"
-          }
-        }
-      }
-    },
-    "pageList.rawCount": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%d raws"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%d 个原始"
-          }
-        }
-      }
-    },
-    "pageList.comparisonCount": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%d comparisons"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%d 个比较"
-          }
-        }
-      }
-    },
-    "graph3d.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "3D Graph"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "3D 图谱"
-          }
-        }
-      }
-    },
-    "pageList.conceptCount": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%d concepts"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%d 个概念"
-          }
-        }
-      }
-    },
-    "graph.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Graph"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "图谱"
-          }
-        }
-      }
-    },
     "stats.precision": {
       "extractionState": "manual",
       "localizations": {
@@ -2857,23 +2466,6 @@
         }
       }
     },
-    "pageList.wordCount": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%d words"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%d 字"
-          }
-        }
-      }
-    },
     "graph3d.": {
       "extractionState": "manual",
       "localizations": {
@@ -2887,40 +2479,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "3D 图谱"
-          }
-        }
-      }
-    },
-    "pageList.entityCount": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%d entities"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%d 个实体"
-          }
-        }
-      }
-    },
-    "pageList.sourceCount": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%d sources"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%d 个来源"
           }
         }
       }
@@ -2955,23 +2513,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "质量评估"
-          }
-        }
-      }
-    },
-    "dashboard.stats.overview": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Overview"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "综合评分"
           }
         }
       }
@@ -3465,23 +3006,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "满意度与评估"
-          }
-        }
-      }
-    },
-    "dashboard.stats.tab.plugins": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Plugins"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "插件"
           }
         }
       }
@@ -4013,23 +3537,6 @@
         }
       }
     },
-    "dashboard.stats.rankingQuality": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ranking Quality"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "排序质量"
-          }
-        }
-      }
-    },
     "dashboard.stats.coverage": {
       "extractionState": "manual",
       "localizations": {
@@ -4077,23 +3584,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "响应延迟"
-          }
-        }
-      }
-    },
-    "dashboard.stats.tab.retrieval": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Retrieval"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "检索阶段"
           }
         }
       }

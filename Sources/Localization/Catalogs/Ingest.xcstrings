@@ -290,23 +290,6 @@
         }
       }
     },
-    "backup.restoreTitle": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Restore Backup"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "恢复备份"
-          }
-        }
-      }
-    },
     "backup.settings": {
       "extractionState": "manual",
       "localizations": {
@@ -337,23 +320,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "数据备份"
-          }
-        }
-      }
-    },
-    "backup.words": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "words"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "字"
           }
         }
       }
@@ -427,23 +393,6 @@
       }
     },
     "icloud.clear": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Clear iCloud Data"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "清除 iCloud 数据"
-          }
-        }
-      }
-    },
-    "icloud.clearCloudData": {
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -851,23 +800,6 @@
         }
       }
     },
-    "icloud.notAvailable": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "iCloud unavailable. Please sign in to your iCloud account."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "iCloud 不可用，请确认已登录 iCloud 账户"
-          }
-        }
-      }
-    },
     "icloud.pull": {
       "extractionState": "manual",
       "localizations": {
@@ -898,23 +830,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "iCloud 拉取完成"
-          }
-        }
-      }
-    },
-    "icloud.pullFromCloud": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Download from iCloud"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "从 iCloud 下载"
           }
         }
       }
@@ -1157,23 +1072,6 @@
         }
       }
     },
-    "icloud.syncError": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sync Error"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "同步错误"
-          }
-        }
-      }
-    },
     "icloud.syncSettings": {
       "extractionState": "manual",
       "localizations": {
@@ -1255,23 +1153,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "%d 个任务正在进行"
-          }
-        }
-      }
-    },
-    "ingest.clipboardImport": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Clipboard Import"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "剪贴板导入"
           }
         }
       }
@@ -1412,23 +1293,6 @@
         }
       }
     },
-    "ingest.field.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Title"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "标题"
-          }
-        }
-      }
-    },
     "ingest.field.titlePlaceholder": {
       "extractionState": "manual",
       "localizations": {
@@ -1442,23 +1306,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "输入页面标题..."
-          }
-        }
-      }
-    },
-    "ingest.fileImport": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "File Import"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "文件导入"
           }
         }
       }
@@ -1531,7 +1378,6 @@
         }
       }
     },
-
     "ingest.importFailed": {
       "extractionState": "manual",
       "localizations": {
@@ -1583,7 +1429,6 @@
         }
       }
     },
-
     "ingest.manualEntry": {
       "extractionState": "manual",
       "localizations": {
@@ -1720,23 +1565,6 @@
         }
       }
     },
-    "ingest.ocrScan": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "OCR Scan"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "OCR 扫描"
-          }
-        }
-      }
-    },
     "ingest.preview.truncated": {
       "extractionState": "manual",
       "localizations": {
@@ -1801,23 +1629,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "智能预览"
-          }
-        }
-      }
-    },
-    "ingest.previewConfirm": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Confirm"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "确认应用"
           }
         }
       }
@@ -2077,23 +1888,6 @@
         }
       }
     },
-    "ingest.voiceNote": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Voice Note"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "语音笔记"
-          }
-        }
-      }
-    },
     "ingest.importRecords": {
       "extractionState": "manual",
       "localizations": {
@@ -2226,24 +2020,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "确认并编辑"
-          }
-        }
-      }
-    },
-
-    "ocr.customIcon": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Custom"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "自定义"
           }
         }
       }
@@ -2452,23 +2228,6 @@
         }
       }
     },
-    "ocr.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "OCR Scan"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "OCR 扫描"
-          }
-        }
-      }
-    },
     "pdf.add": {
       "extractionState": "manual",
       "localizations": {
@@ -2673,23 +2432,6 @@
         }
       }
     },
-    "pdf.ingest": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ingest"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "导入"
-          }
-        }
-      }
-    },
     "pdf.ingestModeFormat": {
       "extractionState": "manual",
       "localizations": {
@@ -2703,23 +2445,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "导入模式：%@"
-          }
-        }
-      }
-    },
-    "pdf.ingestToKnowledge": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ingest to Knowledge"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "导入到知识库"
           }
         }
       }
@@ -2843,23 +2568,6 @@
         }
       }
     },
-    "pdf.pageCountFormat": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%d pages"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%d 页"
-          }
-        }
-      }
-    },
     "pdf.pageNumber": {
       "extractionState": "manual",
       "localizations": {
@@ -2907,23 +2615,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "\\n\\n--- 第 %@ 页 ---\\n\\n"
-          }
-        }
-      }
-    },
-    "pdf.pageType": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Page Type"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "页面类型"
           }
         }
       }
@@ -3026,23 +2717,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "图标"
-          }
-        }
-      }
-    },
-    "schema.field.type": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Type"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "类型"
           }
         }
       }
@@ -3655,23 +3329,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "内部错误"
-          }
-        }
-      }
-    },
-    "pageTitle": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Page Title"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "页面标题"
           }
         }
       }

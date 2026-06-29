@@ -25,12 +25,12 @@ extension L10n {
         public static var featureList: String { tr("onboarding.featureList") }
         public static var featureTitle: String { tr("onboarding.featureTitle") }
 
-        public static var pathTitle: String { tr("onboarding.path.title") }
+        public static var pathTitle: String { tr("onboarding.action.start") }
 
         public enum Path {
             public static var quickStart: String { Onboarding.tr("onboarding.path.quickStart") }
             public static var quickStartDesc: String { Onboarding.tr("onboarding.path.quickStartDesc") }
-            public static var importData: String { Onboarding.tr("onboarding.path.importData") }
+            public static var importData: String { L10n.Common.tr("misc.import") }
             public static var importDataDesc: String { Onboarding.tr("onboarding.path.importDataDesc") }
             public static var explore: String { Onboarding.tr("onboarding.path.explore") }
             public static var exploreDesc: String { Onboarding.tr("onboarding.path.exploreDesc") }

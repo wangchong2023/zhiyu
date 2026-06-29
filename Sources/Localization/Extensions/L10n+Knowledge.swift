@@ -22,7 +22,7 @@ extension L10n {
         /// - Parameter args: args
         /// - Returns: 返回值
         public enum Page {
-            public static var title: String { Common.tr("pageTitle") }
+            public static var title: String { L10n.Common.tr("pageTitle") }
             public static var edit: String { Knowledge.tr("page.edit") }
             public static var doneEditing: String { Knowledge.tr("page.doneEditing") }
             public static var deletePage: String { Knowledge.tr("page.deletePage") }
@@ -32,7 +32,7 @@ extension L10n {
             public static func batchDeleteTitle(_ count: Int) -> String { Knowledge.trf("page.batchDeleteTitle", count) }
             public static func batchDeleteMessage(_ count: Int) -> String { Knowledge.trf("page.batchDeleteMessage", count) }
             public static var icon: String { Knowledge.tr("page.icon") }
-            public static var knowledge: String { Knowledge.tr("page.knowledge") }
+            public static var knowledge: String { L10n.Common.tr("app.name") }
             public static var empty: String { Knowledge.tr("page.empty") }
             public static var emptyHint: String { Knowledge.tr("page.emptyHint") }
             public static var content: String { Knowledge.tr("page.content") }
@@ -42,12 +42,12 @@ extension L10n {
             public static var findLinks: String { Knowledge.tr("page.findLinks") }
             public static var pin: String { Knowledge.tr("page.pin") }
             public static var unpin: String { Knowledge.tr("page.unpin") }
-            public static var wordCountUnit: String { Knowledge.tr("page.wordCountUnit") }
+            public static var wordCountUnit: String { L10n.Common.tr("perf.summary.words") }
             public static var outLinkUnit: String { Knowledge.tr("page.outLinkUnit") }
             public static var noBackLinks: String { Knowledge.tr("page.noBackLinks") }
-            public static var sourceCitation: String { Knowledge.tr("page.sourceCitation") }
+            public static var sourceCitation: String { L10n.Common.tr("type.source") }
             public static var sourceOpenLink: String { Knowledge.tr("page.sourceOpenLink") }
-            public static var sourceTypeFile: String { Knowledge.tr("page.sourceTypeFile") }
+            public static var sourceTypeFile: String { L10n.Common.tr("search.sort.type") }
             public static var doubleTapToNavigate: String { Knowledge.tr("page.doubleTapToNavigate") }
             public static var backlinks: String { Knowledge.tr("page.backlinks") }
             /// 引用外部
@@ -121,7 +121,7 @@ extension L10n {
             public static var aiInsights: AIInsightsVal { AIInsightsVal(title: Knowledge.tr("page.aiInsights")) }
 
             public enum Source {
-                public static var title: String { Knowledge.tr("page.source.title") }
+                public static var title: String { L10n.Common.tr("type.source") }
                 public static var open: String { Knowledge.tr("page.source.open") }
                 public static var content: String { Knowledge.tr("page.source.content") }
                 public static var empty: String { Knowledge.tr("page.source.empty") }

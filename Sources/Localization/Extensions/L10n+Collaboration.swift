@@ -17,10 +17,10 @@ extension L10n {
         /// 本地化翻译
         /// - Parameter key: key
         /// - Returns: 返回值
-        public static var title: String { tr("collab.title") }
+        public static var title: String { L10n.Common.tr("sidebar.collaboration") }
         public static var subtitle: String { tr("collab.subtitle") }
         public static var defaultRoom: String { tr("collab.defaultRoom") }
-        public static var room: String { tr("collab.room") }
+        public static var room: String { tr("collab.defaultRoom") }
         public static var roomName: String { tr("collab.roomName") }
         public static var roomNamePlaceholder: String { tr("collab.roomNamePlaceholder") }
         public static var username: String { tr("collab.username") }

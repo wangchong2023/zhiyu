@@ -15,11 +15,11 @@ import Foundation
 /// Widget 专用本地化命名空间，API 与 L10n.Widget 保持一致。
 enum WidgetL10n {
     static var vaultName: String { String(localized: "widget.vaultName", table: "Platform") }
-    static var create: String { String(localized: "widget.create", table: "Platform") }
-    static var links: String { String(localized: "widget.links", table: "Platform") }
-    static var tags: String { String(localized: "widget.tags", table: "Platform") }
+    static var create: String { String(localized: "logAction.create", table: "Common") }
+    static var links: String { String(localized: "accessibility.links", table: "Common") }
+    static var tags: String { String(localized: "accessibility.tags", table: "Common") }
     static var aiChat: String { String(localized: "widget.aiChat", table: "Platform") }
-    static var search: String { String(localized: "widget.search", table: "Platform") }
+    static var search: String { String(localized: "components.search", table: "Common") }
     static var ai: String { String(localized: "widget.ai", table: "Platform") }
     static var title: String { String(localized: "widget.title", table: "Platform") }
     static var recentUpdates: String { String(localized: "widget.recentUpdates", table: "Platform") }

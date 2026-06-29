@@ -103,74 +103,6 @@
         }
       }
     },
-    "watch.widget.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Quick Capture"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "快速记录"
-          }
-        }
-      }
-    },
-    "watch.pages": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pages"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "页面"
-          }
-        }
-      }
-    },
-    "watch.words": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Words"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "字数"
-          }
-        }
-      }
-    },
-    "watch.recentUpdates": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Recent Updates"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "最近更新"
-          }
-        }
-      }
-    },
     "watch.tenThousand": {
       "extractionState": "manual",
       "localizations": {
@@ -184,23 +116,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "万"
-          }
-        }
-      }
-    },
-    "widget.active": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Active"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "活跃"
           }
         }
       }
@@ -239,57 +154,6 @@
         }
       }
     },
-    "widget.pages": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pages"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "页面"
-          }
-        }
-      }
-    },
-    "widget.recentUpdates": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Recent Updates"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "最近更新"
-          }
-        }
-      }
-    },
-    "widget.stub": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Stub"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "占位"
-          }
-        }
-      }
-    },
     "widget.title": {
       "extractionState": "manual",
       "localizations": {
@@ -303,23 +167,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "知识库"
-          }
-        }
-      }
-    },
-    "widget.words": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Words"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "字"
           }
         }
       }
@@ -494,74 +341,6 @@
         }
       }
     },
-    "widget.aiChat": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "AI Chat"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "AI 对话"
-          }
-        }
-      }
-    },
-    "widget.search": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Search"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "搜索"
-          }
-        }
-      }
-    },
-    "widget.links": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Links"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "链接"
-          }
-        }
-      }
-    },
-    "widget.tags": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tags"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "标签"
-          }
-        }
-      }
-    },
     "widget.vaultName": {
       "extractionState": "manual",
       "localizations": {
@@ -609,23 +388,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Briefing generation failed, please retry"
-          }
-        }
-      }
-    },
-    "widget.create": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Create"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "创建"
           }
         }
       }

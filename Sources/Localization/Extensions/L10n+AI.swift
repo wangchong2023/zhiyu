@@ -25,7 +25,7 @@ extension L10n {
             public static var scanning: String { AI.tr("ai.status.scanning") }
             public static var structuring: String { AI.tr("ai.status.structuring") }
             public static var synthesizing: String { AI.tr("ai.status.synthesizing") }
-            public static var thinking: String { AI.tr("ai.status.thinking") }
+            public static var thinking: String { AI.tr("ai.status.skeleton.thinking") }
             public static var visualizing: String { AI.tr("ai.status.visualizing") }
 
             /// indexing
@@ -43,7 +43,7 @@ extension L10n {
             public static var apiAddress: String { AI.tr("llm.apiAddress") }
             public static var apiKey: String { AI.tr("llm.apiKey") }
             public static var model: String { AI.tr("llm.model") }
-            public static var status: String { AI.tr("llm.status") }
+            public static var status: String { AI.tr("llm.prompt.statusLabel") }
             public static var serviceStatus: String { AI.tr("llm.serviceStatus") }
             public static var providerConfig: String { AI.tr("llm.providerConfig") }
             public static var testConnection: String { AI.tr("llm.testConnection") }
@@ -68,7 +68,7 @@ extension L10n {
                 public static var title: String { AI.tr("llm.provider") }
                 public static var openai: String { AI.tr("llm.provider.openai") }
                 public static var anthropic: String { AI.tr("llm.provider.anthropic") }
-                public static var deepseek: String { AI.tr("llm.provider.deepseek") }
+                public static var deepseek: String { AI.tr("llm.provider.deepSeek") }
                 public static var ollama: String { AI.tr("llm.provider.ollama") }
                 public static var qwen: String { AI.tr("llm.provider.qwen") }
                 public static var zhipu: String { AI.tr("llm.provider.zhipu") }
@@ -116,10 +116,10 @@ extension L10n {
                 public static var sourceList: String { AI.tr("llm.prompt.sourceList") }
                 public static var recentUpdates: String { AI.tr("llm.prompt.recentUpdates") }
                 public static var relevantPages: String { AI.tr("llm.prompt.relevantPages") }
-                public static var typeLabel: String { AI.tr("llm.prompt.typeLabel") }
+                public static var typeLabel: String { L10n.Common.tr("search.sort.type") }
                 public static var relevanceScore: String { AI.tr("llm.prompt.relevanceScore") }
                 public static var chunkType: String { AI.tr("llm.prompt.chunkType") }
-                public static var pageTitle: String { Common.tr("pageTitle") }
+                public static var pageTitle: String { L10n.Common.tr("pageTitle") }
                 public static var issueDesc: String { AI.tr("llm.prompt.issueDesc") }
                 public static var issueType: String { AI.tr("llm.prompt.issueType") }
                 public static var pageContentSnippet: String { AI.tr("llm.prompt.pageContentSnippet") }
@@ -154,8 +154,8 @@ extension L10n {
             public static var available: String { AI.tr("ondevice.available") }
             public static var unavailable: String { AI.tr("ondevice.unavailable") }
             public static var connected: String { AI.tr("ondevice.connected") }
-            public static var statusReady: String { AI.tr("ondevice.status.ready") }
-            public static var statusLoading: String { AI.tr("ondevice.status.loading") }
+            public static var statusReady: String { AI.tr("aitask.status.ready") }
+            public static var statusLoading: String { L10n.Common.tr("loading") }
             public static var appleIntelligence: String { AI.tr("ondevice.appleIntelligence") }
             public static var enableAutoScan: String { AI.tr("ondevice.enableAutoScan") }
             public static var autoRefactor: String { AI.tr("ondevice.autoRefactor") }
@@ -163,7 +163,7 @@ extension L10n {
             public static var models: String { AI.tr("ondevice.models") }
             public static var loadModel: String { AI.tr("ondevice.loadModel") }
             public static var test: String { AI.tr("ondevice.test") }
-            public static var info: String { AI.tr("ondevice.info") }
+            public static var info: String { AI.tr("llm.info") }
             public static var subtitle: String { AI.tr("ondevice.subtitle") }
             public static var supportsFoundation: String { AI.tr("ondevice.supportsFoundation") }
             public static var supportsCoreML: String { AI.tr("ondevice.supportsCoreML") }
@@ -178,7 +178,7 @@ extension L10n {
             public static var generating: String { AI.tr("ondevice.generating") }
             public static var generate: String { AI.tr("ondevice.generate") }
             public static var result: String { AI.tr("ondevice.result") }
-            public static var system: String { AI.tr("ondevice.system") }
+            public static var system: String { L10n.Common.tr("sidebar.system") }
             public static var local: String { AI.tr("ondevice.local") }
 
             public enum Info {
@@ -191,7 +191,7 @@ extension L10n {
             /// error格式化
             /// - Parameter code: code
             /// - Returns: 字符串
-            public static func errorFormat(_ code: String) -> String { AI.trf("ondevice.errorFormat", code) }
+            public static func errorFormat(_ code: String) -> String { L10n.Common.trf("ondevice.errorFormat", code) }
 
             public enum Error {
                 public static var loadFailed: String { AI.tr("ondevice.error.loadFailed") }
@@ -301,8 +301,8 @@ extension L10n {
             }
 
             public enum Quiz {
-                public static var defaultTitle: String { AI.tr("prompt.quiz.defaultTitle") }
-                public static var question: String { AI.tr("prompt.quiz.question") }
+                public static var defaultTitle: String { AI.tr("prompt.expert.quiz.title") }
+                public static var question: String { AI.tr("ondevice.chatQuestion") }
                 public static var option: String { AI.tr("prompt.quiz.option") }
                 public static var explanation: String { AI.tr("prompt.quiz.explanation") }
             }
@@ -358,7 +358,7 @@ extension L10n {
                 public static var add: String { AI.tr("prompt.workshop.add") }
                 
                 public enum Intro {
-                    public static var title: String { AI.tr("prompt.workshop.intro.title") }
+                    public static var title: String { AI.tr("prompt.factory.title") }
                     public static var desc: String { AI.tr("prompt.workshop.intro.desc") }
                 }
                 public enum shortcuts {
@@ -372,8 +372,8 @@ extension L10n {
         }
 
         public enum Synthesis {
-            public static var title: String { AI.tr("synthesis.title") }
-            public static var sidebarTitle: String { AI.tr("sidebar.synthesis") }
+            public static var title: String { AI.tr("aitask.guide.synthesis") }
+            public static var sidebarTitle: String { L10n.Common.tr("sidebar.synthesis") }
             public static var limitReachedWarning: String { AI.tr("synthesis.limitReachedWarning") }
             public static var batchDeleteConfirm: String { AI.tr("synthesis.batchDeleteConfirm") }
             public static var clearAllConfirm: String { AI.tr("synthesis.clearAllConfirm") }
@@ -384,7 +384,7 @@ extension L10n {
             public static func sourceCount(_ n: Int) -> String { AI.trf("synthesis.sourceCount_%d", n) }
             
             public enum Mindmap {
-                public static var title: String { AI.tr("synthesis.mindmap.title") }
+                public static var title: String { AI.tr("prompt.expert.mindmap.title") }
                 public static var renderError: String { AI.tr("synthesis.mindmap.renderError") }
             }
 
@@ -410,10 +410,10 @@ extension L10n {
             
             public static var running: String { Localized.tr("aitask.status.running", table: t) }
             public static var processing: String { Localized.tr("aitask.processing", table: t) }
-            public static var typeIngest: String { Localized.tr("aitask.type.ingest", table: t) }
+            public static var typeIngest: String { L10n.Common.tr("logAction.ingest") }
             public static var typeHealthCheck: String { Localized.tr("aitask.type.healthCheck", table: t) }
-            public static var typeAIScan: String { Localized.tr("aitask.type.aiScan", table: t) }
-            public static var typeSynthesis: String { Localized.tr("aitask.type.synthesis", table: t) }
+            public static var typeAIScan: String { Localized.tr("aitask.guide.aiscan", table: t) }
+            public static var typeSynthesis: String { L10n.Common.tr("sidebar.synthesis") }
             
             public static var categories: String { Localized.tr("aitask.categories", table: t) }
             public static var noHistory: String { Localized.tr("aitask.noHistory", table: t) }

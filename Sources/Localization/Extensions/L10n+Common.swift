@@ -53,7 +53,7 @@ extension L10n {
         public static var copy: String { tr("misc.copy") }
         public static var syncToReminders: String { tr("syncToReminders") }
         public static var `import`: String { tr("misc.import") }
-        public static var create: String { Localized.tr("misc.create", table: t) }
+        public static var create: String { Localized.tr("logAction.create", table: t) }
         public static var deleteAll: String { Localized.tr("misc.deleteAll", table: t) }
         public static var bulkDelete: String { Localized.tr("misc.bulkDelete", table: t) }
         public static var close: String { Localized.tr("misc.close", table: t) }
@@ -107,7 +107,7 @@ extension L10n {
             public static var newPages: String { Common.tr("stats.newPages") }
             public static var growth: String { Common.tr("stats.growth") }
             public static var title: String { Common.tr("stats.title") }
-            public static var totalWords: String { Common.tr("stat.totalWords") }
+            public static var totalWords: String { Common.tr("accessibility.words") }
         }
         
         public enum Stats {
@@ -121,32 +121,32 @@ extension L10n {
             public static var weeklyInsight: String { Common.tr("sidebar.weeklyInsight") }
             public static var dashboard: String { Common.tr("sidebar.dashboard") }
             public static var allPages: String { Common.tr("sidebar.allPages") }
-            public static var tags: String { Common.tr("sidebar.tags") }
+            public static var tags: String { Common.tr("accessibility.tags") }
             public static var trash: String { Common.tr("sidebar.trash") }
-            public static var synthesis: String { Common.tr("sidebar.synthesis") }
+            public static var synthesis: String { L10n.Common.tr("sidebar.synthesis") }
             public static var system: String { Common.tr("sidebar.system") }
             public static var tools: String { Common.tr("sidebar.tools") }
-            public static var capabilities: String { Common.tr("sidebar.capabilities") }
+            public static var capabilities: String { Common.tr("iconPicker.common") }
             public static var healthCheck: String { Common.tr("sidebar.healthCheck") }
             public static var knowledge: String { Common.tr("sidebar.knowledge") }
-            public static var pageList: String { Common.tr("sidebar.pageList") }
+            public static var pageList: String { Common.tr("sidebar.allPages") }
             public static var universe: String { Common.tr("sidebar.universe") }
-            public static var tagManager: String { Common.tr("sidebar.tagManager") }
+            public static var tagManager: String { Common.tr("accessibility.tags") }
             public static var plugins: String { Common.tr("sidebar.plugins") }
             public static var collaboration: String { Common.tr("sidebar.collaboration") }
         }
 
         public enum Tab {
-            public static var knowledge: String { Common.tr("tab.knowledge") }
+            public static var knowledge: String { Common.tr("app.name") }
             public static var chat: String { Common.tr("tab.chat") }
-            public static var graph: String { Common.tr("tab.graph") }
-            public static var synthesis: String { Common.tr("tab.synthesis") }
-            public static var ingest: String { Common.tr("tab.ingest") }
+            public static var graph: String { Common.tr("perf.summary.graph") }
+            public static var synthesis: String { Common.tr("sidebar.synthesis") }
+            public static var ingest: String { Common.tr("sources") }
             public static var settings: String { Common.tr("tab.settings") }
             public static var voice: String { Common.tr("tab.voice") }
             public static var pdf: String { Common.tr("tab.pdf") }
             public static var collab: String { Common.tr("tab.collab") }
-            public static var search: String { Common.tr("tab.search") }
+            public static var search: String { Common.tr("components.search") }
         }
 
         public enum Global {
@@ -182,7 +182,7 @@ extension L10n {
             public static var load: String { Common.tr("perf.load") }
             public static var lint: String { Common.tr("action.healthCheck") }
             public static var graphLayout: String { Common.tr("perf.graphLayout") }
-            public static var search: String { Common.tr("perf.search") }
+            public static var search: String { Common.tr("components.search") }
             public static var edges: String { Common.tr("perf.edges") }
             public static var save: String { Common.tr("perf.save") }
             public static var ragChain: String { Common.tr("perf.ragChain") }
@@ -191,17 +191,17 @@ extension L10n {
             
             public enum summary {
                 public static var title: String { Common.tr("perf.summary.title") }
-                public static var search: String { Common.tr("perf.summary.search") }
-                public static var pages: String { Common.tr("perf.summary.pages") }
+                public static var search: String { Common.tr("components.search") }
+                public static var pages: String { Common.tr("perf.pages") }
                 public static var words: String { Common.tr("perf.summary.words") }
                 public static var nodes: String { Common.tr("perf.summary.nodes") }
                 public static var edges: String { Common.tr("perf.summary.edges") }
-                public static var load: String { Common.tr("perf.summary.load") }
+                public static var load: String { Common.tr("perf.load") }
                 public static var save: String { Common.tr("perf.summary.save") }
                 public static var graph: String { Common.tr("perf.summary.graph") }
                 public static var lint: String { Common.tr("action.healthCheck") }
-                public static var memory: String { Common.tr("perf.summary.memory") }
-                public static var graphLayout: String { Common.tr("perf.summary.graphLayout") }
+                public static var memory: String { Common.tr("demo.memory.title") }
+                public static var graphLayout: String { Common.tr("perf.graphLayout") }
             }
         }
 
@@ -210,11 +210,11 @@ extension L10n {
         }
 
         public enum Splash {
-            public static var appName: String { Common.tr("splash.appName") }
+            public static var appName: String { Common.tr("app.name") }
             public static var author: String { Common.tr("splash.author") }
             public static var enter: String { Common.tr("splash.enter") }
             public static var quote: String { Common.tr("splash.quote") }
-            public static var title: String { Common.tr("splash.title") }
+            public static var title: String { Common.tr("app.name") }
         }
 
         public enum Spatial {
@@ -258,7 +258,7 @@ extension L10n {
                 public static var content: String { Common.tr("demo.welcome.content") }
                 public static var prompt: String { Common.tr("demo.welcome.prompt") }
                 public static var tag1: String { Common.tr("demo.welcome.tag1") }
-                public static var tag2: String { Common.tr("demo.welcome.tag2") }
+                public static var tag2: String { Common.tr("app.name") }
                 public static var tag3: String { Common.tr("demo.welcome.tag3") }
                 public static var cardTitle: String { Common.tr("demo.welcome.card.title") }
                 public static var cardDesc: String { Common.tr("demo.welcome.card.desc") }
@@ -356,16 +356,16 @@ extension L10n {
         public enum Tags {
             public static var ai: String { Common.tr("tags.ai") }
             public static var agent: String { Common.tr("tags.agent") }
-            public static var planning: String { Common.tr("tags.planning") }
-            public static var memory: String { Common.tr("tags.memory") }
+            public static var planning: String { Common.tr("demo.planning.title") }
+            public static var memory: String { Common.tr("demo.memory.title") }
             public static var rag: String { Common.tr("tags.rag") }
-            public static var toolUse: String { Common.tr("tags.toolUse") }
+            public static var toolUse: String { Common.tr("demo.toolUse.title") }
             public static var llm: String { Common.tr("tags.llm") }
             public static var architecture: String { Common.tr("tags.architecture") }
-            public static var tools: String { Common.tr("tags.tools") }
+            public static var tools: String { Common.tr("sidebar.tools") }
             public static var nlp: String { Common.tr("tags.nlp") }
             public static var storage: String { Common.tr("tags.storage") }
-            public static var security: String { Common.tr("tags.security") }
+            public static var security: String { Common.tr("security") }
             public static var theory: String { Common.tr("tags.theory") }
             public static var network: String { Common.tr("tags.network") }
             public static var `protocol`: String { Common.tr("tags.protocol") }
@@ -379,7 +379,7 @@ extension L10n {
             public static var incorrect: String { Localized.tr("misc.incorrect", table: t) }
             public static var nextQuestion: String { Localized.tr("misc.nextQuestion", table: t) }
             public static var viewResults: String { Localized.tr("misc.viewResults", table: t) }
-            public static var create: String { Localized.tr("misc.create", table: t) }
+            public static var create: String { Localized.tr("logAction.create", table: t) }
             public static var clear: String { Localized.tr("misc.clear", table: t) }
             public static var clearAll: String { Localized.tr("misc.clearAll", table: t) }
             public static var listSeparator: String { Localized.tr("misc.listSeparator", table: t) }
@@ -428,7 +428,7 @@ extension L10n {
         
         public enum Snippet {
             public static var methodology: String { Localized.tr("demo.snippet.methodology", table: t) }
-            public static var workflow: String { Localized.tr("demo.snippet.workflow", table: t) }
+            public static var workflow: String { Localized.tr("demo.fallback.workflow", table: t) }
             public static var luckin: String { Localized.tr("demo.snippet.luckin", table: t) }
             public static var survey: String { Localized.tr("demo.snippet.survey", table: t) }
             public static var pkmRagLink: String { Localized.tr("demo.snippet.pkmRagLink", table: t) }
@@ -491,14 +491,14 @@ extension L10n {
             public static var infrastructure: String { Localized.tr("tags.infrastructure", table: t) }
             public static var decoration: String { Localized.tr("tags.decoration", table: t) }
             public static var finance: String { Localized.tr("tags.finance", table: t) }
-            public static var planning: String { Localized.tr("tags.planning", table: t) }
+            public static var planning: String { Localized.tr("demo.planning.title", table: t) }
             public static var team: String { Localized.tr("tags.team", table: t) }
             public static var recruitment: String { Localized.tr("tags.recruitment", table: t) }
             public static var supplyChain: String { Localized.tr("tags.supplyChain", table: t) }
             public static var materials: String { Localized.tr("tags.materials", table: t) }
             public static var design: String { Localized.tr("tags.design", table: t) }
             public static var marketing: String { Localized.tr("tags.marketing", table: t) }
-            public static var growth: String { Localized.tr("tags.growth", table: t) }
+            public static var growth: String { Localized.tr("stats.growth", table: t) }
             public static var rd: String { Localized.tr("tags.rd", table: t) }
         }
     }

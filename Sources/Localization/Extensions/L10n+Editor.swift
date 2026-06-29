@@ -25,7 +25,7 @@ extension L10n {
         public static var tableColumn1: String { Localized.tr("editor.tableColumn1", table: t) }
         public static var tableColumn2: String { Localized.tr("editor.tableColumn2", table: t) }
         public static var tableColumn3: String { Localized.tr("editor.tableColumn3", table: t) }
-        public static var tableContent: String { Localized.tr("editor.tableContent", table: t) }
+        public static var tableContent: String { Localized.tr("create.content", table: t) }
         public static var bold: String { Localized.tr("editor.bold", table: t) }
         public static var code: String { Localized.tr("editor.code", table: t) }
         public static var divider: String { Localized.tr("editor.divider", table: t) }

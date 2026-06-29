@@ -766,40 +766,6 @@
         }
       }
     },
-    "model_manager.params.reset_to_defaults": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reset to Defaults"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "重置为默认值"
-          }
-        }
-      }
-    },
-    "model_manager.params.save_configuration": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Save Configuration"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "保存配置"
-          }
-        }
-      }
-    },
     "model_manager.params.temperature": {
       "extractionState": "manual",
       "localizations": {
@@ -851,23 +817,6 @@
         }
       }
     },
-    "model_manager.routing.advanced_settings": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Advanced Settings"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "高级设置"
-          }
-        }
-      }
-    },
     "model_manager.routing.cloud_escalation": {
       "extractionState": "manual",
       "localizations": {
@@ -898,23 +847,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "云端模型选择"
-          }
-        }
-      }
-    },
-    "model_manager.routing.network_status": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Network Status"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "网络状态监控"
           }
         }
       }
@@ -1055,23 +987,6 @@
         }
       }
     },
-    "model_manager.server.name": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Server Name"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "服务器名称"
-          }
-        }
-      }
-    },
     "model_manager.server.set_default": {
       "extractionState": "manual",
       "localizations": {
@@ -1102,23 +1017,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "测试连接"
-          }
-        }
-      }
-    },
-    "model_manager.server.url": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Server URL"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "服务器地址"
           }
         }
       }
@@ -1480,40 +1378,6 @@
         }
       }
     },
-    "model_manager.server.form.add_title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Add Server"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "添加服务器"
-          }
-        }
-      }
-    },
-    "model_manager.server.form.edit_title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Edit Server"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "编辑服务器"
-          }
-        }
-      }
-    },
     "model_manager.server.form.cancel": {
       "extractionState": "manual",
       "localizations": {
@@ -1565,23 +1429,6 @@
         }
       }
     },
-    "model_manager.routing.cloud_escalation_title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cloud Hybrid Strategy"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "端云混合策略"
-          }
-        }
-      }
-    },
     "model_manager.routing.cloud_escalation_toggle": {
       "extractionState": "manual",
       "localizations": {
@@ -1616,23 +1463,6 @@
         }
       }
     },
-    "model_manager.routing.cloud_model_selection": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cloud Model Selection"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "云端模型选择"
-          }
-        }
-      }
-    },
     "model_manager.routing.current_cloud_model": {
       "extractionState": "manual",
       "localizations": {
@@ -1650,40 +1480,6 @@
         }
       }
     },
-    "model_manager.routing.task_rules": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Task Routing Rules"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "任务路由规则"
-          }
-        }
-      }
-    },
-    "model_manager.routing.task.semantic_chunking": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Semantic Chunking"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "语义分块"
-          }
-        }
-      }
-    },
     "model_manager.routing.task.link_discovery": {
       "extractionState": "manual",
       "localizations": {
@@ -1697,23 +1493,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "链接发现"
-          }
-        }
-      }
-    },
-    "model_manager.routing.task.synthesis": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Synthesis Lab"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "合成实验室"
           }
         }
       }
@@ -2041,23 +1820,6 @@
         }
       }
     },
-    "model_manager.params.select_model": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Select Model"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "选择模型"
-          }
-        }
-      }
-    },
     "model_manager.params.reset": {
       "extractionState": "manual",
       "localizations": {
@@ -2109,23 +1871,6 @@
         }
       }
     },
-    "model_manager.routing.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Smart Routing"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "智能路由"
-          }
-        }
-      }
-    },
     "model_manager.server.mock_local_dev": {
       "extractionState": "manual",
       "localizations": {
@@ -2173,23 +1918,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "下载大小"
-          }
-        }
-      }
-    },
-    "model_manager.spec.parameters": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Parameters"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "参数量"
           }
         }
       }
@@ -2530,23 +2258,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "语音速记"
-          }
-        }
-      }
-    },
-    "model_manager.lab.use_case.chat": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "AI Chat"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "AI 智能对话"
           }
         }
       }

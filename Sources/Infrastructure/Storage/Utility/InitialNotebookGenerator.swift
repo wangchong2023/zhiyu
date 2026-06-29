@@ -19,6 +19,11 @@ import Foundation
 /// 职责：用于快速填充知识库，展示图谱、检索、AI 分析及引用物理文件溯源能力。
 struct InitialNotebookGenerator {
 
+    /// 个人知识管理演示数据页面总数
+    static let pkmPageCount = 15
+    /// 咖啡店项目调研演示数据页面总数
+    static let researchPageCount = 15
+
     // MARK: - 模拟调用日志常量
 
     /// 演示模型名称，模拟未配置外部大模型时的内置/本地空跑服务

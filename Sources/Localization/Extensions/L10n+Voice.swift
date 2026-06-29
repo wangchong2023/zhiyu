@@ -29,7 +29,7 @@ extension L10n {
             public static var saveTitle: String { Voice.tr("speech.saveTitle") }
             public static var noteTitle: String { Voice.tr("speech.noteTitle") }
             public static var noteTitlePlaceholder: String { Voice.tr("speech.noteTitlePlaceholder") }
-            public static var voiceNote: String { Voice.tr("speech.voiceNote") }
+            public static var voiceNote: String { Voice.tr("speech.title") }
             public static var voiceTag: String { Voice.tr("speech.voiceTag") }
             public static var Language: String { Voice.tr("speech.language") }
             public static var needPermission: String { Voice.tr("speech.needPermission") }
@@ -43,7 +43,7 @@ extension L10n {
             public static var confirmAndEdit: String { Voice.tr("speech.confirmAndEdit") }
 
             public enum Status {
-                public static var ready: String { Voice.tr("speech.status.ready") }
+                public static var ready: String { Voice.tr("aitask.status.ready") }
                 public static var recording: String { Voice.tr("speech.status.recording") }
                 public static var complete: String { Voice.tr("speech.status.complete") }
                 public static var denied: String { Voice.tr("speech.status.denied") }
@@ -51,8 +51,8 @@ extension L10n {
                 public static var notDetermined: String { Voice.tr("speech.status.notDetermined") }
                 public static var unknown: String { Voice.tr("speech.status.unknown") }
                 public static var error: String { Voice.tr("speech.status.error") }
-                public static var audioError: String { Voice.tr("speech.status.audioError") }
-                public static var localeNotSupported: String { Voice.tr("speech.status.localeNotSupported") }
+                public static var audioError: String { Voice.tr("speech.error.audioEngine") }
+                public static var localeNotSupported: String { Voice.tr("speech.error.localeNotSupported") }
                 public static var simulatorNotSupported: String { Voice.tr("speech.status.simulatorNotSupported") }
             }
 

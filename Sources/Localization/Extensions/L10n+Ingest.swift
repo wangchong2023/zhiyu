@@ -34,7 +34,7 @@ extension L10n {
         /// 获取PDF页数格式化文案
         /// - Parameter count: 页数
         /// - Returns: 本地化文案
-        public static func pdfPageCountFormat(_ count: Int) -> String { Localized.trf("pdf.pageCountFormat", table: t, count) }
+        public static func pdfPageCountFormat(_ count: Int) -> String { L10n.Common.trf("search.pagesCount", count) }
 
         /// 获取PDF创建页面后的提示文案
         /// - Parameter title: 页面标题
@@ -72,11 +72,11 @@ extension L10n {
         public static var importingFile: String { Ingest.tr("ingest.importingFile") }
         public static var invalidURL: String { Ingest.tr("ingest.invalidURL") }
         public static var fetchingURL: String { Ingest.tr("ingest.fetchingURL") }
-        public static var fileImport: String { Ingest.tr("ingest.fileImport") }
+        public static var fileImport: String { Ingest.tr("ingest.file") }
         public static var urlImport: String { Ingest.tr("ingest.urlImport") }
-        public static var ocrScan: String { Ingest.tr("ingest.ocrScan") }
-        public static var clipboardImport: String { Ingest.tr("ingest.clipboardImport") }
-        public static var voiceNote: String { Ingest.tr("ingest.voiceNote") }
+        public static var ocrScan: String { Ingest.tr("ingest.ocr") }
+        public static var clipboardImport: String { Ingest.tr("ingest.clipboard") }
+        public static var voiceNote: String { Ingest.tr("ingest.voice") }
         public static var audioSubtitle: String { Ingest.tr("ingest.audioSubtitle") }
         public static var resultTitle: String { Ingest.tr("ingest.resultTitle") }
         public static var importRecords: String { Ingest.tr("ingest.importRecords") }
@@ -122,7 +122,7 @@ extension L10n {
         public static var iconCustom: String { Ingest.tr("ingest.iconCustom") }
         public static var iconDefault: String { Ingest.tr("ingest.iconDefault") }
         public static var preview: String { Ingest.tr("ingest.preview") }
-        public static var previewConfirm: String { Ingest.tr("ingest.previewConfirm") }
+        public static var previewConfirm: String { L10n.Common.tr("confirm") }
         public static var previewDiscard: String { Ingest.tr("ingest.previewDiscard") }
         public static var suggestLinks: String { Ingest.tr("ingest.suggestLinks") }
         public static var tips: String { Ingest.tr("ingest.tips") }
@@ -142,12 +142,12 @@ extension L10n {
         }
 
         public enum field {
-            public static var title: String { Ingest.tr("ingest.field.title") }
+            public static var title: String { L10n.Common.tr("search.sort.title") }
             public static var titlePlaceholder: String { Ingest.tr("ingest.field.titlePlaceholder") }
             public static var tags: String { Ingest.tr("ingest.field.tags") }
             public static var tagsPlaceholder: String { Ingest.tr("ingest.field.tagsPlaceholder") }
             public static var content: String { Ingest.tr("schema.field.content") } // 修正映射
-            public static var type: String { Ingest.tr("schema.field.type") }
+            public static var type: String { L10n.Common.tr("search.sort.type") }
             public static var icon: String { Ingest.tr("schema.field.icon") }
         }
 
@@ -162,7 +162,7 @@ extension L10n {
 
         public typealias ocr = OCR
         public struct OCR {
-            public static var title: String { Ingest.tr("ocr.title") }
+            public static var title: String { Ingest.tr("ingest.ocr") }
             public static var previewTitle: String { Ingest.tr("ocr.previewTitle") }
             public static var pageType: String { Ingest.tr("ocr.pageType") }
             public static var saveToKnowledge: String { Ingest.tr("ocr.saveToKnowledge") }
@@ -171,9 +171,9 @@ extension L10n {
             public static var selectImage: String { Ingest.tr("ocr.selectImage") }
             public static var fromAlbum: String { Ingest.tr("ocr.fromAlbum") }
             public static var recognize: String { Ingest.tr("ocr.recognize") }
-            public static var pageTitle: String { Common.tr("pageTitle") }
+            public static var pageTitle: String { L10n.Common.tr("pageTitle") }
             public static var changeIcon: String { Ingest.tr("ocr.changeIcon") }
-            public static var customIcon: String { Ingest.tr("ocr.customIcon") }
+            public static var customIcon: String { Ingest.tr("ingest.iconCustom") }
             public static var scanTag: String { Ingest.tr("ocr.scanTag") }
             public static var confirmAndEdit: String { Ingest.tr("ocr.confirmAndEdit") }
             public static var scanFailed: String { Ingest.tr("ocr.scanFailed") }
@@ -194,10 +194,10 @@ extension L10n {
             public static var pageSeparator: String { Ingest.tr("pdf.pageSeparator") }
             public static var contentPreview: String { Ingest.tr("pdf.contentPreview") }
 
-            public static var ingestToKnowledge: String { Ingest.tr("pdf.ingestToKnowledge") }
-            public static var ingest: String { Ingest.tr("pdf.ingest") }
-            public static var pageTitle: String { Common.tr("pageTitle") }
-            public static var pageType: String { Ingest.tr("pdf.pageType") }
+            public static var ingestToKnowledge: String { Ingest.tr("ingest.submit") }
+            public static var ingest: String { L10n.Common.tr("logAction.ingest") }
+            public static var pageTitle: String { L10n.Common.tr("pageTitle") }
+            public static var pageType: String { Ingest.tr("ocr.pageType") }
             public static var targetPage: String { Ingest.tr("pdf.targetPage") }
             public static var extractionMethod: String { Ingest.tr("pdf.extractionMethod") }
             public static var fullText: String { Ingest.tr("pdf.fullText") }
