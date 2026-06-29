@@ -52,7 +52,7 @@
         }
       }
     },
-    "model_manager.routing.auto_cloud_desc": {
+    "model_manager.routing.auto_online_desc": {
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -817,7 +817,7 @@
         }
       }
     },
-    "model_manager.routing.cloud_escalation": {
+    "model_manager.routing.online_escalation": {
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -834,7 +834,7 @@
         }
       }
     },
-    "model_manager.routing.cloud_model": {
+    "model_manager.routing.online_model": {
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -1429,7 +1429,7 @@
         }
       }
     },
-    "model_manager.routing.cloud_escalation_toggle": {
+    "model_manager.routing.online_escalation_toggle": {
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -1446,7 +1446,7 @@
         }
       }
     },
-    "model_manager.routing.cloud_escalation_desc": {
+    "model_manager.routing.online_escalation_desc": {
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -1463,7 +1463,7 @@
         }
       }
     },
-    "model_manager.routing.current_cloud_model": {
+    "model_manager.routing.current_online_model": {
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -1769,7 +1769,7 @@
         }
       }
     },
-    "model_manager.routing.decision.cloud": {
+    "model_manager.routing.decision.online": {
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -1803,7 +1803,7 @@
         }
       }
     },
-    "model_manager.routing.decision.auto_cloud": {
+    "model_manager.routing.decision.auto_online": {
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -3146,7 +3146,7 @@
         }
       }
     },
-    "model_manager.routing.cloud_escalation_title": {
+    "model_manager.routing.online_escalation_title": {
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -3163,7 +3163,7 @@
         }
       }
     },
-    "model_manager.routing.cloud_model_selection": {
+    "model_manager.routing.online_model_selection": {
       "extractionState": "manual",
       "localizations": {
         "en": {

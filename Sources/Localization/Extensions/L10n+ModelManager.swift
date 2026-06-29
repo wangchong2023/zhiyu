@@ -325,8 +325,8 @@ extension L10n {
         // MARK: - 智能路由
 
         public enum Routing {
-            public static var cloudEscalation: String {
-                ModelManager.tr("model_manager.routing.cloud_escalation")
+            public static var onlineEscalation: String {
+                ModelManager.tr("model_manager.routing.online_escalation")
             }
 
             public static var modelStrategy: String {
@@ -337,8 +337,8 @@ extension L10n {
                 ModelManager.tr("model_manager.routing.runtimeStatus")
             }
 
-            public static var cloudModel: String {
-                ModelManager.tr("model_manager.routing.cloud_model")
+            public static var onlineModel: String {
+                ModelManager.tr("model_manager.routing.online_model")
             }
 
             public static var routingRules: String {
@@ -353,27 +353,27 @@ extension L10n {
                 ModelManager.tr("model_manager.routing.advanced")
             }
 
-            public static var cloudEscalationTitle: String {
-                ModelManager.tr("model_manager.routing.cloud_escalation")
+            public static var onlineEscalationTitle: String {
+                ModelManager.tr("model_manager.routing.online_escalation_title")
             }
 
-            public static var cloudEscalationToggle: String {
-                ModelManager.tr("model_manager.routing.cloud_escalation_toggle")
+            public static var onlineEscalationToggle: String {
+                ModelManager.tr("model_manager.routing.online_escalation_toggle")
             }
 
-            public static var cloudEscalationDesc: String {
-                ModelManager.tr("model_manager.routing.cloud_escalation_desc")
+            public static var onlineEscalationDesc: String {
+                ModelManager.tr("model_manager.routing.online_escalation_desc")
             }
 
-            public static var cloudModelSelection: String {
-                ModelManager.tr("model_manager.routing.cloud_model")
+            public static var onlineModelSelection: String {
+                ModelManager.tr("model_manager.routing.online_model_selection")
             }
 
-            /// 当前云端模型
+            /// 当前在线模型
             /// - Parameter model: 模型名称
-            /// - Returns: 格式化的云端模型文本
-            public static func currentCloudModel(_ model: String) -> String {
-                ModelManager.trf("model_manager.routing.current_cloud_model", model)
+            /// - Returns: 格式化的在线模型文本
+            public static func currentOnlineModel(_ model: String) -> String {
+                ModelManager.trf("model_manager.routing.current_online_model", model)
             }
 
             public static var taskRules: String {
@@ -456,24 +456,24 @@ extension L10n {
                 ModelManager.tr("model_manager.routing.decision.unselected")
             }
 
-            public static var decisionCloud: String {
-                ModelManager.tr("model_manager.routing.decision.cloud")
+            public static var decisionOnline: String {
+                ModelManager.tr("model_manager.routing.decision.online")
             }
 
             public static var decisionLocal: String {
                 ModelManager.tr("model_manager.routing.decision.local")
             }
 
-            public static var autoCloudDesc: String {
-                ModelManager.tr("model_manager.routing.auto_cloud_desc")
+            public static var autoOnlineDesc: String {
+                ModelManager.tr("model_manager.routing.auto_online_desc")
             }
 
             public static var statusNotReady: String {
                 ModelManager.tr("model_manager.routing.status_not_ready")
             }
 
-            public static var decisionAutoCloud: String {
-                ModelManager.tr("model_manager.routing.decision.auto_cloud")
+            public static var decisionAutoOnline: String {
+                ModelManager.tr("model_manager.routing.decision.auto_online")
             }
         }
 

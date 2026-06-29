@@ -38,16 +38,16 @@ public struct SmartRoutingView: View {
             Text(L10n.ModelManager.Routing.modelStrategy)
                 .font(.subheadline.weight(.semibold)).foregroundStyle(.appText).padding(.horizontal, DesignSystem.small)
 
-            // 端云混合开关
+            // 端侧与在线混合开关
             VStack(alignment: .leading, spacing: DesignSystem.small) {
                 HStack(alignment: .center, spacing: 8) {
-                    // 主开关左侧添加合并融合图标，以表现端云智能调度的含义
+                    // 主开关左侧添加合并融合图标，以表现端侧与在线智能调度的含义
                     Image(systemName: "arrow.triangle.merge")
                         .foregroundStyle(Color.theme.accent)
                     VStack(alignment: .leading, spacing: DesignSystem.atomic) {
-                        Text(L10n.ModelManager.Routing.cloudEscalationToggle)
+                        Text(L10n.ModelManager.Routing.onlineEscalationToggle)
                             .font(.subheadline).foregroundStyle(.appText)
-                        Text(L10n.ModelManager.Routing.cloudEscalationDesc)
+                        Text(L10n.ModelManager.Routing.onlineEscalationDesc)
                             .font(.caption2).foregroundStyle(.appSecondary)
                     }
                     Spacer()
@@ -100,7 +100,7 @@ public struct SmartRoutingView: View {
                 
                 // 本地模型未就绪且非强制云端时的自动托管友好诊断提示
                 if !modelManager.isCloudEscalationEnabled && !modelManager.isModelLocalReady(for: modelManager.activeModelId) {
-                    Text(L10n.ModelManager.Routing.autoCloudDesc)
+                    Text(L10n.ModelManager.Routing.autoOnlineDesc)
                         .font(.caption2)
                         .foregroundStyle(.orange)
                         .padding(.leading, DesignSystem.titleIconSize + 8)
@@ -138,11 +138,11 @@ public struct SmartRoutingView: View {
 
     private func getCurrentRoutingDecision() -> String {
         if modelManager.isCloudEscalationEnabled {
-            return L10n.ModelManager.Routing.decisionCloud
+            return L10n.ModelManager.Routing.decisionOnline
         } else if modelManager.isModelLocalReady(for: modelManager.activeModelId) {
             return L10n.ModelManager.Routing.decisionLocal
         } else {
-            return L10n.ModelManager.Routing.decisionAutoCloud
+            return L10n.ModelManager.Routing.decisionAutoOnline
         }
     }
 
