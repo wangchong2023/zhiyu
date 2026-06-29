@@ -3095,23 +3095,6 @@
         }
       }
     },
-    "model_manager.routing.task.synthesis": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Synthesis Lab"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "合成实验室"
-          }
-        }
-      }
-    },
     "model_manager.spec.parameters": {
       "extractionState": "manual",
       "localizations": {
@@ -3125,23 +3108,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "参数量"
-          }
-        }
-      }
-    },
-    "model_manager.params.reset_to_defaults": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reset to Defaults"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "重置为默认值"
           }
         }
       }
@@ -3176,40 +3142,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "在线模型选择"
-          }
-        }
-      }
-    },
-    "model_manager.routing.network_status": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Network Status"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "网络状态监控"
-          }
-        }
-      }
-    },
-    "model_manager.routing.task_rules": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Task Routing Rules"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "任务路由规则"
           }
         }
       }
