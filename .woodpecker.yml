@@ -3,7 +3,7 @@ labels:
 
 skip_clone: true
 
-pipeline_timeout: 30
+pipeline_timeout: 90
 
 steps:
   clone-repo:
