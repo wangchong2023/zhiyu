@@ -319,22 +319,43 @@ struct UserProfileMenu: View {
             }
         }
         #else
-        // iOS/iPadOS：统一使用 popover 气泡，并强制 iPhone 不降级为 sheet，以保证菜单完美指向右上角头像位置
-        Button(action: {
-            HapticFeedback.shared.trigger(.selection)
-            showMenuPopover = true
-        }) {
-            profileLabel
-        }
-        .buttonStyle(.plain)
-        .accessibilityIdentifier("userProfileMenuButton")
-        .popover(isPresented: $showMenuPopover) {
-            menuPopoverContent
-                .frame(
-                    width: CustomProfilePopover.Constants.menuWidth,
-                    height: UIDevice.current.userInterfaceIdiom == .pad ? 360 : 340
-                )
-                .presentationCompactAdaptation(.popover)
+        // iOS/iPadOS：根据设备类型选择弹出方式
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            // iPhone 使用 sheet，确保可见
+            Button(action: {
+                HapticFeedback.shared.trigger(.selection)
+                showMenuPopover = true
+            }) {
+                profileLabel
+            }
+            .buttonStyle(.plain)
+            .accessibilityIdentifier("userProfileMenuButton")
+            .sheet(isPresented: $showMenuPopover) {
+                menuPopoverContent
+                    .frame(
+                        width: CustomProfilePopover.Constants.menuWidth,
+                        height: 340
+                    )
+                    .presentationCompactAdaptation(.sheet)
+            }
+        } else {
+            // iPad 以及其他使用 popover
+            Button(action: {
+                HapticFeedback.shared.trigger(.selection)
+                showMenuPopover = true
+            }) {
+                profileLabel
+            }
+            .buttonStyle(.plain)
+            .accessibilityIdentifier("userProfileMenuButton")
+            .popover(isPresented: $showMenuPopover) {
+                menuPopoverContent
+                    .frame(
+                        width: CustomProfilePopover.Constants.menuWidth,
+                        height: UIDevice.current.userInterfaceIdiom == .pad ? 360 : 340
+                    )
+                    .presentationCompactAdaptation(.popover)
+            }
         }
         #endif
     }
