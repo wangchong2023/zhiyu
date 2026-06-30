@@ -188,6 +188,7 @@ struct UserProfileMenu: View {
     @State private var pendingMenuAction: MenuAction?
 
     private var isUITesting: Bool {
+        NSClassFromString("XCTest") != nil ||
         ProcessInfo.processInfo.arguments.contains("--uitesting") ||
         ProcessInfo.processInfo.environment["UITesting"] == "true"
     }
