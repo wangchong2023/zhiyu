@@ -46,7 +46,9 @@ struct AppTabToolbarModifier<Trailing: View>: ViewModifier {
                 #endif
                 
                 ToolbarItem(placement: .topBarLeading) {
-                    UserProfileMenu()
+                    HStack(spacing: 0) {
+                        UserProfileMenu()
+                    }
                 }
                 
                 ToolbarItem(placement: .topBarTrailing) {

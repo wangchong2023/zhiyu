@@ -351,8 +351,8 @@ struct UserProfileMenu: View {
                 .onDisappear {
                     if let action = pendingMenuAction {
                         pendingMenuAction = nil
-                        // 延迟 0.25s 执行，彻底避开 UIKit Dismiss/Present 周期冲突
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                        // 延迟 0.5s 执行，彻底避开 UIKit Dismiss/Present 周期冲突
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                             executeMenuAction(action)
                         }
                     }
@@ -407,8 +407,8 @@ private extension UserProfileMenu {
         .onDisappear {
             if let action = pendingMenuAction {
                 pendingMenuAction = nil
-                // 延迟 0.25s 执行，彻底避开 UIKit Dismiss/Present 周期冲突
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                // 延迟 0.5s 执行，彻底避开 UIKit Dismiss/Present 周期冲突
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     executeMenuAction(action)
                 }
             }
