@@ -20,7 +20,7 @@ import Foundation
 struct InitialNotebookGenerator {
 
     /// 个人知识管理演示数据页面总数
-    static let pkmPageCount = 15
+    static let pkmPageCount = 18
     /// 咖啡店项目调研演示数据页面总数
     static let researchPageCount = 15
 
@@ -331,7 +331,22 @@ struct InitialNotebookGenerator {
             // 15. 知识的涌现效应
             PageSeed(title: String(localized: "demo.pkm.15.title", defaultValue: "知识的涌现效应"), type: .concept,
                      content: "涌现效应是指当系统节点达到一定数量时出现的质变。在[[个人知识图谱指南]]中，只要我们不断为[[语音速记的未关联笔记]]建立链接，庞大的[[双向链接的价值]]网络就会自发在[[跨领域笔记枢纽指南]]中催生出全新的交叉学科灵感。",
-                     tags: [L10n.InitialNotebook.Tags.association, L10n.InitialNotebook.Tags.innovation])
+                     tags: [L10n.InitialNotebook.Tags.association, L10n.InitialNotebook.Tags.innovation]),
+            
+            // 16. 卢曼卡片盒的选择
+            PageSeed(title: String(localized: "demo.pkm.16.title", defaultValue: "卢曼卡片盒的选择"), type: .concept,
+                     content: String(localized: "demo.pkm.16.content", defaultValue: "卢曼使用纸质卡片盒积累了大量的学术成果。选择卡片盒而不是笔记本，关键在于摆脱线性的目录束缚，促成不同主题（如[[卡片盒笔记法]]与[[费曼学习法实践]]）之间的非线性网状碰撞。"),
+                     tags: [L10n.InitialNotebook.Tags.noteStyles, L10n.InitialNotebook.Tags.learningMethod]),
+            
+            // 17. 信息茧房与知识整合
+            PageSeed(title: String(localized: "demo.pkm.17.title", defaultValue: "信息茧房与知识整合"), type: .entity,
+                     content: String(localized: "demo.pkm.17.content", defaultValue: "在海量碎片化信息中，人们极易陷入信息茧房。通过在[[个人知识图谱指南]]中对信息进行原子化重写，并手动与已有的[[知识的涌现效应]]建立关联，能有效促进跨领域知识整合。"),
+                     tags: [L10n.InitialNotebook.Tags.knowledgeMgmt, L10n.InitialNotebook.Tags.association]),
+            
+            // 18. 双脑协同工作流
+            PageSeed(title: String(localized: "demo.pkm.18.title", defaultValue: "双脑协同工作流"), type: .comparison,
+                     content: String(localized: "demo.pkm.18.content", defaultValue: "双脑协同工作流将人类的生物脑作为灵感与决策引擎，将基于[[个人知识图谱指南]]构建的“数字外脑”作为海量存储与精确索引。两者的协同配合需要依赖[[混合检索策略]]与[[主动召回与间隔重复]]机制。"),
+                     tags: [L10n.InitialNotebook.Tags.summary, L10n.InitialNotebook.Tags.efficiency])
         ]
     }
 

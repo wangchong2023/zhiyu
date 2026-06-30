@@ -389,7 +389,7 @@ extension L10n {
             }
 
             public static var taskSynthesis: String {
-                L10n.Common.tr("sidebar.synthesis")
+                L10n.Common.Sidebar.synthesis
             }
 
             public static var taskChat: String {

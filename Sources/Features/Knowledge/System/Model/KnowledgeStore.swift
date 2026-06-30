@@ -115,6 +115,9 @@ public final class KnowledgeStore {
                             let vaultName = VaultService.shared.vaults.first(where: { $0.id == vaultID })?.name
                             await self.seedDefaultContent(vaultName: vaultName)
                             keyStore?.set(true, forKey: seedKey)
+                            
+                            // 🎬 播种完毕后，重新从物理库同步加载内存镜像，同时会自动同步刷新活跃笔记本的页面计数
+                            await self.refresh()
                         }
                     }
                 }

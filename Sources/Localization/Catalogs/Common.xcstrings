@@ -6630,23 +6630,6 @@
           }
         }
       }
-    },
-    "sidebar.synthesis": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Synthesis"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "合成实验室"
-          }
-        }
-      }
     }
   },
   "version": "1.0"

@@ -187,6 +187,11 @@ struct UserProfileMenu: View {
     /// popover 消失后待执行的导航动作，避免 UIKit 转场冲突（Mac Catalyst）
     @State private var pendingMenuAction: MenuAction?
 
+    private var isUITesting: Bool {
+        ProcessInfo.processInfo.arguments.contains("--uitesting") ||
+        ProcessInfo.processInfo.environment["UITesting"] == "true"
+    }
+
     fileprivate enum MenuAction {
         case settings, profile, plan, plugins, aiSettings
     }
@@ -331,12 +336,33 @@ struct UserProfileMenu: View {
             .buttonStyle(.plain)
             .accessibilityIdentifier("userProfileMenuButton")
             .sheet(isPresented: $showMenuPopover) {
-                menuPopoverContent
-                    .frame(
-                        width: CustomProfilePopover.Constants.menuWidth,
-                        height: 340
+                VStack(spacing: 0) {
+                    Spacer().frame(height: DesignSystem.medium) // 为拖拽条留出空间
+                    CustomProfilePopover(
+                        showMenuPopover: $showMenuPopover,
+                        onAction: { pendingMenuAction = $0 }
                     )
-                    .presentationCompactAdaptation(.sheet)
+                }
+                .environment(authService)
+                .environment(store)
+                .environment(router)
+                .environmentObject(themeManager)
+                .environmentObject(onboardingService)
+                .onDisappear {
+                    if let action = pendingMenuAction {
+                        pendingMenuAction = nil
+                        // 延迟 0.25s 执行，彻底避开 UIKit Dismiss/Present 周期冲突
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                            executeMenuAction(action)
+                        }
+                    }
+                }
+                .presentationDetents(
+                    isUITesting
+                        ? [.large]
+                        : [.height(340)]
+                )
+                .presentationDragIndicator(.visible)
             }
         } else {
             // iPad 以及其他使用 popover

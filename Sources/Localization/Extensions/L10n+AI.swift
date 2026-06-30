@@ -373,7 +373,7 @@ extension L10n {
 
         public enum Synthesis {
             public static var title: String { AI.tr("aitask.guide.synthesis") }
-            public static var sidebarTitle: String { L10n.Common.tr("sidebar.synthesis") }
+            public static var sidebarTitle: String { L10n.Common.Sidebar.synthesis }
             public static var limitReachedWarning: String { AI.tr("synthesis.limitReachedWarning") }
             public static var batchDeleteConfirm: String { AI.tr("synthesis.batchDeleteConfirm") }
             public static var clearAllConfirm: String { AI.tr("synthesis.clearAllConfirm") }
