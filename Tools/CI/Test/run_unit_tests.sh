@@ -19,14 +19,16 @@ DERIVED_DATA_PATH="${BUILD_DIR}/DerivedData-ios"
 # 获取动态寻找出的最新可用模拟器
 SIM_NAME=$(find_simulator)
 DESTINATION="platform=iOS Simulator,name=${SIM_NAME}"
-# 进程级并行：使用 2 个模拟器实例，xcodebuild 自动克隆并 round-robin 分配测试
+# 进程级并行：使用 4 个模拟器实例，xcodebuild 自动克隆并 round-robin 分配测试
 # 区别于线程级并行 (-parallel-testing-enabled)，每个模拟器是独立 OS 进程，
 # 拥有独立的 MainActor 和 Swift Concurrency 运行时，完全避免 actor 冲突
 PARALLEL_DESTINATIONS=(
     "-destination" "${DESTINATION}"
     "-destination" "${DESTINATION}"
+    "-destination" "${DESTINATION}"
+    "-destination" "${DESTINATION}"
 )
-echo "📱 使用模拟器: ${SIM_NAME}（进程级并行 ×2）"
+echo "📱 使用模拟器: ${SIM_NAME}（进程级并行 ×4）"
 
 # ── 2. 从 @flaky 注释自动收集不稳定测试 ─────────────────────────────
 echo "🔍 收集 @flaky 标记的不稳定测试..."
