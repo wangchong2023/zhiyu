@@ -215,42 +215,51 @@ final class SettingsE2ETests: KnowledgeBaseUITests {
 
     /// 验证语言切换控件可交互
     func testLanguageSwitching() async {
-        let tabLabels = ["Settings", "设置"]
-        var tapped = false
-        for label in tabLabels {
-            let tab = app.tabBars.buttons[label].exists ? app.tabBars.buttons[label] : app.buttons[label]
-            if tab.exists && tab.isHittable {
-                tab.tap()
-                tapped = true
-                break
-            }
-        }
-        if !tapped {
-            let tab = app.tabBars.buttons.element(boundBy: 3)
-            if tab.exists && tab.isHittable {
-                tab.tap()
-            }
-        }
-        try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
+        // 1. 找到用户头像入口并点击
+        let profileButton = app.buttons["userProfileMenuButton"]
+        XCTAssertTrue(profileButton.waitForExistence(timeout: 5), "用户头像入口应当存在")
+        profileButton.tap()
 
+        try? await Task.sleep(nanoseconds: 1_000_000_000)
+
+        // 2. 点击系统设置菜单项
+        let settingsMenuButton = app.buttons["settingsMenuButton"]
+        XCTAssertTrue(settingsMenuButton.waitForExistence(timeout: 5), "系统设置菜单入口应当存在")
+        settingsMenuButton.tap()
+
+        try? await Task.sleep(nanoseconds: 1_500_000_000)
+
+        // 3. 语言切换测试
         let langPicker = app.pickerWheels.firstMatch
         if langPicker.exists && langPicker.isHittable {
             langPicker.adjust(toPickerWheelValue: "English")
-            try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
+            try? await Task.sleep(nanoseconds: 500_000_000)
         }
     }
 
     /// 验证主题颜色按钮可交互
     func testThemeAccentColorChange() async {
-        tapTab(named: "设置")
-        try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
+        // 1. 找到用户头像入口并点击
+        let profileButton = app.buttons["userProfileMenuButton"]
+        XCTAssertTrue(profileButton.waitForExistence(timeout: 5), "用户头像入口应当存在")
+        profileButton.tap()
 
+        try? await Task.sleep(nanoseconds: 1_000_000_000)
+
+        // 2. 点击系统设置菜单项
+        let settingsMenuButton = app.buttons["settingsMenuButton"]
+        XCTAssertTrue(settingsMenuButton.waitForExistence(timeout: 5), "系统设置菜单入口应当存在")
+        settingsMenuButton.tap()
+
+        try? await Task.sleep(nanoseconds: 1_500_000_000)
+
+        // 3. 主题色变更测试
         let colorButtons = app.buttons.matching(
             NSPredicate(format: "identifier CONTAINS 'accent' OR identifier CONTAINS 'color'")
         ).allElementsBoundByIndex
         if let firstColor = colorButtons.first {
             safeTap(firstColor)
-            try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
+            try? await Task.sleep(nanoseconds: 500_000_000)
         }
     }
 }

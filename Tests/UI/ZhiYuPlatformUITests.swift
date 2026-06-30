@@ -529,6 +529,13 @@ final class iPadTests: ZhiYuPlatformUITests {
 @available(iOS 17.0, *)
 final class MacCatalystTests: ZhiYuPlatformUITests {
 
+    override func setUp() async throws {
+        try await super.setUp()
+        // 非 Mac Catalyst 环境下跳过该类中的所有测试
+        try XCTSkipUnless(ProcessInfo.processInfo.isiOSAppOnMac || ProcessInfo.processInfo.isMacCatalystApp,
+                          "仅在 Mac Catalyst 目标上运行 MacCatalystTests")
+    }
+
     /// 验证 Mac 菜单栏存在（仅 macCatalyst 环境）
     func testMacMenuBarExists() throws {
         // 非 Mac Catalyst 环境下跳过
@@ -761,10 +768,10 @@ final class AccessibilityTests: ZhiYuPlatformUITests {
 
         // 验证找到的导航元素应该有 accessibility label
         if knowledgeTabBar.exists {
-            XCTAssertFalse(knowledgeTabBar.accessibilityLabel?.isEmpty ?? true,
+            XCTAssertFalse(knowledgeTabBar.label.isEmpty,
                            "Knowledge TabBar 按鈕应有 accessibility label")
         } else if knowledgeSidebar.exists {
-            XCTAssertFalse(knowledgeSidebar.accessibilityLabel?.isEmpty ?? true,
+            XCTAssertFalse(knowledgeSidebar.label.isEmpty,
                            "Knowledge Sidebar 按鈕应有 accessibility label")
         }
     }

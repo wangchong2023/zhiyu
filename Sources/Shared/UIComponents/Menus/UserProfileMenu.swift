@@ -444,6 +444,7 @@ struct CustomProfilePopover: View {
                         onAction?(.settings)
                         showMenuPopover = false
                     }
+                    .accessibilityIdentifier("settingsMenuButton")
                     
                     menuRow(icon: "creditcard.fill", color: Color(hue: 0.62, saturation: 0.65, brightness: 0.82), title: L10n.Auth.subscription) {
                         onAction?(.plan)

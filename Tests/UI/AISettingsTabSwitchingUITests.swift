@@ -50,8 +50,10 @@ final class AISettingsTabSwitchingUITests: XCTestCase {
         try? await Task.sleep(nanoseconds: 1_500_000_000)
 
         // 3. 确认进入 AI 设置页面
-        let navTitle = app.navigationBars["人工智能"]
-        XCTAssertTrue(navTitle.waitForExistence(timeout: 5), "AI 设置页面导航栏标题应为'人工智能'")
+        let navTitle = app.navigationBars.firstMatch
+        XCTAssertTrue(navTitle.waitForExistence(timeout: 5), "AI 设置页面导航栏应当存在")
+        let titleLabel = navTitle.staticTexts.firstMatch.label
+        XCTAssertTrue(titleLabel == "人工智能" || titleLabel == "Artificial Intelligence", "AI 设置页面导航栏标题应为 '人工智能' 或 'Artificial Intelligence'")
 
         // 4. 通过 segmented control 定位 Picker
         let segmentedControl = app.segmentedControls.firstMatch
@@ -71,7 +73,7 @@ final class AISettingsTabSwitchingUITests: XCTestCase {
         print("DEBUG ALL static texts: \(allStaticTexts)")
 
         let apiKeyText = app.staticTexts.containing(
-            NSPredicate(format: "label CONTAINS '开启 AI 助手' OR label CONTAINS '提供商' OR label CONTAINS 'API'")
+            NSPredicate(format: "label CONTAINS '开启 AI 助手' OR label CONTAINS 'Enable AI Assistant' OR label CONTAINS '提供商' OR label CONTAINS 'Provider' OR label CONTAINS 'API'")
         ).firstMatch
         XCTAssertTrue(apiKeyText.waitForExistence(timeout: 3),
                       "点击'在线大模型' tab 后应显示相关配置内容（API Key、提供商等），说明 tab 切换响应成功")
@@ -87,10 +89,10 @@ final class AISettingsTabSwitchingUITests: XCTestCase {
         print("DEBUG ALL static texts: \(allStaticTexts2)")
 
         let localText = app.staticTexts.containing(
-            NSPredicate(format: "label CONTAINS '本地' OR label CONTAINS '模型市场' OR label CONTAINS '测试'")
+            NSPredicate(format: "label CONTAINS '本地' OR label CONTAINS '模型市场' OR label CONTAINS '测试' OR label CONTAINS 'Model Store' OR label CONTAINS 'Laboratory' OR label CONTAINS 'Local'")
         ).firstMatch
         XCTAssertTrue(localText.waitForExistence(timeout: 3),
-                      "点击'本地大模型' tab 后应显示相关配置内容（模型市场/测试实验室）")
+                      "点击'本地大模型' tab 后应显示相关配置内容（模型市场/测试实验室/Model Store/Laboratory/Local）")
 
         // 8. 点击 "大模型策略" tab 回到第一项
         let tab1 = segmentedControl.buttons.element(boundBy: 0)
@@ -99,7 +101,7 @@ final class AISettingsTabSwitchingUITests: XCTestCase {
         try? await Task.sleep(nanoseconds: 1_000_000_000)
 
         let strategyText = app.staticTexts.containing(
-            NSPredicate(format: "label CONTAINS '策略' OR label CONTAINS '路由' OR label CONTAINS '本地模型'")
+            NSPredicate(format: "label CONTAINS '策略' OR label CONTAINS '路由' OR label CONTAINS '本地模型' OR label CONTAINS 'Strategy' OR label CONTAINS 'Policy' OR label CONTAINS 'Routing' OR label CONTAINS 'Collaborative AI'")
         ).firstMatch
         XCTAssertTrue(strategyText.waitForExistence(timeout: 3),
                       "点击'大模型策略' tab 后应显示路由策略相关内容")
