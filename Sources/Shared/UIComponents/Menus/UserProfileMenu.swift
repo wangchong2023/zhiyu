@@ -363,6 +363,9 @@ struct UserProfileMenu: View {
                         : [.height(340)]
                 )
                 .presentationDragIndicator(.visible)
+                .background(
+                    themeManager.pageBackground().ignoresSafeArea()
+                )
             }
         } else {
             // iPad 以及其他使用 popover
